@@ -25,6 +25,7 @@ import {
   AIMessage,
 } from '@/hooks/useBookRecommendations';
 import { User } from '@/domain/user.model';
+import { lora } from '@/utils/fonts/fonts';
 
 interface Props {
   currentUserId: string;
@@ -44,6 +45,7 @@ const mdComponents = {
         fontSize: '0.85rem',
         lineHeight: 1.65,
         color: 'rgba(255,255,255,0.92)',
+        fontFamily: lora.style.fontFamily,
         mb: 0.75,
         mt: 0,
       }}
@@ -52,10 +54,16 @@ const mdComponents = {
     </Typography>
   ),
   strong: ({ children }: React.HTMLAttributes<HTMLElement>) => (
-    <strong style={{ color: '#e9d5ff', fontWeight: 700 }}>{children}</strong>
+    <strong
+      style={{ color: '#e9d5ff', fontWeight: 700, fontFamily: 'inherit' }}
+    >
+      {children}
+    </strong>
   ),
   em: ({ children }: React.HTMLAttributes<HTMLElement>) => (
-    <em style={{ color: 'rgba(233,213,255,0.85)' }}>{children}</em>
+    <em style={{ color: 'rgba(233,213,255,0.85)', fontFamily: 'inherit' }}>
+      {children}
+    </em>
   ),
   ul: ({ children }: React.HTMLAttributes<HTMLUListElement>) => (
     <Box component="ul" sx={{ pl: 2.5, my: 0.5, '& li': { mb: 0.5 } }}>
@@ -74,6 +82,7 @@ const mdComponents = {
         fontSize: '0.85rem',
         lineHeight: 1.65,
         color: 'rgba(255,255,255,0.92)',
+        fontFamily: lora.style.fontFamily,
       }}
     >
       {children}
@@ -86,6 +95,7 @@ const mdComponents = {
         fontSize: '1rem',
         fontWeight: 700,
         color: '#e9d5ff',
+        fontFamily: lora.style.fontFamily,
         mb: 0.5,
         mt: 1,
       }}
@@ -100,6 +110,7 @@ const mdComponents = {
         fontSize: '0.95rem',
         fontWeight: 700,
         color: '#e9d5ff',
+        fontFamily: lora.style.fontFamily,
         mb: 0.5,
         mt: 1,
       }}
@@ -114,6 +125,7 @@ const mdComponents = {
         fontSize: '0.9rem',
         fontWeight: 700,
         color: '#e9d5ff',
+        fontFamily: lora.style.fontFamily,
         mb: 0.5,
         mt: 0.75,
       }}
@@ -194,6 +206,7 @@ function MessageBubble({ message }: { message: AIMessage }) {
                 fontSize: '0.85rem',
                 lineHeight: 1.65,
                 color: 'rgba(255,255,255,0.92)',
+                fontFamily: lora.style.fontFamily,
               }}
             >
               {message.content}
@@ -304,6 +317,7 @@ export default function AIRecommendationsPanel({
         open={open}
         onClose={handleClose}
         PaperProps={{
+          className: lora.className,
           sx: {
             width: { xs: '100vw', sm: PANEL_WIDTH },
             background: 'rgba(10, 10, 10, 0.85)',
@@ -343,6 +357,7 @@ export default function AIRecommendationsPanel({
               sx={{
                 fontWeight: 600,
                 color: 'rgba(255,255,255,0.95)',
+                fontFamily: lora.style.fontFamily,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
@@ -354,7 +369,11 @@ export default function AIRecommendationsPanel({
               <AutoAwesomeRoundedIcon sx={{ fontSize: 11, color: '#c084fc' }} />
               <Typography
                 variant="caption"
-                sx={{ color: '#c084fc', fontSize: '0.7rem' }}
+                sx={{
+                  color: '#c084fc',
+                  fontSize: '0.7rem',
+                  fontFamily: lora.style.fontFamily,
+                }}
               >
                 {headerLabel}
               </Typography>
@@ -452,6 +471,7 @@ export default function AIRecommendationsPanel({
                 backgroundColor: 'rgba(255,255,255,0.05)',
                 color: 'rgba(255,255,255,0.9)',
                 fontSize: '0.85rem',
+                fontFamily: lora.style.fontFamily,
                 '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
                 '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
                 '&.Mui-focused fieldset': {
