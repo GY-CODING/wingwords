@@ -12,6 +12,7 @@ import { ProfileLayout } from './components/ProfileLayout/ProfileLayout';
 import { ProfilePageSkeleton } from './components/ProfilePageSkeleton';
 import { useProfileBiography } from './hooks/useProfileBiography';
 import { useProfilePage } from './hooks/useProfilePage';
+import AIRecommendationsPanel from '@/app/components/organisms/AIRecommendationsPanel/AIRecommendationsPanel';
 
 function ProfilePageContent() {
   const user = useSelector(
@@ -55,6 +56,11 @@ function ProfilePageContent() {
         onClose={() => biography.setIsErrorBiography(false)}
         message="Error updating biography"
         severity={ESeverity.ERROR}
+      />
+      <AIRecommendationsPanel
+        mode="discover"
+        currentUserId={user.id}
+        currentUser={user}
       />
     </>
   );

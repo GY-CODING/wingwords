@@ -12,6 +12,8 @@ import { useParams, useRouter } from 'next/navigation';
 import { Suspense, useEffect } from 'react';
 import { UserProfileSkeleton } from './components/UserProfileSkeleton/UserProfileSkeleton';
 import { useAddFriend } from './hooks/useAddFriend';
+import AIRecommendationsPanel from '@/app/components/organisms/AIRecommendationsPanel/AIRecommendationsPanel';
+import { User } from '@/domain/user.model';
 
 function UserProfileContent() {
   const params = useParams();
@@ -73,6 +75,15 @@ function UserProfileContent() {
         message="Could not send friend request. Try again."
         severity={ESeverity.ERROR}
       />
+      {!isOwnProfile && currentUser?.id && (
+        <AIRecommendationsPanel
+          mode="recommend"
+          currentUserId={currentUser.id}
+          currentUser={currentUser as User}
+          targetUserId={userId}
+          targetUser={user}
+        />
+      )}
     </>
   );
 }
