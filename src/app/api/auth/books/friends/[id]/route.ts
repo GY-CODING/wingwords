@@ -57,7 +57,7 @@ export async function DELETE(
     await sendLog(LogLevel.INFO, LogMessage.FRIEND_DELETED, {
       additionalData: { friendId },
     });
-    return NextResponse.json(null, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
     await sendLog(LogLevel.ERROR, LogMessage.FRIEND_DELETE_FAILED, {
       additionalData: {

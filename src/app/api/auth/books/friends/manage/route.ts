@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     await sendLog(LogLevel.INFO, LogMessage.FRIEND_REQUEST_MANAGED, {
       additionalData: { requestId, command },
     });
-    return NextResponse.json(null, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
     await sendLog(LogLevel.ERROR, LogMessage.FRIEND_REQUEST_MANAGE_FAILED, {
       additionalData: {
