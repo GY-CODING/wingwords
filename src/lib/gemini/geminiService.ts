@@ -161,6 +161,7 @@ export async function* streamDiscoverRecommendations(
       systemInstruction: DISCOVER_SYSTEM_PROMPT,
       temperature: 0.85,
       maxOutputTokens: 4096,
+      thinkingConfig: { thinkingBudget: 0 },
     },
   });
 
@@ -190,6 +191,7 @@ export async function* streamBookRecommendations(
       systemInstruction: SYSTEM_PROMPT,
       temperature: 0.8,
       maxOutputTokens: 4096,
+      thinkingConfig: { thinkingBudget: 0 },
     },
   });
 

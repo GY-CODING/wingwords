@@ -236,10 +236,12 @@ export default function AIRecommendationsPanel({
   const {
     messages,
     isLoading,
+    error,
     getRecommendations,
     getDiscoverRecommendations,
     askQuestion,
     askDiscoverQuestion,
+    retry,
   } = useBookRecommendations();
 
   useEffect(() => {
@@ -408,7 +410,13 @@ export default function AIRecommendationsPanel({
             },
           }}
         >
-          {messages.length === 0 && (
+          {/* Empty / loading / error state */}
+          {messages.length === 0 && isLoading && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
+              <CircularProgress size={28} sx={{ color: '#9333ea' }} />
+            </Box>
+          )}
+          {messages.length === 0 && !isLoading && !error && (
             <Box
               sx={{
                 display: 'flex',
@@ -417,26 +425,68 @@ export default function AIRecommendationsPanel({
                 justifyContent: 'center',
                 height: '100%',
                 gap: 1.5,
-                opacity: 0.5,
+                opacity: 0.4,
               }}
             >
               <AutoStoriesRoundedIcon sx={{ fontSize: 48, color: '#9333ea' }} />
               <Typography
                 variant="body2"
-                sx={{ color: 'rgba(255,255,255,0.6)', textAlign: 'center' }}
+                sx={{
+                  color: 'rgba(255,255,255,0.6)',
+                  textAlign: 'center',
+                  fontFamily: lora.style.fontFamily,
+                }}
               >
-                Loading recommendations…
+                Ready when you are…
               </Typography>
+            </Box>
+          )}
+          {error && (
+            <Box
+              sx={{
+                mx: 1,
+                mt: 2,
+                p: 2,
+                borderRadius: 2,
+                background: 'rgba(239,68,68,0.08)',
+                border: '1px solid rgba(239,68,68,0.25)',
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: '0.82rem',
+                  color: 'rgba(252,165,165,0.9)',
+                  mb: 1,
+                  fontFamily: lora.style.fontFamily,
+                }}
+              >
+                {error}
+              </Typography>
+              <Box
+                component="button"
+                onClick={retry}
+                disabled={isLoading}
+                sx={{
+                  background: 'rgba(147,51,234,0.2)',
+                  border: '1px solid rgba(147,51,234,0.4)',
+                  borderRadius: 1.5,
+                  color: '#c084fc',
+                  px: 1.5,
+                  py: 0.5,
+                  fontSize: '0.78rem',
+                  fontFamily: lora.style.fontFamily,
+                  cursor: 'pointer',
+                  '&:hover': { background: 'rgba(147,51,234,0.3)' },
+                  '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
+                }}
+              >
+                Try again
+              </Box>
             </Box>
           )}
           {messages.map((msg, idx) => (
             <MessageBubble key={idx} message={msg} />
           ))}
-          {isLoading && messages.length === 0 && (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-              <CircularProgress size={24} sx={{ color: '#9333ea' }} />
-            </Box>
-          )}
           <div ref={messagesEndRef} />
         </Box>
 

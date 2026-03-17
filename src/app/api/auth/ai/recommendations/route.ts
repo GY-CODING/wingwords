@@ -9,6 +9,26 @@ import {
 } from '@/lib/gemini/geminiService';
 import { NextRequest, NextResponse } from 'next/server';
 
+// Server-side cache: avoid re-fetching books on every follow-up question
+const BOOK_CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const bookContextCache = new Map<
+  string,
+  { context: BookContext[]; ts: number }
+>();
+
+function getBookContextCache(key: string): BookContext[] | null {
+  const entry = bookContextCache.get(key);
+  if (!entry || Date.now() - entry.ts > BOOK_CACHE_TTL) {
+    bookContextCache.delete(key);
+    return null;
+  }
+  return entry.context;
+}
+
+function setBookContextCache(key: string, context: BookContext[]): void {
+  bookContextCache.set(key, { context, ts: Date.now() });
+}
+
 const GET_BOOKS_TITLES_QUERY = `
   query GetBooksTitles($ids: [Int!]!) {
     books(where: {id: {_in: $ids}}) {
@@ -164,6 +184,29 @@ export async function POST(req: NextRequest) {
       ? `Bearer ${session.tokenSet.idToken}`
       : undefined;
 
+    // Limit history to last 8 turns to avoid token bloat
+    const trimmedHistory = history?.slice(-8);
+
+    // Helper: get book context using server-side cache
+    async function resolveBookContext(
+      userId: string,
+      includeAuth: boolean
+    ): Promise<BookContext[]> {
+      const cacheKey = userId;
+      const cached = getBookContextCache(cacheKey);
+      if (cached) return cached;
+
+      const books = await fetchGyBooks(
+        baseUrl!,
+        userId,
+        includeAuth ? authHeader : undefined
+      );
+      const titleMap = await fetchHardcoverTitles(books.map((b) => b.id));
+      const context = mergeBookContext(books, titleMap);
+      setBookContextCache(cacheKey, context);
+      return context;
+    }
+
     // Discover mode: recommend new books based on current user's library only
     if (mode === 'discover') {
       if (!currentUserId) {
@@ -173,20 +216,12 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const currentBooks = await fetchGyBooks(
-        baseUrl,
-        currentUserId,
-        authHeader
-      );
-      const titleMap = await fetchHardcoverTitles(
-        currentBooks.map((b) => b.id)
-      );
-      const currentBookContext = mergeBookContext(currentBooks, titleMap);
+      const currentBookContext = await resolveBookContext(currentUserId, true);
 
       const stream = streamDiscoverRecommendations({
         currentUserBooks: currentBookContext,
         userQuestion: question,
-        history,
+        history: trimmedHistory,
       });
 
       const readable = new ReadableStream({
@@ -196,6 +231,8 @@ export async function POST(req: NextRequest) {
             for await (const chunk of stream) {
               controller.enqueue(encoder.encode(chunk));
             }
+          } catch {
+            controller.enqueue(encoder.encode('\n\n[ERROR]'));
           } finally {
             controller.close();
           }
@@ -219,29 +256,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const [targetBooks, currentBooks] = await Promise.all([
-      fetchGyBooks(baseUrl, targetUserId),
-      fetchGyBooks(baseUrl, currentUserId, authHeader),
+    const [targetBookContext, currentBookContext] = await Promise.all([
+      resolveBookContext(targetUserId, false),
+      resolveBookContext(currentUserId, true),
     ]);
-
-    const allIds = [
-      ...new Set([
-        ...targetBooks.map((b) => b.id),
-        ...currentBooks.map((b) => b.id),
-      ]),
-    ];
-
-    const titleMap = await fetchHardcoverTitles(allIds);
-
-    const targetBookContext = mergeBookContext(targetBooks, titleMap);
-    const currentBookContext = mergeBookContext(currentBooks, titleMap);
 
     const stream = streamBookRecommendations({
       targetUserName: targetUserName ?? 'this user',
       targetUserBooks: targetBookContext,
       currentUserBooks: currentBookContext,
       userQuestion: question,
-      history,
+      history: trimmedHistory,
     });
 
     const readable = new ReadableStream({
@@ -251,6 +276,8 @@ export async function POST(req: NextRequest) {
           for await (const chunk of stream) {
             controller.enqueue(encoder.encode(chunk));
           }
+        } catch {
+          controller.enqueue(encoder.encode('\n\n[ERROR]'));
         } finally {
           controller.close();
         }
