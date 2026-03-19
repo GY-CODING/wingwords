@@ -18,7 +18,7 @@ async function handler(
     const idToken = session?.tokenSet?.idToken;
 
     if (!session || !idToken) {
-      await sendLog(LogLevel.ERROR, LogMessage.SESSION_NOT_FOUND, {
+      await sendLog(LogLevel.WARN, LogMessage.SESSION_NOT_FOUND, {
         additionalData: { bookId },
       });
       return NextResponse.json(

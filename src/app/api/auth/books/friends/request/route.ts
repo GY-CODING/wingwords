@@ -9,7 +9,7 @@ async function handler(req: NextRequest) {
     const session = await auth0.getSession();
 
     if (!session) {
-      await sendLog(LogLevel.ERROR, LogMessage.SESSION_NOT_FOUND);
+      await sendLog(LogLevel.WARN, LogMessage.SESSION_NOT_FOUND);
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
