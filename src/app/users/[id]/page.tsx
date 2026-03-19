@@ -101,7 +101,7 @@ function UserProfileContent() {
           currentUserId={currentUser.id}
           currentUser={currentUser as User}
           targetUserId={userId}
-          targetUser={user}
+          targetUser={user as unknown as User}
         />
       )}
     </>
