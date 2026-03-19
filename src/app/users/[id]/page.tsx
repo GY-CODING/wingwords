@@ -32,9 +32,15 @@ function UserProfileContent() {
     isAdding,
     isSuccess,
     isError,
+    isRemoving,
+    isRemoveSuccess,
+    isRemoveError,
     handleAddFriend,
+    handleRemoveFriend,
     setIsSuccess,
     setIsError,
+    setIsRemoveSuccess,
+    setIsRemoveError,
   } = useAddFriend(userId);
 
   if (isLoading) return <UserProfileSkeleton />;
@@ -59,7 +65,9 @@ function UserProfileContent() {
           visitorProps: {
             isFriend,
             isAddingFriend: isAdding,
+            isRemovingFriend: isRemoving,
             onAddFriend: handleAddFriend,
+            onRemoveFriend: handleRemoveFriend,
           },
         })}
       />
@@ -73,6 +81,18 @@ function UserProfileContent() {
         open={isError}
         onClose={() => setIsError(false)}
         message="Could not send friend request. Try again."
+        severity={ESeverity.ERROR}
+      />
+      <AnimatedAlert
+        open={isRemoveSuccess}
+        onClose={() => setIsRemoveSuccess(false)}
+        message="Friend removed successfully."
+        severity={ESeverity.SUCCESS}
+      />
+      <AnimatedAlert
+        open={isRemoveError}
+        onClose={() => setIsRemoveError(false)}
+        message="Could not remove friend. Try again."
         severity={ESeverity.ERROR}
       />
       {!isOwnProfile && currentUser?.id && (

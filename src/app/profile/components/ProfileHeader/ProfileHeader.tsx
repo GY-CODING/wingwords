@@ -11,6 +11,7 @@ import LaunchIcon from '@mui/icons-material/Launch';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PeopleIcon from '@mui/icons-material/People';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import {
   Box,
   Chip,
@@ -40,7 +41,9 @@ interface ProfileHeaderProps {
   isLoadingBooks?: boolean;
   isFriend?: boolean;
   isAddingFriend?: boolean;
+  isRemovingFriend?: boolean;
   onAddFriend?: () => void;
+  onRemoveFriend?: () => void;
 }
 
 export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -59,7 +62,9 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   isLoadingBooks = false,
   isFriend,
   isAddingFriend = false,
+  isRemovingFriend = false,
   onAddFriend,
+  onRemoveFriend,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
@@ -554,13 +559,13 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                       </IconButton>
                     </Tooltip>
                     <Tooltip
-                      title={isFriend ? 'Already friends' : 'Add friend'}
+                      title={isFriend ? 'Remove friend' : 'Add friend'}
                       placement="top"
                     >
                       <span>
                         <IconButton
-                          onClick={onAddFriend}
-                          disabled={isFriend || isAddingFriend}
+                          onClick={isFriend ? onRemoveFriend : onAddFriend}
+                          disabled={isAddingFriend || isRemovingFriend}
                           sx={{
                             background: isFriend
                               ? 'rgba(52,211,153,0.1)'
@@ -573,23 +578,36 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                               ? '#34d399'
                               : 'rgba(255,255,255,0.7)',
                             transition: 'all 0.2s ease',
-                            '&:hover': !isFriend
+                            '&:hover': isFriend
                               ? {
+                                  background: 'rgba(239,68,68,0.15)',
+                                  border: '1px solid rgba(239,68,68,0.4)',
+                                  color: '#ef4444',
+                                }
+                              : {
                                   background: 'rgba(255,255,255,0.1)',
                                   border: '1px solid rgba(255,255,255,0.25)',
                                   color: '#fff',
-                                }
-                              : {},
+                                },
+                            '&:hover .friend-check-icon': { display: 'none' },
+                            '&:hover .friend-remove-icon': { display: 'block' },
                             '&.Mui-disabled': {
-                              opacity: 1,
-                              color: isFriend
-                                ? '#34d399'
-                                : 'rgba(255,255,255,0.25)',
+                              opacity: 0.6,
                             },
                           }}
                         >
                           {isFriend ? (
-                            <CheckIcon fontSize="small" />
+                            <>
+                              <CheckIcon
+                                className="friend-check-icon"
+                                fontSize="small"
+                              />
+                              <PersonRemoveIcon
+                                className="friend-remove-icon"
+                                fontSize="small"
+                                sx={{ display: 'none' }}
+                              />
+                            </>
                           ) : (
                             <PersonAddIcon fontSize="small" />
                           )}

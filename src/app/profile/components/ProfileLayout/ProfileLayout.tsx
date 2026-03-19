@@ -32,7 +32,9 @@ export interface ProfileEditProps {
 export interface ProfileVisitorProps {
   isFriend: boolean;
   isAddingFriend: boolean;
+  isRemovingFriend: boolean;
   onAddFriend: () => void;
+  onRemoveFriend: () => void;
 }
 
 interface ProfileLayoutProps {
@@ -119,7 +121,9 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
           onBiographyCancel={editProps?.onBiographyCancel ?? noop}
           isFriend={visitorProps?.isFriend}
           isAddingFriend={visitorProps?.isAddingFriend}
+          isRemovingFriend={visitorProps?.isRemovingFriend}
           onAddFriend={visitorProps?.onAddFriend}
+          onRemoveFriend={visitorProps?.onRemoveFriend}
         />
 
         <Box

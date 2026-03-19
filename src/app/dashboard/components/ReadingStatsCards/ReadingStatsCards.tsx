@@ -131,14 +131,13 @@ export const ReadingStatsCards = React.memo<ReadingStatsCardsProps>(
                 <StatCardSkeleton />
               </motion.div>
             ))
-          : cards.map((card, index) => {
+          : cards.map((card) => {
               const Icon = card.icon;
               return (
                 <motion.div
                   key={card.title}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
                   whileHover={{ y: -2 }}
                 >
                   <Paper
@@ -150,7 +149,6 @@ export const ReadingStatsCards = React.memo<ReadingStatsCardsProps>(
                       padding: 1.5,
                       border: '1px solid rgba(255, 255, 255, 0.06)',
                       cursor: 'pointer',
-                      transition: 'all 0.3s ease',
                       '&:hover': {
                         border: '1px solid rgba(255, 255, 255, 0.1)',
                         background: 'rgba(255, 255, 255, 0.04)',

@@ -73,17 +73,13 @@ export const QuickActions = React.memo(() => {
           gap: 1,
         }}
       >
-        {actions.map((action, index) => {
+        {actions.map((action) => {
           const Icon = action.icon;
           return (
             <motion.div
               key={action.title}
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                duration: 0.3,
-                delay: index * 0.05,
-              }}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
             >
@@ -96,7 +92,6 @@ export const QuickActions = React.memo(() => {
                   padding: 1.5,
                   border: '1px solid rgba(255, 255, 255, 0.06)',
                   cursor: 'pointer',
-                  transition: 'all 0.3s ease',
                   textAlign: 'center',
                   '&:hover': {
                     border: '1px solid rgba(255, 255, 255, 0.1)',
