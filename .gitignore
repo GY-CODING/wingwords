@@ -4,3 +4,4 @@ node_modules/
 CLAUDE.md
 .vercel
 coverage/
+tsconfig.tsbuildinfo

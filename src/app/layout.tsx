@@ -1,6 +1,7 @@
 import React from 'react';
 import ClientLayout from './ClientLayout';
 import { Metadata, Viewport } from 'next';
+import { Analytics } from '@vercel/analytics/next';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -50,6 +51,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#161616" />
       </head>
       <body suppressHydrationWarning={true}>
+        <Analytics />
         <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
