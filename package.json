@@ -32,7 +32,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@google/genai": "^1.45.0",
-    "@gycoding/nebula": "^1.0.10",
+    "@gycoding/nebula": "^1.0.13",
     "@mui/icons-material": "^7.1.1",
     "@mui/material": "^7.3.4",
     "@mui/x-charts": "^8.8.0",
