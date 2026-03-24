@@ -11,6 +11,7 @@ const nextConfig = {
   // External packages para evitar problemas con MongoDB en servidor
   serverExternalPackages: ['mongodb'],
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
