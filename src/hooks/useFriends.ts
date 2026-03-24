@@ -84,7 +84,7 @@ export function useFriends(): useFriendsProps {
 
   const count = data?.length;
   return {
-    data,
+    data: data as Friend[] | undefined,
     isLoading,
     error,
     count: count || 0,

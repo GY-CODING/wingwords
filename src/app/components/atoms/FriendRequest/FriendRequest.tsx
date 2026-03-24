@@ -2,7 +2,7 @@ import { User } from '@/domain/friend.model';
 import { ECommands } from '@/utils/constants/ECommands';
 import { lora } from '@/utils/fonts/fonts';
 import { Check, Close } from '@mui/icons-material';
-import { Box, IconButton, Typography } from '@mui/material';
+import { Box, CircularProgress, IconButton } from '@mui/material';
 import Image from 'next/image';
 
 interface FriendRequestProps {
@@ -24,85 +24,134 @@ export default function FriendRequest({
     <Box
       component="a"
       href={`/users/${user?.id}`}
-      key={user?.id}
       sx={{
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'left',
-        gap: '1.5rem',
-        background: 'rgba(255, 255, 255, 0.03)',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 255, 255, 0.06)',
-        borderRadius: '16px',
-        padding: '1rem',
-        width: { xs: '100%', md: '100%' },
-        height: '100px',
-        minWidth: { xs: '200px', md: '400px' },
+        gap: '12px',
+        background: 'rgba(255, 255, 255, 0.02)',
+        border: '1px solid rgba(147, 51, 234, 0.1)',
+        borderRadius: '12px',
+        padding: '10px 12px',
+        width: '100%',
         position: 'relative',
         textDecoration: 'none',
-        transition: 'all 0.3s ease',
+        transition: 'all 0.2s ease',
         '&:hover': {
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          background: 'rgba(255, 255, 255, 0.05)',
+          border: '1px solid rgba(147, 51, 234, 0.3)',
+          background: 'rgba(147, 51, 234, 0.05)',
         },
       }}
     >
-      <Image
-        src={user?.picture || ''}
-        style={{
-          width: 'auto',
-          height: '100%',
-          aspectRatio: '1/1',
-          borderRadius: '50%',
-          objectFit: 'cover',
-        }}
-        alt={user?.username || ''}
-        width={100}
-        height={100}
-      />
-      <Typography
+      {/* Avatar */}
+      <Box
         sx={{
-          letterSpacing: '0.1rem',
-          fontWeight: 'bold',
-          color: 'white',
+          flexShrink: 0,
+          width: 44,
+          height: 44,
+          borderRadius: '50%',
+          border: '1.5px solid rgba(147, 51, 234, 0.35)',
+          padding: '2px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Image
+          src={user?.picture || ''}
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: '50%',
+            objectFit: 'cover',
+          }}
+          alt={user?.username || ''}
+          width={44}
+          height={44}
+        />
+      </Box>
+
+      {/* Username */}
+      <Box
+        sx={{
+          flex: 1,
+          minWidth: 0,
+          fontWeight: 600,
+          color: 'rgba(255,255,255,0.88)',
           fontFamily: lora.style.fontFamily,
-          fontSize: { xs: 16, md: 20 },
+          fontSize: { xs: 14, md: 15 },
+          letterSpacing: '0.02rem',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
         }}
       >
         {user?.username || ''}
-      </Typography>
+      </Box>
+
+      {/* Actions */}
       <Box
         sx={{
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'center',
-          position: 'absolute',
-          right: '1rem',
-          gap: '.2rem',
+          gap: '6px',
+          flexShrink: 0,
         }}
+        onClick={(e) => e.preventDefault()}
       >
-        <IconButton
-          sx={{ color: 'rgba(147, 51, 234, 0.6)' }}
-          onClick={(e) => {
-            e.preventDefault();
-            handleManageRequest(requestId, ECommands.ACCEPT);
-          }}
-          disabled={isThisRequestLoading}
-        >
-          <Check />
-        </IconButton>
-        <IconButton
-          sx={{ color: 'rgba(255, 255, 255, 0.4)' }}
-          onClick={(e) => {
-            e.preventDefault();
-            handleManageRequest(requestId, ECommands.DENY);
-          }}
-          disabled={isThisRequestLoading}
-        >
-          <Close />
-        </IconButton>
+        {isThisRequestLoading ? (
+          <CircularProgress size={20} sx={{ color: 'rgba(147,51,234,0.6)' }} />
+        ) : (
+          <>
+            <IconButton
+              size="small"
+              sx={{
+                background: 'rgba(147, 51, 234, 0.12)',
+                border: '1px solid rgba(147, 51, 234, 0.3)',
+                color: 'rgba(192, 132, 252, 0.9)',
+                width: 30,
+                height: 30,
+                transition: 'all 0.2s',
+                '&:hover': {
+                  background: 'rgba(147, 51, 234, 0.25)',
+                  border: '1px solid rgba(147, 51, 234, 0.6)',
+                  color: '#c084fc',
+                },
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                handleManageRequest(requestId, ECommands.ACCEPT);
+              }}
+              disabled={isThisRequestLoading}
+            >
+              <Check sx={{ fontSize: '15px' }} />
+            </IconButton>
+            <IconButton
+              size="small"
+              sx={{
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                color: 'rgba(255, 255, 255, 0.4)',
+                width: 30,
+                height: 30,
+                transition: 'all 0.2s',
+                '&:hover': {
+                  background: 'rgba(255, 82, 82, 0.1)',
+                  border: '1px solid rgba(255, 82, 82, 0.3)',
+                  color: 'rgba(255, 100, 100, 0.8)',
+                },
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                handleManageRequest(requestId, ECommands.DENY);
+              }}
+              disabled={isThisRequestLoading}
+            >
+              <Close sx={{ fontSize: '15px' }} />
+            </IconButton>
+          </>
+        )}
       </Box>
     </Box>
   );

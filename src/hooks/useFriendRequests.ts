@@ -82,8 +82,8 @@ export function useFriendRequests(profileId: UUID): useFriendRequestsProps {
 
       return data.map((request, index) => ({
         ...request,
-        user: users[index],
-      }));
+        user: users[index] as User | null,
+      })) as FriendRequestWithUser[];
     }, [data, users]);
 
   const handleManageRequest = async (requestId: string, command: ECommands) => {
@@ -93,8 +93,9 @@ export function useFriendRequests(profileId: UUID): useFriendRequestsProps {
 
     // Optimistic: eliminar la solicitud de la lista de inmediato
     await mutateRequests(
-      (current: FriendRequest[] | undefined) =>
-        current?.filter((r) => r.id !== requestId),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ((current: any) =>
+        current?.filter((r: any) => r.id !== requestId)) as any,
       { revalidate: false }
     );
 
@@ -126,7 +127,7 @@ export function useFriendRequests(profileId: UUID): useFriendRequestsProps {
   };
 
   return {
-    data,
+    data: data as FriendRequest[] | undefined,
     isLoading,
     error,
     profilesID: data?.map((r) => r.from) as UUID[] | undefined,

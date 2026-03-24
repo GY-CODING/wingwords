@@ -96,6 +96,7 @@ jest.mock('@mui/material', () => ({
       {children}
     </span>
   ),
+  CircularProgress: () => <span data-testid="loading-spinner" />,
 }));
 
 // Mock Material-UI icons
@@ -120,8 +121,9 @@ describe('FriendRequest', () => {
   const mockIsLoadingManageRequest = jest.fn(() => false);
 
   beforeEach(() => {
-    mockHandleManageRequest.mockClear();
-    mockIsLoadingManageRequest.mockClear();
+    mockHandleManageRequest.mockReset();
+    mockIsLoadingManageRequest.mockReset();
+    mockIsLoadingManageRequest.mockReturnValue(false);
   });
 
   describe('Basic Rendering', () => {
@@ -147,7 +149,7 @@ describe('FriendRequest', () => {
           requestId={mockRequestId}
         />
       );
-      expect(screen.getByTestId('user-username')).toHaveTextContent('testuser');
+      expect(screen.getByText('testuser')).toBeInTheDocument();
     });
 
     it('renders user image with correct props', () => {
@@ -215,7 +217,7 @@ describe('FriendRequest', () => {
       );
     });
 
-    it('disables buttons when loading', () => {
+    it('shows loading spinner instead of buttons when loading', () => {
       mockIsLoadingManageRequest.mockReturnValue(true);
       render(
         <FriendRequest
@@ -225,9 +227,8 @@ describe('FriendRequest', () => {
           requestId={mockRequestId}
         />
       );
-      const buttons = screen.getAllByTestId('action-button');
-      expect(buttons[0]).toBeDisabled();
-      expect(buttons[1]).toBeDisabled();
+      expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
+      expect(screen.queryAllByTestId('action-button')).toHaveLength(0);
     });
   });
 
@@ -241,7 +242,6 @@ describe('FriendRequest', () => {
           requestId={mockRequestId}
         />
       );
-      expect(screen.getByTestId('user-username')).toHaveTextContent('');
       const image = screen.getByTestId('user-image');
       expect(image).toHaveAttribute('src', '');
       expect(image).toHaveAttribute('alt', '');
