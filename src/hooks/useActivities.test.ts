@@ -241,7 +241,8 @@ describe('useActivities', () => {
 
     expect(mockUseSWR).toHaveBeenCalledWith(
       `/api/public/books/activities?userId=${mockUserId}`,
-      expect.any(Function)
+      expect.any(Function),
+      expect.objectContaining({ revalidateOnFocus: false })
     );
   });
 
@@ -257,8 +258,9 @@ describe('useActivities', () => {
     renderHook(() => useActivities(undefined));
 
     expect(mockUseSWR).toHaveBeenCalledWith(
-      '/api/public/books/activities?userId=undefined',
-      expect.any(Function)
+      null,
+      expect.any(Function),
+      expect.objectContaining({ revalidateOnFocus: false })
     );
   });
 });

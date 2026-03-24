@@ -59,8 +59,8 @@ describe('FriendCardSkeleton', () => {
 
       const avatarSkeleton = screen.getByTestId('skeleton-circular');
       expect(avatarSkeleton).toBeInTheDocument();
-      expect(avatarSkeleton).toHaveAttribute('data-width', '80');
-      expect(avatarSkeleton).toHaveAttribute('data-height', '80');
+      expect(avatarSkeleton).toHaveAttribute('data-width', '48');
+      expect(avatarSkeleton).toHaveAttribute('data-height', '48');
     });
 
     it('renders text skeleton for username', () => {
@@ -68,8 +68,8 @@ describe('FriendCardSkeleton', () => {
 
       const textSkeleton = screen.getByTestId('skeleton-text');
       expect(textSkeleton).toBeInTheDocument();
-      expect(textSkeleton).toHaveAttribute('data-width', '60%');
-      expect(textSkeleton).toHaveAttribute('data-height', '32');
+      expect(textSkeleton).toHaveAttribute('data-width', '55%');
+      expect(textSkeleton).toHaveAttribute('data-height', '24');
     });
   });
 
@@ -102,16 +102,16 @@ describe('FriendCardSkeleton', () => {
       render(<FriendCardSkeleton />);
 
       const avatarSkeleton = screen.getByTestId('skeleton-circular');
-      expect(avatarSkeleton).toHaveAttribute('data-width', '80');
-      expect(avatarSkeleton).toHaveAttribute('data-height', '80');
+      expect(avatarSkeleton).toHaveAttribute('data-width', '48');
+      expect(avatarSkeleton).toHaveAttribute('data-height', '48');
     });
 
     it('username skeleton has correct dimensions', () => {
       render(<FriendCardSkeleton />);
 
       const textSkeleton = screen.getByTestId('skeleton-text');
-      expect(textSkeleton).toHaveAttribute('data-width', '60%');
-      expect(textSkeleton).toHaveAttribute('data-height', '32');
+      expect(textSkeleton).toHaveAttribute('data-width', '55%');
+      expect(textSkeleton).toHaveAttribute('data-height', '24');
     });
   });
 

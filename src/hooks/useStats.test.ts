@@ -81,7 +81,8 @@ describe('useStats', () => {
 
     expect(mockUseSWR).toHaveBeenCalledWith(
       `/api/public/accounts/${userId}/books/stats`,
-      expect.any(Function)
+      expect.any(Function),
+      expect.objectContaining({ revalidateOnFocus: false })
     );
   });
 
@@ -96,7 +97,11 @@ describe('useStats', () => {
 
     renderHook(() => useStats('' as any));
 
-    expect(mockUseSWR).toHaveBeenCalledWith(null, expect.any(Function));
+    expect(mockUseSWR).toHaveBeenCalledWith(
+      null,
+      expect.any(Function),
+      expect.objectContaining({ revalidateOnFocus: false })
+    );
   });
 
   it('should not fetch when userId is null', () => {
@@ -110,7 +115,11 @@ describe('useStats', () => {
 
     renderHook(() => useStats(null));
 
-    expect(mockUseSWR).toHaveBeenCalledWith(null, expect.any(Function));
+    expect(mockUseSWR).toHaveBeenCalledWith(
+      null,
+      expect.any(Function),
+      expect.objectContaining({ revalidateOnFocus: false })
+    );
   });
 
   it('should handle undefined userId', () => {
@@ -125,7 +134,11 @@ describe('useStats', () => {
     // @ts-expect-error - Testing with undefined
     renderHook(() => useStats(undefined));
 
-    expect(mockUseSWR).toHaveBeenCalledWith(null, expect.any(Function));
+    expect(mockUseSWR).toHaveBeenCalledWith(
+      null,
+      expect.any(Function),
+      expect.objectContaining({ revalidateOnFocus: false })
+    );
   });
 
   it('should return undefined data when no stats are found', () => {

@@ -104,7 +104,11 @@ describe('useStatsPreFetch', () => {
 
     renderHook(() => useStatsPreFetch(userId));
 
-    expect(mockUseSWR).toHaveBeenCalledWith(null, expect.any(Function));
+    expect(mockUseSWR).toHaveBeenCalledWith(
+      null,
+      expect.any(Function),
+      expect.objectContaining({ revalidateOnFocus: false })
+    );
   });
 
   it('should fetch when userId is different from storedUserId', () => {
@@ -118,7 +122,8 @@ describe('useStatsPreFetch', () => {
 
     expect(mockUseSWR).toHaveBeenCalledWith(
       `/api/public/accounts/${userId}/books/stats`,
-      expect.any(Function)
+      expect.any(Function),
+      expect.objectContaining({ revalidateOnFocus: false })
     );
   });
 
@@ -127,7 +132,11 @@ describe('useStatsPreFetch', () => {
 
     renderHook(() => useStatsPreFetch(undefined));
 
-    expect(mockUseSWR).toHaveBeenCalledWith(null, expect.any(Function));
+    expect(mockUseSWR).toHaveBeenCalledWith(
+      null,
+      expect.any(Function),
+      expect.objectContaining({ revalidateOnFocus: false })
+    );
   });
 
   it('should handle multiple state changes correctly', () => {
