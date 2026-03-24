@@ -107,13 +107,12 @@ export function useFriendsActivityFeed(): UseFriendsActivityFeedResult {
     (index) => `/api/auth/books/activity?page=${index}&size=${PAGE_SIZE}`,
     fetchPage,
     {
-      revalidateOnFocus: true,
-      revalidateOnReconnect: true,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
       shouldRetryOnError: false,
-      dedupingInterval: 10000,
+      dedupingInterval: 60000,
       keepPreviousData: true,
-      refreshInterval: 60000, // polling pasivo: nuevas actividades cada 60s
-      revalidateFirstPage: true,
+      revalidateFirstPage: false,
     }
   );
 
@@ -192,7 +191,7 @@ export function useFriendsActivityFeed(): UseFriendsActivityFeedResult {
     if (hasNext) setSize((s) => s + 1);
   }, [hasNext, setSize]);
 
-  const isLoading = Boolean(!pages && !error) || (isValidating && size === 1);
+  const isLoading = !pages && !error;
   const isLoadingMore = isValidating && size > 1;
 
   return {
