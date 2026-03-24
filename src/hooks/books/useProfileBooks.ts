@@ -78,9 +78,9 @@ export function useProfileBooks(profileId?: string, pageSize = 50): Result {
     swrKey,
     fetcher,
     {
-      revalidateOnFocus: false, // No revalidar al hacer foco en la ventana
-      revalidateOnReconnect: true, // Sí revalidar al recuperar conexión
-      dedupingInterval: 5000, // Evitar duplicados durante 5 segundos
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 60000,
       keepPreviousData: true, // Mantener datos previos mientras carga
       shouldRetryOnError: false, // No reintentar automáticamente
     }

@@ -166,7 +166,7 @@ export default function DashboardPage() {
   const { user, isLoading: userLoading } = useGyCodingUser();
   const router = useRouter();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   // 🚀 PETICIÓN 1: Libros del usuario
   const { data: books = [], isLoading: booksLoading } = useMergedBooks(

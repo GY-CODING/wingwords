@@ -16,7 +16,13 @@ export function useStatsPreFetch(userId: UUID | undefined) {
     userId && userId !== storedUserId
       ? `/api/public/accounts/${userId}/books/stats`
       : null,
-    () => getStats(userId!)
+    () => getStats(userId!),
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      shouldRetryOnError: false,
+      dedupingInterval: 60000,
+    }
   );
 
   useEffect(() => {

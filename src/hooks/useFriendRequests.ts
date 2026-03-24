@@ -51,7 +51,12 @@ export function useFriendRequests(profileId: UUID): useFriendRequestsProps {
   } = useSWR(
     profileId ? ['friendRequests', profileId] : null,
     ([, id]) => getFriendRequests(id),
-    { refreshInterval: 30000 }
+    {
+      refreshInterval: 30000,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 30000,
+    }
   );
 
   const {
@@ -60,7 +65,13 @@ export function useFriendRequests(profileId: UUID): useFriendRequestsProps {
     mutate: mutateUsers,
   } = useSWR(
     data ? ['getAccountsUsers', data.map((r) => r.from)] : null,
-    async ([, ids]) => Promise.all(ids.map(getAccountsUser))
+    async ([, ids]) => Promise.all(ids.map(getAccountsUser)),
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      shouldRetryOnError: false,
+      dedupingInterval: 60000,
+    }
   );
 
   const friendRequestsWithUsers: FriendRequestWithUser[] | undefined =

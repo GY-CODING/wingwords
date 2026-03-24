@@ -134,8 +134,8 @@ export default function useMergedBooksIncremental(
     ([, size]) => fetchAllMergedBooks(profileId!, size as number),
     {
       revalidateOnFocus: false,
-      revalidateOnReconnect: true,
-      dedupingInterval: 5000,
+      revalidateOnReconnect: false,
+      dedupingInterval: 60000,
       keepPreviousData: true,
       onSuccess: () => setIsDone(true),
       onError: () => setIsDone(true),
