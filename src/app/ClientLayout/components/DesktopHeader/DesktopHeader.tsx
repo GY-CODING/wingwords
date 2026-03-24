@@ -133,18 +133,21 @@ export const DesktopHeader = ({
         {/* Friend Requests */}
         {user && (
           <MotionIconButton
-            whileHover={{ scale: 1.1, rotate: 10 }}
+            whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={onFriendRequestsClick}
+            sx={{
+              color: isLoadingRequests
+                ? 'rgba(255,255,255,0.2)'
+                : 'rgba(255,255,255,0.5)',
+              transition: 'color 0.25s ease',
+              '&:hover': {
+                color: '#c084fc',
+                backgroundColor: 'rgba(192, 132, 252, 0.08)',
+              },
+            }}
           >
-            <InboxIcon
-              sx={{
-                fontSize: '28px',
-                color: isLoadingRequests ? 'gray' : '#FFF',
-                position: 'relative',
-                filter: 'drop-shadow(0 0 4px rgba(147, 51, 234, 0.3))',
-              }}
-            />
+            <InboxIcon sx={{ fontSize: '22px' }} />
             {friendRequestsCount > 0 && (
               <MotionBox
                 initial={{ scale: 0 }}
@@ -152,17 +155,20 @@ export const DesktopHeader = ({
                 transition={{ type: 'spring', stiffness: 500, damping: 15 }}
                 sx={{
                   position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  width: '20px',
-                  height: '20px',
+                  top: 4,
+                  right: 4,
+                  width: '16px',
+                  height: '16px',
                   background:
                     'linear-gradient(135deg, #9333ea 0%, #a855f7 100%)',
                   color: 'white',
                   borderRadius: '50%',
-                  padding: '4px',
-                  fontSize: '12px',
-                  boxShadow: '0 2px 8px rgba(147, 51, 234, 0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  boxShadow: '0 2px 6px rgba(147, 51, 234, 0.4)',
                 }}
               >
                 {friendRequestsCount}

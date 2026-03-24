@@ -55,9 +55,20 @@ export default function Profile({ user }: ProfileProps): JSX.Element {
             aspectRatio: '1/1',
             borderRadius: '50%',
             objectFit: 'cover',
-            border: '2px solid rgba(147, 51, 234, 0.3)',
-            transition: 'border-color 0.3s ease',
+            border: '2px solid rgba(147, 51, 234, 0.25)',
+            transition: 'border-color 0.25s ease, box-shadow 0.25s ease',
             zIndex: 1000,
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLImageElement).style.borderColor =
+              'rgba(192, 132, 252, 0.7)';
+            (e.currentTarget as HTMLImageElement).style.boxShadow =
+              '0 0 10px rgba(147, 51, 234, 0.3)';
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLImageElement).style.borderColor =
+              'rgba(147, 51, 234, 0.25)';
+            (e.currentTarget as HTMLImageElement).style.boxShadow = 'none';
           }}
           alt={user?.username || ''}
           width={100}
@@ -78,15 +89,15 @@ export default function Profile({ user }: ProfileProps): JSX.Element {
           <Grow {...TransitionProps}>
             <Paper
               sx={{
-                background:
-                  'linear-gradient(135deg, rgba(10, 10, 10, 0.98) 0%, rgba(26, 26, 26, 0.98) 100%)',
-                backdropFilter: 'blur(20px)',
+                background: 'rgba(12, 12, 16, 0.97)',
+                backdropFilter: 'blur(24px)',
                 color: 'white',
-                borderRadius: '16px',
-                marginTop: '8px',
-                width: '233px',
-                boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.4)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '14px',
+                marginTop: '10px',
+                width: '220px',
+                boxShadow:
+                  '0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(147,51,234,0.15)',
+                border: '1px solid rgba(147, 51, 234, 0.12)',
                 overflow: 'hidden',
               }}
             >
@@ -96,92 +107,136 @@ export default function Profile({ user }: ProfileProps): JSX.Element {
                     width: '100%',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '4px',
-                    padding: '8px',
                   }}
                 >
+                  {/* Header con usuario */}
                   <Box
-                    id="profile-menu-item"
                     sx={{
-                      fontWeight: 'bold',
-                      height: '40px',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingX: '20px',
-                      fontFamily: lora.style.fontFamily,
-                      fontSize: '18px',
-                      borderRadius: '8px',
-                      transition: 'background-color 0.3s ease',
-                      '&:hover': {
-                        backgroundColor: 'rgba(147, 51, 234, 0.1)',
-                      },
+                      gap: 1.5,
+                      px: 2,
+                      py: 1.5,
+                      borderBottom: '1px solid rgba(255,255,255,0.06)',
                     }}
                   >
-                    <Link
+                    <Image
+                      src={user?.picture || ''}
+                      alt={user?.username || ''}
+                      width={32}
+                      height={32}
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                        textDecoration: 'none',
-                        color: 'white',
-                        fontWeight: 'bold',
-                        fontFamily: lora.style.fontFamily,
+                        borderRadius: '50%',
+                        objectFit: 'cover',
+                        border: '1px solid rgba(147,51,234,0.3)',
                       }}
-                      href={'/profile'}
-                      onClick={() => {
-                        handleClose(new Event('click'));
-                      }}
-                    >
-                      Profile
-                      <AccountCircleIcon
-                        sx={{ fontSize: '24px', color: '#FFF' }}
-                      />
-                    </Link>
+                    />
+                    <Box>
+                      <Box
+                        sx={{
+                          fontFamily: lora.style.fontFamily,
+                          fontSize: '13px',
+                          color: 'rgba(255,255,255,0.9)',
+                          fontWeight: 600,
+                        }}
+                      >
+                        {user?.username}
+                      </Box>
+                      <Box
+                        sx={{
+                          fontSize: '11px',
+                          color: 'rgba(255,255,255,0.35)',
+                          fontFamily: lora.style.fontFamily,
+                        }}
+                      >
+                        {user?.email}
+                      </Box>
+                    </Box>
                   </Box>
 
-                  <Box
-                    id="logout-menu-item"
-                    sx={{
-                      fontWeight: 'bold',
-                      height: '40px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingX: '20px',
-                      fontFamily: lora.style.fontFamily,
-                      borderRadius: '8px',
-                      transition: 'background-color 0.3s ease',
-                      '&:hover': {
-                        backgroundColor: 'rgba(255, 82, 82, 0.1)',
-                      },
-                    }}
-                  >
-                    <a
-                      style={{
-                        textDecoration: 'none',
-                        color: '#FF5252',
-                        fontWeight: 'bold',
-                        fontFamily: lora.style.fontFamily,
-                        fontSize: '18px',
-                        display: 'flex',
-                        width: '100%',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                      }}
-                      href={'/auth/logout?federated=true'}
-                      onClick={() => {
-                        handleClose(new Event('click'));
-                      }}
+                  {/* Items */}
+                  <Box sx={{ p: '6px' }}>
+                    <Link
+                      href="/profile"
+                      style={{ textDecoration: 'none' }}
+                      onClick={() => handleClose(new Event('click'))}
                     >
-                      Logout
-                      <Image
-                        src="/logout-red.svg"
-                        alt="logout"
-                        width={20}
-                        height={20}
-                      />
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1.5,
+                          px: 1.5,
+                          py: 1,
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          transition: 'background 0.2s',
+                          '&:hover': {
+                            backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                          },
+                        }}
+                      >
+                        <AccountCircleIcon
+                          sx={{
+                            fontSize: '18px',
+                            color: 'rgba(192,132,252,0.8)',
+                          }}
+                        />
+                        <Box
+                          sx={{
+                            fontFamily: lora.style.fontFamily,
+                            fontSize: '13px',
+                            color: 'rgba(255,255,255,0.75)',
+                          }}
+                        >
+                          Profile
+                        </Box>
+                      </Box>
+                    </Link>
+
+                    <Box
+                      sx={{
+                        my: '4px',
+                        borderTop: '1px solid rgba(255,255,255,0.05)',
+                      }}
+                    />
+
+                    <a
+                      href="/auth/logout?federated=true"
+                      style={{ textDecoration: 'none' }}
+                      onClick={() => handleClose(new Event('click'))}
+                    >
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1.5,
+                          px: 1.5,
+                          py: 1,
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          transition: 'background 0.2s',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255, 82, 82, 0.08)',
+                          },
+                        }}
+                      >
+                        <Image
+                          src="/logout-red.svg"
+                          alt="logout"
+                          width={16}
+                          height={16}
+                        />
+                        <Box
+                          sx={{
+                            fontFamily: lora.style.fontFamily,
+                            fontSize: '13px',
+                            color: 'rgba(255, 100, 100, 0.8)',
+                          }}
+                        >
+                          Logout
+                        </Box>
+                      </Box>
                     </a>
                   </Box>
                 </Box>
