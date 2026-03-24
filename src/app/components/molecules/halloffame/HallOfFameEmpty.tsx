@@ -4,7 +4,13 @@ import { Box, Typography } from '@mui/material';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import { lora } from '@/utils/fonts/fonts';
 
-export const HallOfFameEmpty: React.FC = () => (
+interface HallOfFameEmptyProps {
+  isOwnProfile?: boolean;
+}
+
+export const HallOfFameEmpty: React.FC<HallOfFameEmptyProps> = ({
+  isOwnProfile = true,
+}) => (
   <Box
     sx={{
       background: 'rgba(255, 255, 255, 0.03)',
@@ -34,17 +40,21 @@ export const HallOfFameEmpty: React.FC = () => (
         textAlign: 'center',
       }}
     >
-      Your Hall of Fame is empty.
+      {isOwnProfile
+        ? 'Your Hall of Fame is empty.'
+        : 'This user has no books in their Hall of Fame yet.'}
     </Typography>
-    <Typography
-      sx={{
-        fontFamily: lora.style.fontFamily,
-        fontSize: '0.85rem',
-        color: 'rgba(255,255,255,0.2)',
-        textAlign: 'center',
-      }}
-    >
-      Add your favourite books to build your personal showcase.
-    </Typography>
+    {isOwnProfile && (
+      <Typography
+        sx={{
+          fontFamily: lora.style.fontFamily,
+          fontSize: '0.85rem',
+          color: 'rgba(255,255,255,0.2)',
+          textAlign: 'center',
+        }}
+      >
+        Add your favourite books to build your personal showcase.
+      </Typography>
+    )}
   </Box>
 );

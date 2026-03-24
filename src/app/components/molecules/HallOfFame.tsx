@@ -61,20 +61,33 @@ export default function HallOfFame({ userId }: { userId: string }) {
     }
   };
 
+  const isOwnProfile = userId === user?.id;
+
   // Si books es undefined o array vacío
   if (!books || books.length === 0) {
+    const hasQuote = !!quote?.trim();
     return (
-      <>
-        <HallOfFameEmpty />
-        <HallOfFameQuoteInput
-          quote={quote || ''}
-          editedQuote={editedQuote}
-          setEditedQuote={setEditedQuote}
-          isEditing={isEditing}
-          setIsEditing={setIsEditing}
-          onSave={handleUpdate}
-          disabled={userId !== user?.id}
-        />
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          width: '100%',
+          gap: '1.5rem',
+        }}
+      >
+        <HallOfFameEmpty isOwnProfile={isOwnProfile} />
+        {(isOwnProfile || hasQuote) && (
+          <HallOfFameQuoteInput
+            quote={quote || ''}
+            editedQuote={editedQuote}
+            setEditedQuote={setEditedQuote}
+            isEditing={isEditing}
+            setIsEditing={setIsEditing}
+            onSave={handleUpdate}
+            disabled={!isOwnProfile}
+          />
+        )}
         <AnimatedAlert
           open={isUpdated}
           message="Quote updated successfully!"
@@ -87,7 +100,7 @@ export default function HallOfFame({ userId }: { userId: string }) {
           severity={ESeverity.ERROR}
           onClose={() => setIsUpdateError(false)}
         />
-      </>
+      </Box>
     );
   }
 
@@ -183,7 +196,7 @@ export default function HallOfFame({ userId }: { userId: string }) {
         isEditing={isEditing}
         setIsEditing={setIsEditing}
         onSave={handleUpdate}
-        disabled={userId !== user?.id}
+        disabled={!isOwnProfile}
       />
       <AnimatedAlert
         open={isUpdated}
