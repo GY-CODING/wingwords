@@ -27,6 +27,17 @@ async function handler(request: Request) {
 
     if (!apiResponse.ok) {
       const errorText = await apiResponse.text();
+
+      if (apiResponse.status === 404) {
+        await sendLog(
+          LogLevel.WARN,
+          LogMessage.BOOK_NOT_FOUND,
+          { additionalData: { error: errorText } },
+          id
+        );
+        return NextResponse.json({ error: 'Book not found' }, { status: 404 });
+      }
+
       await sendLog(
         LogLevel.ERROR,
         LogMessage.BOOK_RETRIEVE_FAILED,

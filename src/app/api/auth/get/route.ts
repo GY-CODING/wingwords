@@ -35,7 +35,7 @@ export async function GET() {
     const userDoc = await db.collection('Metadata').findOne({ userId });
 
     if (!userDoc) {
-      await sendLog(LogLevel.ERROR, LogMessage.USER_NOT_FOUND, {
+      await sendLog(LogLevel.WARN, LogMessage.USER_NOT_FOUND, {
         additionalData: { userId },
       });
       return NextResponse.json({ error: 'User not found' }, { status: 404 });

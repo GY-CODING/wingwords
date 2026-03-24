@@ -18,6 +18,7 @@ export enum LogMessage {
 
   // ── Book ──
   BOOK_RETRIEVED = 'The book [{id}] has been retrieved',
+  BOOK_NOT_FOUND = 'Book not found',
   BOOK_RETRIEVE_FAILED = 'The book [{id}] could not be retrieved',
   BOOK_UPDATED = 'The book [{id}] has been updated',
   BOOK_UPDATE_FAILED = 'The book [{id}] could not be updated',
@@ -77,10 +78,12 @@ export enum LogMessage {
   // ── Hardcover ──
   HARDCOVER_BOOK_RETRIEVED = 'Hardcover book [{id}] retrieved',
   HARDCOVER_BOOK_RETRIEVE_FAILED = 'Hardcover book [{id}] could not be retrieved',
+  HARDCOVER_BOOK_NOT_FOUND = 'Hardcover book not found',
   HARDCOVER_BOOKS_SEARCHED = 'Hardcover book search completed',
   HARDCOVER_BOOKS_SEARCH_FAILED = 'Hardcover book search failed',
   HARDCOVER_AUTHOR_RETRIEVED = 'Hardcover author retrieved',
   HARDCOVER_AUTHOR_RETRIEVE_FAILED = 'Hardcover author could not be retrieved',
+  HARDCOVER_AUTHOR_NOT_FOUND = 'Hardcover author not found',
   HARDCOVER_AUTHORS_SEARCHED = 'Hardcover author search completed',
   HARDCOVER_AUTHORS_SEARCH_FAILED = 'Hardcover author search failed',
 

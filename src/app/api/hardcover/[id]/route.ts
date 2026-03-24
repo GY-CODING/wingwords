@@ -58,6 +58,7 @@ export async function GET(
 
     const rawBook = data.data?.books_by_pk;
     if (!rawBook) {
+      await sendLog(LogLevel.WARN, LogMessage.HARDCOVER_BOOK_NOT_FOUND, {}, id);
       return NextResponse.json({ error: 'Book not found' }, { status: 404 });
     }
 

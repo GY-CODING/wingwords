@@ -64,6 +64,12 @@ export async function GET(
 
     const rawAuthor = data.data?.authors?.[0];
     if (!rawAuthor) {
+      await sendLog(
+        LogLevel.WARN,
+        LogMessage.HARDCOVER_AUTHOR_NOT_FOUND,
+        {},
+        id
+      );
       return NextResponse.json({ error: 'Author not found' }, { status: 404 });
     }
 
