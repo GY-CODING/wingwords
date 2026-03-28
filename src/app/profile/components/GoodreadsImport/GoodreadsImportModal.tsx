@@ -69,6 +69,7 @@ interface GoodreadsImportModalProps {
   saveProgress?: SaveProgress;
   saveError?: string | null;
   libraryBookIds?: Set<string>;
+  importSource?: 'goodreads' | 'hardcover';
 }
 
 const SHELF_LABELS: Record<GoodreadsShelf | 'all', string> = {
@@ -102,6 +103,7 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
   },
   saveError = null,
   libraryBookIds,
+  importSource = 'goodreads',
 }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fileInputRef = useRef<HTMLInputElement>(
@@ -212,7 +214,14 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
           borderBottom: '1px solid rgba(255,255,255,0.06)',
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            flexWrap: 'wrap',
+          }}
+        >
           <FileUploadIcon sx={{ color: '#a855f7', fontSize: 24 }} />
           <Typography
             sx={{
@@ -222,8 +231,59 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
               color: '#fff',
             }}
           >
-            Import from Goodreads
+            Import CSV
           </Typography>
+          {status === 'idle' ? (
+            <Box sx={{ display: 'flex', gap: 0.75 }}>
+              <Chip
+                label="Goodreads"
+                size="small"
+                sx={{
+                  background: 'rgba(236,109,80,0.1)',
+                  color: '#f6a98a',
+                  border: '1px solid rgba(236,109,80,0.25)',
+                  height: 20,
+                  fontSize: 11,
+                  fontFamily: lora.style.fontFamily,
+                }}
+              />
+              <Chip
+                label="Hardcover"
+                size="small"
+                sx={{
+                  background: 'rgba(99,179,237,0.1)',
+                  color: '#90cdf4',
+                  border: '1px solid rgba(99,179,237,0.25)',
+                  height: 20,
+                  fontSize: 11,
+                  fontFamily: lora.style.fontFamily,
+                }}
+              />
+            </Box>
+          ) : (
+            <Chip
+              label={
+                importSource === 'hardcover'
+                  ? 'Hardcover detected'
+                  : 'Goodreads detected'
+              }
+              size="small"
+              sx={{
+                background:
+                  importSource === 'hardcover'
+                    ? 'rgba(99,179,237,0.1)'
+                    : 'rgba(236,109,80,0.1)',
+                color: importSource === 'hardcover' ? '#90cdf4' : '#f6a98a',
+                border:
+                  importSource === 'hardcover'
+                    ? '1px solid rgba(99,179,237,0.25)'
+                    : '1px solid rgba(236,109,80,0.25)',
+                height: 20,
+                fontSize: 11,
+                fontFamily: lora.style.fontFamily,
+              }}
+            />
+          )}
         </Box>
         <IconButton
           onClick={onClose}
@@ -524,7 +584,9 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                       fontFamily: lora.style.fontFamily,
                     }}
                   >
-                    Searching Hardcover…
+                    {importSource === 'hardcover'
+                      ? 'Fetching your Hardcover library…'
+                      : 'Searching Hardcover…'}
                   </Typography>
                   <Typography
                     sx={{
@@ -870,20 +932,43 @@ const UploadStep: React.FC<UploadStepProps> = ({
           fontWeight: 600,
           fontSize: 18,
           color: '#fff',
-          mb: 0.5,
+          mb: 1,
         }}
       >
-        Upload your Goodreads export
+        Upload your library export
       </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mb: 1.5 }}>
+        <Chip
+          label="Goodreads"
+          size="small"
+          sx={{
+            background: 'rgba(236,109,80,0.1)',
+            color: '#f6a98a',
+            border: '1px solid rgba(236,109,80,0.25)',
+            fontFamily: lora.style.fontFamily,
+            fontSize: 12,
+          }}
+        />
+        <Chip
+          label="Hardcover"
+          size="small"
+          sx={{
+            background: 'rgba(99,179,237,0.1)',
+            color: '#90cdf4',
+            border: '1px solid rgba(99,179,237,0.25)',
+            fontFamily: lora.style.fontFamily,
+            fontSize: 12,
+          }}
+        />
+      </Box>
       <Typography
         sx={{
-          color: 'rgba(255,255,255,0.5)',
+          color: 'rgba(255,255,255,0.4)',
           fontSize: 13,
           fontFamily: lora.style.fontFamily,
         }}
       >
-        Export your library from Goodreads → My Books → Import/Export, then
-        upload the CSV here.
+        The format is detected automatically.
       </Typography>
     </Box>
     <input

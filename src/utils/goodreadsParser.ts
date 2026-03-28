@@ -10,9 +10,12 @@ export interface GoodreadsBook {
   shelf: GoodreadsShelf;
   dateRead: string | null;
   dateAdded: string;
+  dateStarted?: string | null;
   publisher: string;
   yearPublished: string;
   review: string | null;
+  /** Populated only for Hardcover CSV imports — the specific edition ID. */
+  hardcoverEditionId?: string;
 }
 
 /**
@@ -75,10 +78,8 @@ export function parseGoodreadsCSV(csvContent: string): GoodreadsBook[] {
   return books;
 }
 
-/**
- * Splits CSV content into lines, respecting quoted multi-line fields.
- */
-function splitCSVLines(csv: string): string[] {
+/** Splits CSV content into lines, respecting quoted multi-line fields. */
+export function splitCSVLines(csv: string): string[] {
   const lines: string[] = [];
   let current = '';
   let insideQuotes = false;
@@ -99,10 +100,8 @@ function splitCSVLines(csv: string): string[] {
   return lines;
 }
 
-/**
- * Parses a single CSV row into an array of raw field strings.
- */
-function parseCSVRow(row: string): string[] {
+/** Parses a single CSV row into an array of raw field strings. */
+export function parseCSVRow(row: string): string[] {
   const fields: string[] = [];
   let current = '';
   let insideQuotes = false;
@@ -128,7 +127,7 @@ function parseCSVRow(row: string): string[] {
 }
 
 /** Strips surrounding quotes and whitespace from a field value. */
-function cleanField(value: string): string {
+export function cleanField(value: string): string {
   return value.replace(/^"+|"+$/g, '').trim();
 }
 

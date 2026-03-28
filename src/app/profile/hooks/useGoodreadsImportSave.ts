@@ -82,7 +82,8 @@ export function useGoodreadsImportSave(): UseGoodreadsImportSaveReturn {
             const hardcoverBookId = result.selectedCandidate!.id;
             const formData = buildRateBookFormData(
               hardcoverBookId,
-              result.source
+              result.source,
+              result.preferredEditionId
             );
             try {
               await rateBook(formData, username);

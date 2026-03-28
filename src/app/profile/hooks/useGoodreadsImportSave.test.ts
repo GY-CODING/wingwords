@@ -56,6 +56,7 @@ const makeResult = (
         averageRating: 4.0,
       },
   skipped,
+  importSource: 'goodreads',
 });
 
 describe('useGoodreadsImportSave', () => {

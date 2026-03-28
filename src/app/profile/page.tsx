@@ -15,7 +15,9 @@ import { useProfilePage } from './hooks/useProfilePage';
 import AIRecommendationsPanel from '@/app/components/organisms/AIRecommendationsPanel/AIRecommendationsPanel';
 import { GoodreadsImportModal } from './components/GoodreadsImport/GoodreadsImportModal';
 import { useGoodreadsImport } from './hooks/useGoodreadsImport';
+import { useHardcoverCsvImport } from './hooks/useHardcoverCsvImport';
 import { useGoodreadsImportSave } from './hooks/useGoodreadsImportSave';
+import { detectCsvFormat } from '@/utils/hardcoverParser';
 
 function ProfilePageContent() {
   const user = useSelector(
@@ -29,8 +31,16 @@ function ProfilePageContent() {
   const biography = useProfileBiography(user);
 
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [importSource, setImportSource] = useState<'goodreads' | 'hardcover'>(
+    'goodreads'
+  );
   const goodreadsImport = useGoodreadsImport();
+  const hardcoverCsvImport = useHardcoverCsvImport();
   const goodreadsImportSave = useGoodreadsImportSave();
+
+  // The active import hook depends on which CSV format was detected
+  const activeImport =
+    importSource === 'hardcover' ? hardcoverCsvImport : goodreadsImport;
 
   const libraryBookIds = useMemo(
     () => new Set((profilePage.books ?? []).map((b) => b.id)),
@@ -43,8 +53,22 @@ function ProfilePageContent() {
   };
   const handleCloseImport = () => {
     setIsImportModalOpen(false);
+    setImportSource('goodreads');
     goodreadsImport.reset();
+    hardcoverCsvImport.reset();
     goodreadsImportSave.resetSave();
+  };
+  const handleFileUpload = async (file: File) => {
+    // Read just the first 600 bytes — enough to detect the header row
+    const headerSlice = await file.slice(0, 600).text();
+    const format = detectCsvFormat(headerSlice);
+    const source = format === 'hardcover' ? 'hardcover' : 'goodreads';
+    setImportSource(source);
+    if (source === 'hardcover') {
+      hardcoverCsvImport.handleFileUpload(file);
+    } else {
+      goodreadsImport.handleFileUpload(file);
+    }
   };
   const handleImport = (
     selected: Parameters<typeof goodreadsImportSave.importBooks>[0]
@@ -93,21 +117,25 @@ function ProfilePageContent() {
       <GoodreadsImportModal
         open={isImportModalOpen}
         onClose={handleCloseImport}
-        status={goodreadsImport.status}
-        results={goodreadsImport.results}
-        progress={goodreadsImport.progress}
-        errorMessage={goodreadsImport.errorMessage}
-        shelfFilter={goodreadsImport.shelfFilter}
-        onShelfFilterChange={goodreadsImport.setShelfFilter}
-        onFileUpload={goodreadsImport.handleFileUpload}
-        onSelectCandidate={goodreadsImport.setSelectedCandidate}
-        onToggleSkipped={goodreadsImport.toggleSkipped}
-        onReset={goodreadsImport.reset}
+        status={activeImport.status}
+        results={activeImport.results}
+        progress={activeImport.progress}
+        errorMessage={activeImport.errorMessage}
+        shelfFilter={activeImport.shelfFilter}
+        onShelfFilterChange={activeImport.setShelfFilter}
+        onFileUpload={handleFileUpload}
+        onSelectCandidate={activeImport.setSelectedCandidate}
+        onToggleSkipped={activeImport.toggleSkipped}
+        onReset={() => {
+          activeImport.reset();
+          setImportSource('goodreads');
+        }}
         onImport={handleImport}
         saveStatus={goodreadsImportSave.saveStatus}
         saveProgress={goodreadsImportSave.saveProgress}
         saveError={goodreadsImportSave.saveError}
         libraryBookIds={libraryBookIds}
+        importSource={importSource}
       />
     </>
   );

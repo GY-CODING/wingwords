@@ -39,7 +39,7 @@ export function mapGoodreadsBookToUserData(
   return {
     status,
     rating: book.myRating,
-    startDate: '',
+    startDate: book.dateStarted ?? '',
     endDate: book.dateRead ?? '',
     review: book.review ?? '',
     progress,
@@ -52,7 +52,8 @@ export function mapGoodreadsBookToUserData(
  */
 export function buildRateBookFormData(
   hardcoverBookId: string,
-  goodreadsBook: GoodreadsBook
+  goodreadsBook: GoodreadsBook,
+  editionId?: string
 ): FormData {
   const userData = mapGoodreadsBookToUserData(goodreadsBook);
   const fd = new FormData();
@@ -63,5 +64,6 @@ export function buildRateBookFormData(
   fd.set('endDate', userData.endDate);
   fd.set('review', userData.review);
   fd.set('progress', String(userData.progress));
+  if (editionId) fd.set('editionId', editionId);
   return fd;
 }

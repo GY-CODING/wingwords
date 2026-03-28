@@ -495,7 +495,10 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                         <EditIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Import from Goodreads" placement="top">
+                    <Tooltip
+                      title="Import from Goodreads or Hardcover"
+                      placement="top"
+                    >
                       <IconButton
                         onClick={onImportGoodreads}
                         sx={{

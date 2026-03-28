@@ -12,9 +12,12 @@ export type ImportStatus = 'idle' | 'parsing' | 'searching' | 'done' | 'error';
 
 export interface ImportBookResult {
   source: GoodreadsBook;
+  importSource: 'goodreads' | 'hardcover';
   candidates: HardcoverBook[];
   selectedCandidate: HardcoverBook | null;
   skipped: boolean;
+  /** Edition ID to use for rateBook() — only populated for Hardcover CSV imports. */
+  preferredEditionId?: string;
 }
 
 export interface UseGoodreadsImportReturn {
@@ -90,6 +93,7 @@ export function useGoodreadsImport(): UseGoodreadsImportReturn {
 
       const initialResults: ImportBookResult[] = books.map((b) => ({
         source: b,
+        importSource: 'goodreads',
         candidates: [],
         selectedCandidate: null,
         skipped: false,
