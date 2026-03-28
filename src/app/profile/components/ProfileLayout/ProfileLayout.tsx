@@ -27,6 +27,7 @@ export interface ProfileEditProps {
   onBiographySave: () => void;
   onBiographyCancel: () => void;
   onEditProfile: () => void;
+  onImportGoodreads?: () => void;
 }
 
 export interface ProfileVisitorProps {
@@ -119,6 +120,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
           onBiographyChange={editProps?.onBiographyChange ?? noop}
           onBiographySave={editProps?.onBiographySave ?? noop}
           onBiographyCancel={editProps?.onBiographyCancel ?? noop}
+          onImportGoodreads={editProps?.onImportGoodreads}
           isFriend={visitorProps?.isFriend}
           isAddingFriend={visitorProps?.isAddingFriend}
           isRemovingFriend={visitorProps?.isRemovingFriend}

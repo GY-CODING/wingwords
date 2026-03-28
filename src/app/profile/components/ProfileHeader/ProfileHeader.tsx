@@ -7,6 +7,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import EditIcon from '@mui/icons-material/Edit';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FileDownload from '@mui/icons-material/FileDownload';
 import LaunchIcon from '@mui/icons-material/Launch';
 import LogoutIcon from '@mui/icons-material/Logout';
 import PeopleIcon from '@mui/icons-material/People';
@@ -36,6 +37,7 @@ interface ProfileHeaderProps {
   onBiographyChange: (bio: string) => void;
   onBiographySave: () => void;
   onBiographyCancel: () => void;
+  onImportGoodreads?: () => void;
   canEdit?: boolean;
   books?: UserProfileBook[];
   isLoadingBooks?: boolean;
@@ -57,6 +59,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onBiographyChange,
   onBiographySave,
   onBiographyCancel,
+  onImportGoodreads,
   canEdit = true,
   books = [],
   isLoadingBooks = false,
@@ -490,6 +493,23 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                         }}
                       >
                         <EditIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Import from Goodreads" placement="top">
+                      <IconButton
+                        onClick={onImportGoodreads}
+                        sx={{
+                          background: 'rgba(147, 51, 234, 0.12)',
+                          backdropFilter: 'blur(10px)',
+                          border: '1px solid rgba(147, 51, 234, 0.4)',
+                          color: '#e9d5ff',
+                          '&:hover': {
+                            background: 'rgba(147, 51, 234, 0.18)',
+                            border: '1px solid rgba(147, 51, 234, 0.6)',
+                          },
+                        }}
+                      >
+                        <FileDownload fontSize="small" />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Log Out" placement="top">
