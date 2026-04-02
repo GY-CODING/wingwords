@@ -13,12 +13,18 @@ const HallOfFame = React.lazy(
 const ActivityTab = React.lazy(
   () => import('../../../components/molecules/activityTab')
 );
+const ListsTab = React.lazy(() =>
+  import('../ListsTab/ListsTab').then((m) => ({
+    default: m.ListsTab,
+  }))
+);
 
 interface ProfileTabContentProps {
   tab: number;
   userId: string;
   books: UserProfileBook[];
   booksLoading: boolean;
+  isOwnProfile?: boolean;
   children?: React.ReactNode;
 }
 
@@ -27,6 +33,7 @@ export function ProfileTabContent({
   userId,
   books,
   booksLoading,
+  isOwnProfile = false,
   children,
 }: ProfileTabContentProps) {
   if (tab === 0 && children) {
@@ -34,6 +41,16 @@ export function ProfileTabContent({
   }
 
   if (tab === 1) {
+    return (
+      <Box sx={{ mt: 4 }}>
+        <Suspense fallback={<CircularProgress />}>
+          <ListsTab isOwnProfile={isOwnProfile} />
+        </Suspense>
+      </Box>
+    );
+  }
+
+  if (tab === 2) {
     return (
       <Box
         sx={{
@@ -50,7 +67,7 @@ export function ProfileTabContent({
     );
   }
 
-  if (tab === 2) {
+  if (tab === 3) {
     if (booksLoading) {
       return (
         <Box
@@ -82,7 +99,7 @@ export function ProfileTabContent({
     );
   }
 
-  if (tab === 3) {
+  if (tab === 4) {
     return (
       <Box
         sx={{

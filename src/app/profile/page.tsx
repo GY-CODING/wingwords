@@ -1,7 +1,6 @@
 'use client';
 
 import AnimatedAlert from '@/app/components/atoms/Alert/Alert';
-import ProfileSkeleton from '@/app/components/atoms/ProfileSkeleton/ProfileSkeleton';
 import { User } from '@/domain/user.model';
 import { useFriends } from '@/hooks/useFriends';
 import { RootState } from '@/store';
@@ -145,7 +144,7 @@ function ProfilePageContent() {
 
 export default function ProfilePage() {
   return (
-    <Suspense fallback={<ProfileSkeleton />}>
+    <Suspense fallback={<ProfilePageSkeleton />}>
       <ProfilePageContent />
     </Suspense>
   );

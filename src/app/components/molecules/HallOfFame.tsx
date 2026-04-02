@@ -11,9 +11,11 @@ import { ESeverity } from '@/utils/constants/ESeverity';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import { Box, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { HallOfFameSkeleton } from './HallOfFameSkeleton';
 import { HallOfFameCarousel } from './halloffame/HallOfFameCarousel';
+import { useAppSelector } from '@/store/hooks';
+import { BookHelpers } from '@/domain/HardcoverBook';
 import { HallOfFameEmpty } from './halloffame/HallOfFameEmpty';
 import { HallOfFameQuoteInput } from './halloffame/HallOfFameQuoteInput';
 
@@ -35,6 +37,29 @@ export default function HallOfFame({ userId }: { userId: string }) {
   const [isEditing, setIsEditing] = useState(false);
 
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Override covers with user's selected edition from library.
+  // Read-only: no fetch triggered here to avoid fighting with useProfilePage's useLibrary(friendId).
+  const { books: cachedBooks, userId: cachedLibraryUserId } = useAppSelector(
+    (s) => s.library
+  );
+  const libraryBooks = cachedLibraryUserId === user?.id ? cachedBooks : [];
+  const libraryBookCoverMap = useMemo(() => {
+    const map = new Map<string, string>();
+    libraryBooks?.forEach((b) => {
+      map.set(String(b.id), BookHelpers.getDisplayCoverUrl(b));
+    });
+    return map;
+  }, [libraryBooks]);
+
+  const booksWithEditionCovers = useMemo(
+    () =>
+      (books ?? []).map((b) => ({
+        ...b,
+        cover: { url: libraryBookCoverMap.get(b.id) ?? b.cover?.url },
+      })),
+    [books, libraryBookCoverMap]
+  );
 
   React.useEffect(() => {
     setEditedQuote(quote || '');
@@ -190,7 +215,7 @@ export default function HallOfFame({ userId }: { userId: string }) {
       </Box>
 
       <HallOfFameCarousel
-        books={books}
+        books={booksWithEditionCovers}
         currentIndex={currentIndex}
         setCurrentIndex={setCurrentIndex}
       />

@@ -3,6 +3,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { lora } from '@/utils/fonts/fonts';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import { Box, Chip, Typography } from '@mui/material';
@@ -28,6 +29,7 @@ interface ProfileNavigationProps {
   hallOfFameCount?: number;
   children?: React.ReactNode;
   basePath?: string;
+  isOwnProfile?: boolean;
 }
 
 export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
@@ -37,6 +39,7 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
   hallOfFameCount = 0,
   children,
   basePath = '/profile',
+  isOwnProfile = true,
 }) => {
   const router = useRouter();
   const { t } = useTranslation();
@@ -51,7 +54,7 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
     onTabChange(tabId);
   };
 
-  const navigationItems: NavigationItem[] = [
+  const allNavigationItems: NavigationItem[] = [
     {
       id: 0,
       label: t('profile.nav.library'),
@@ -62,6 +65,13 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
     },
     {
       id: 1,
+      label: t('profile.nav.lists'),
+      icon: <FormatListBulletedIcon sx={{ fontSize: 20 }} />,
+      color: '#e879f9',
+      gradient: 'linear-gradient(135deg, #d946ef 0%, #a21caf 100%)',
+    },
+    {
+      id: 2,
       label: t('profile.nav.hallOfFame'),
       icon: <WorkspacePremiumIcon sx={{ fontSize: 20 }} />,
       color: '#f59e0b',
@@ -69,20 +79,24 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
       badge: hallOfFameCount,
     },
     {
-      id: 2,
+      id: 3,
       label: t('profile.nav.stats'),
       icon: <BarChartIcon sx={{ fontSize: 20 }} />,
       color: '#60a5fa',
       gradient: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
     },
     {
-      id: 3,
+      id: 4,
       label: t('profile.nav.activity'),
       icon: <TimelineIcon sx={{ fontSize: 20 }} />,
       color: '#34d399',
       gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
     },
   ];
+
+  const navigationItems = isOwnProfile
+    ? allNavigationItems
+    : allNavigationItems.filter((item) => item.id !== 1);
 
   return (
     <Box

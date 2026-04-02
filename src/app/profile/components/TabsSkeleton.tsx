@@ -4,6 +4,7 @@ import React from 'react';
 // Colors match ProfileNavigation tab colors
 const TAB_CONFIGS = [
   { width: 100, color: 'rgba(168, 85, 247, 0.15)' }, // Library – purple
+  { width: 80, color: 'rgba(232, 121, 249, 0.12)' }, // Lists – fuchsia
   { width: 130, color: 'rgba(245, 158, 11, 0.12)' }, // Hall of Fame – amber
   { width: 80, color: 'rgba(96, 165, 250, 0.12)' }, // Stats – blue
   { width: 95, color: 'rgba(52, 211, 153, 0.12)' }, // Activity – green

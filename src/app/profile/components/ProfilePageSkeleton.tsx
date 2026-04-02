@@ -2,7 +2,6 @@ import React from 'react';
 import { Box, Container } from '@mui/material';
 import { ProfileHeaderSkeleton } from './ProfileHeader/ProfileHeaderSkeleton';
 import { TabsSkeleton } from './TabsSkeleton';
-import { BooksFilterSkeleton } from './BooksFilter/BooksFilterSkeleton';
 import { BooksListSkeleton } from './BooksList/BooksListSkeleton';
 
 export const ProfilePageSkeleton: React.FC = () => (
@@ -41,7 +40,6 @@ export const ProfilePageSkeleton: React.FC = () => (
             width: '100%',
           }}
         >
-          <BooksFilterSkeleton />
           <BooksListSkeleton />
         </Box>
       </Box>

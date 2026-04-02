@@ -764,6 +764,7 @@ const appMessages = defineMessages({
     id: 'profile.nav.activity',
     defaultMessage: 'Activity',
   },
+  profileNavLists: { id: 'profile.nav.lists', defaultMessage: 'Lists' },
 
   // BooksStats / BooksStatsDisplay labels
   profileStatsReading: {
@@ -1349,6 +1350,147 @@ const appMessages = defineMessages({
   profileViewCalendar: {
     id: 'profile.view.calendar',
     defaultMessage: 'Calendar View',
+  },
+
+  // ── Lists ─────────────────────────────────────────────────────────────────
+
+  // ListsTab
+  listsTabEmpty: {
+    id: 'lists.tab.empty',
+    defaultMessage: 'No lists yet. Create your first one!',
+  },
+  listsTabEmptyOther: {
+    id: 'lists.tab.empty.other',
+    defaultMessage: 'No lists yet.',
+  },
+  listsTabNewList: {
+    id: 'lists.tab.new-list',
+    defaultMessage: 'New list',
+  },
+  listsTabCreate: {
+    id: 'lists.tab.create',
+    defaultMessage: 'Create list',
+  },
+
+  // ListCard
+  listsCardBooks: {
+    id: 'lists.card.books',
+    defaultMessage: '{count} book',
+  },
+  listsCardBooksPlural: {
+    id: 'lists.card.books.plural',
+    defaultMessage: '{count} books',
+  },
+  listsCardRead: {
+    id: 'lists.card.read',
+    defaultMessage: '{done} / {total} read',
+  },
+
+  // CreateListModal
+  listsModalTitle: {
+    id: 'lists.modal.title',
+    defaultMessage: 'New list',
+  },
+  listsModalNameLabel: {
+    id: 'lists.modal.name.label',
+    defaultMessage: 'Name',
+  },
+  listsModalDescriptionLabel: {
+    id: 'lists.modal.description.label',
+    defaultMessage: 'Description (optional)',
+  },
+  listsModalCreate: {
+    id: 'lists.modal.create',
+    defaultMessage: 'Create list',
+  },
+  listsModalCreating: {
+    id: 'lists.modal.creating',
+    defaultMessage: 'Creating…',
+  },
+
+  // List detail page — status badges
+  listsStatusReading: {
+    id: 'lists.status.reading',
+    defaultMessage: 'Reading',
+  },
+  listsStatusRead: {
+    id: 'lists.status.read',
+    defaultMessage: 'Read',
+  },
+  listsStatusWantToRead: {
+    id: 'lists.status.want-to-read',
+    defaultMessage: 'Want to read',
+  },
+
+  // List detail page — actions & UI
+  listsDetailRemove: {
+    id: 'lists.detail.remove',
+    defaultMessage: 'Remove',
+  },
+  listsDetailSearchPlaceholder: {
+    id: 'lists.detail.search.placeholder',
+    defaultMessage: 'Search books to add…',
+  },
+  listsDetailAddToList: {
+    id: 'lists.detail.add-to-list',
+    defaultMessage: 'Add to list',
+  },
+  listsDetailAlreadyInList: {
+    id: 'lists.detail.already-in-list',
+    defaultMessage: 'Already in list',
+  },
+  listsDetailNamePlaceholder: {
+    id: 'lists.detail.name.placeholder',
+    defaultMessage: 'List name',
+  },
+  listsDetailDescriptionPlaceholder: {
+    id: 'lists.detail.description.placeholder',
+    defaultMessage: 'Description (optional)',
+  },
+  listsDetailSave: {
+    id: 'lists.detail.save',
+    defaultMessage: 'Save',
+  },
+  listsDetailCancel: {
+    id: 'lists.detail.cancel',
+    defaultMessage: 'Cancel',
+  },
+  listsDetailEditMeta: {
+    id: 'lists.detail.edit-meta',
+    defaultMessage: 'Edit name & description',
+  },
+  listsDetailNotFound: {
+    id: 'lists.detail.not-found',
+    defaultMessage: 'List not found.',
+  },
+  listsDetailEmpty: {
+    id: 'lists.detail.empty',
+    defaultMessage: 'This list is empty. Add some books above.',
+  },
+  listsDetailAddBooks: {
+    id: 'lists.detail.add-books',
+    defaultMessage: 'Add books',
+  },
+  listsDetailDragToReorder: {
+    id: 'lists.detail.drag-to-reorder',
+    defaultMessage: 'drag to reorder',
+  },
+  listsDetailInLibrary: {
+    id: 'lists.detail.in-library',
+    defaultMessage: 'In library',
+  },
+  listsDetailDeleteList: {
+    id: 'lists.detail.delete-list',
+    defaultMessage: 'Delete list',
+  },
+  listsDetailDeleteListConfirm: {
+    id: 'lists.detail.delete-list.confirm',
+    defaultMessage:
+      'Are you sure you want to delete "{name}"? This action cannot be undone.',
+  },
+  listsDetailDeleting: {
+    id: 'lists.detail.deleting',
+    defaultMessage: 'Deleting...',
   },
 
   // ── Translation banner ────────────────────────────────────────────────────

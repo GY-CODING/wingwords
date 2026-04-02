@@ -144,6 +144,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
             booksCount={books.length}
             hallOfFameCount={hallOfFameCount}
             basePath={basePath}
+            isOwnProfile={isOwnProfile}
           >
             {tab === 0 && (
               <CompactBooksFilter
@@ -184,6 +185,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
               userId={user.id as string}
               books={books}
               booksLoading={booksLoading}
+              isOwnProfile={isOwnProfile}
             >
               <BooksTab
                 books={books}
