@@ -14,7 +14,7 @@ import { motion } from 'framer-motion';
 import React, { useMemo, useState } from 'react';
 import { HallOfFameSkeleton } from './HallOfFameSkeleton';
 import { HallOfFameCarousel } from './halloffame/HallOfFameCarousel';
-import useLibrary from '@/hooks/books/useLibrary';
+import { useAppSelector } from '@/store/hooks';
 import { BookHelpers } from '@/domain/HardcoverBook';
 import { HallOfFameEmpty } from './halloffame/HallOfFameEmpty';
 import { HallOfFameQuoteInput } from './halloffame/HallOfFameQuoteInput';
@@ -38,8 +38,12 @@ export default function HallOfFame({ userId }: { userId: string }) {
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Override covers with user's selected edition from library
-  const { data: libraryBooks } = useLibrary(user?.id as string | undefined);
+  // Override covers with user's selected edition from library.
+  // Read-only: no fetch triggered here to avoid fighting with useProfilePage's useLibrary(friendId).
+  const { books: cachedBooks, userId: cachedLibraryUserId } = useAppSelector(
+    (s) => s.library
+  );
+  const libraryBooks = cachedLibraryUserId === user?.id ? cachedBooks : [];
   const libraryBookCoverMap = useMemo(() => {
     const map = new Map<string, string>();
     libraryBooks?.forEach((b) => {

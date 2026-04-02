@@ -13,7 +13,7 @@ import {
 import type HardcoverBook from '@/domain/HardcoverBook';
 import { BookHelpers } from '@/domain/HardcoverBook';
 import { useHardcoverBatch } from '@/hooks/books/useHardcoverBatch';
-import useLibrary from '@/hooks/books/useLibrary';
+import { useAppSelector } from '@/store/hooks';
 import { useActivities } from '@/hooks/useActivities';
 import { useTranslation } from '@/hooks/useTranslation';
 import { translateActivityMessage } from '@/hooks/activities/utils/activityHelpers';
@@ -495,7 +495,11 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ id }) => {
       ?.map((a: { bookId: any }) => a.bookId)
       .filter(Boolean) as string[]) || []
   );
-  const { data: libraryBooks } = useLibrary(user?.id as string | undefined);
+  // Read-only: no fetch triggered here to avoid fighting with useProfilePage's useLibrary(friendId).
+  const { books: cachedBooks, userId: cachedLibraryUserId } = useAppSelector(
+    (s) => s.library
+  );
+  const libraryBooks = cachedLibraryUserId === user?.id ? cachedBooks : [];
   const [loadedCount, setLoadedCount] = useState(0);
 
   // User edition cover overrides from library
