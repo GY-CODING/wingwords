@@ -3,6 +3,8 @@
 
 import enMessages from '@/locales/en.json';
 import esMessages from '@/locales/es.json';
+import glMessages from '@/locales/gl.json';
+import deMessages from '@/locales/de.json';
 import {
   createContext,
   useCallback,
@@ -23,6 +25,8 @@ type Messages = Record<string, string>;
 const ALL_MESSAGES: Record<Locale, Messages> = {
   en: enMessages,
   es: esMessages,
+  gl: glMessages,
+  de: deMessages,
 };
 
 function resolveLocale(raw: string): Locale {
@@ -62,7 +66,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const t = useCallback(
     (id: string, params?: Record<string, string | number>) => {
-      const msg = ALL_MESSAGES[locale][id] ?? id;
+      const messages = ALL_MESSAGES[locale] ?? ALL_MESSAGES[DEFAULT_LOCALE];
+      const msg = messages[id] ?? ALL_MESSAGES[DEFAULT_LOCALE][id] ?? id;
       if (!params) return msg;
       return msg.replace(/\{(\w+)\}/g, (_, key) =>
         String(params[key] ?? `{${key}}`)

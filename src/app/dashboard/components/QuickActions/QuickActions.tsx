@@ -8,7 +8,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import PeopleIcon from '@mui/icons-material/People';
 import SearchIcon from '@mui/icons-material/Search';
 import TimelineIcon from '@mui/icons-material/Timeline';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Paper, Tooltip, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -116,17 +116,21 @@ export const QuickActions = React.memo(() => {
                 >
                   <Icon sx={{ color: '#a855f7', fontSize: 18 }} />
                 </Box>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: 'rgba(255, 255, 255, 0.8)',
-                    fontWeight: 600,
-                    fontSize: '0.75rem',
-                    fontFamily: lora.style.fontFamily,
-                  }}
-                >
-                  {action.title}
-                </Typography>
+                <Tooltip title={action.title} placement="top" arrow>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontWeight: 600,
+                      fontSize: '0.75rem',
+                      fontFamily: lora.style.fontFamily,
+                    }}
+                  >
+                    {action.title.length > 11
+                      ? `${action.title.slice(0, 10)}…`
+                      : action.title}
+                  </Typography>
+                </Tooltip>
               </Paper>
             </motion.div>
           );

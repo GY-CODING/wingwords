@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * Script para compilar archivos .lang.ts a archivos .json finales
  * con traducción automática vía MyMemory (100% gratuito, sin registro).
@@ -47,7 +49,6 @@ function loadEnvFile() {
 loadEnvFile();
 
 const SRC_DIR = path.join(__dirname, '../src');
-const SUPPORTED_LOCALES = localesConfig.supportedLocales;
 const SOURCE_LOCALE = localesConfig.defaultLocale;
 const USE_AI = !process.argv.includes('--no-ai');
 
@@ -55,6 +56,7 @@ const USE_AI = !process.argv.includes('--no-ai');
 const MYMEMORY_LOCALE_MAP = {
   en: 'en',
   es: 'es',
+  gl: 'gl',
   fr: 'fr',
   de: 'de',
   it: 'it',
@@ -97,7 +99,76 @@ function httpRequest(url, options = {}) {
   });
 }
 
-// ─── MyMemory translation ────────────────────────────────────────────────────
+// ─── DeepL (primario cuando hay API key) ─────────────────────────────────────
+const DEEPL_API_KEY = process.env.DEEPL_API_KEY || null;
+// El sufijo :fx indica tier gratuito → api-free.deepl.com
+const DEEPL_API_URL = DEEPL_API_KEY?.endsWith(':fx')
+  ? 'https://api-free.deepl.com/v2/translate'
+  : 'https://api.deepl.com/v2/translate';
+
+// Idiomas soportados por DeepL (gl no está soportado)
+const DEEPL_SUPPORTED = new Set(['en', 'es', 'de', 'fr', 'it', 'pt', 'nl', 'pl', 'ru', 'zh', 'ja', 'ca']);
+
+/**
+ * Traduce un texto con DeepL API.
+ * Devuelve el texto traducido o null si falla o el idioma no está soportado.
+ */
+async function translateWithDeepL(text, targetLang) {
+  if (!DEEPL_API_KEY) return null;
+  if (!DEEPL_SUPPORTED.has(targetLang)) return null;
+
+  const body = JSON.stringify({
+    text: [text],
+    source_lang: SOURCE_LOCALE.toUpperCase(),
+    target_lang: targetLang.toUpperCase(),
+  });
+
+  try {
+    const response = await httpRequest(DEEPL_API_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': `DeepL-Auth-Key ${DEEPL_API_KEY}`,
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body),
+      },
+      body,
+    });
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data?.translations?.[0]?.text || null;
+  } catch {
+    return null;
+  }
+}
+
+// ─── Lingva Translate (fallback sin API key) ──────────────────────────────────
+const LINGVA_INSTANCES = [
+  'https://lingva.ml',
+];
+
+/**
+ * Traduce un texto con Lingva Translate API.
+ * Devuelve el texto traducido o null si falla.
+ */
+async function translateWithLingva(text, sourceLang, targetLang) {
+  const q = encodeURIComponent(text);
+  for (const instance of LINGVA_INSTANCES) {
+    const url = `${instance}/api/v1/${sourceLang}/${targetLang}/${q}`;
+    try {
+      const response = await httpRequest(url, { method: 'GET' });
+      if (!response.ok) continue;
+      const data = await response.json();
+      const translated = data?.translation;
+      if (!translated || translated === text) continue;
+      return translated;
+    } catch (_) {
+      // prueba siguiente instancia
+    }
+  }
+  return null;
+}
+
+// ─── MyMemory translation (fallback) ─────────────────────────────────────────
 /**
  * Traduce un texto con MyMemory API (sin key, sin registro).
  * Devuelve el texto traducido o null si falla.
@@ -127,30 +198,94 @@ async function translateWithMyMemory(text, sourceLang, targetLang) {
 
 /**
  * Traduce un mapa { id: textoIngles } al locale destino.
- * Devuelve { id: textoTraducido } o null si todos fallan.
+ * Usa Lingva como primario y MyMemory como fallback.
+ * Muestra progreso por clave y guarda parcialmente cada SAVE_EVERY claves.
+ * @param {Record<string,string>} textsMap
+ * @param {string} targetLocale
+ * @param {string} localeFile  - ruta al .json de destino (para guardado parcial)
+ * @param {Record<string,string>} existingTranslations - claves ya traducidas (base)
+ * @param {string[]} allIds - orden completo de claves del locale
+ * @returns {Promise<Record<string,string>|null>}
  */
-async function translateBatch(textsMap, targetLocale) {
+async function translateBatch(textsMap, targetLocale, localeFile, existingTranslations, allIds) {
+  const SAVE_EVERY = 20; // guardar progreso cada N claves traducidas
   const sourceLang = MYMEMORY_LOCALE_MAP[SOURCE_LOCALE] || SOURCE_LOCALE;
   const targetLang = MYMEMORY_LOCALE_MAP[targetLocale] || targetLocale;
   const entries = Object.entries(textsMap);
+  const total = entries.length;
   const result = {};
   let ok = 0;
+  let fail = 0;
+  let skipped = 0;
+  let savedCount = 0;
 
-  for (const [id, text] of entries) {
-    // Skip auto-translation if the text contains {placeholders} — MyMemory
-    // tends to strip or corrupt interpolation variables like {title} or {author}.
+  // Merge parcial: parte de las traducciones ya existentes
+  const partial = { ...existingTranslations };
+
+  function savePartial() {
+    // Reconstruir el JSON en el orden canónico (allIds)
+    const snapshot = {};
+    for (const id of allIds) {
+      if (result[id]) snapshot[id] = result[id];
+      else if (partial[id] && !partial[id].startsWith('[PENDING]')) snapshot[id] = partial[id];
+      else if (textsMap[id]) snapshot[id] = `[PENDING] ${textsMap[id]}`;
+      else if (partial[id]) snapshot[id] = partial[id];
+    }
+    fs.writeFileSync(localeFile, JSON.stringify(snapshot, null, 2) + '\n', 'utf8');
+  }
+
+  for (let i = 0; i < entries.length; i++) {
+    const [id, text] = entries[i];
+    const n = i + 1;
+
+    // Skip placeholders — los servicios de traducción tienden a corromperlos
     if (/\{[a-zA-Z_]\w*\}/.test(text)) {
-      // Leave the key untranslated so it stays in EN (will fallback to defaultMessage)
+      process.stdout.write(`\r      [${n}/${total}] ⏭  ${id.slice(0, 50).padEnd(50)} (placeholder, skip)`);
+      skipped++;
       continue;
     }
-    const translation = await translateWithMyMemory(text, sourceLang, targetLang);
+
+    process.stdout.write(`\r      [${n}/${total}] ⏳ ${id.slice(0, 50).padEnd(50)}`);
+
+    let translation = null;
+    try {
+      // 1. DeepL (si hay key y el idioma está soportado)
+      translation = await translateWithDeepL(text, targetLang);
+      // 2. Lingva
+      if (!translation) translation = await translateWithLingva(text, sourceLang, targetLang);
+      // 3. Fallback MyMemory
+      if (!translation) {
+        translation = await translateWithMyMemory(text, sourceLang, targetLang);
+        if (translation) await new Promise((r) => setTimeout(r, 300));
+      }
+    } catch (err) {
+      process.stdout.write(`\r      [${n}/${total}] ❌ ${id.slice(0, 50).padEnd(50)} ERROR: ${err.message}\n`);
+      fail++;
+      await new Promise((r) => setTimeout(r, 100));
+      continue;
+    }
+
     if (translation) {
       result[id] = translation;
       ok++;
+      process.stdout.write(`\r      [${n}/${total}] ✅ ${id.slice(0, 50).padEnd(50)}\n`);
+    } else {
+      fail++;
+      process.stdout.write(`\r      [${n}/${total}] ⚠️  ${id.slice(0, 50).padEnd(50)} (sin traducción)\n`);
     }
-    // Pausa para no superar el rate limit de MyMemory
-    await new Promise((r) => setTimeout(r, 300));
+
+    // Guardado parcial cada SAVE_EVERY claves con éxito
+    if (ok > 0 && ok % SAVE_EVERY === 0 && ok !== savedCount) {
+      savePartial();
+      savedCount = ok;
+      console.log(`      💾 Guardado parcial: ${ok} traducidas hasta ahora`);
+    }
+
+    await new Promise((r) => setTimeout(r, 100));
   }
+
+  process.stdout.write('\n');
+  console.log(`      📊 Resultado: ✅ ${ok} traducidas · ⚠️  ${fail} fallidas · ⏭  ${skipped} placeholders`);
 
   return ok > 0 ? result : null;
 }
@@ -172,10 +307,12 @@ function findLangFiles(dir) {
 function extractMessages(filePath) {
   const content = fs.readFileSync(filePath, 'utf8');
   const messages = {};
-  const re = /\w+:\s*\{\s*id:\s*["']([^"']+)["'],\s*defaultMessage:\s*["']([^"']+)["']/g;
+  // Use backreference (\2) so the closing delimiter must match the opening one.
+  // This allows "double quotes" inside single-quoted strings and vice-versa.
+  const re = /\w+:\s*\{\s*id:\s*["']([^"']+)["'],\s*defaultMessage:\s*(['"])((?:(?!\2)[\s\S])*)\2/g;
   let m;
   while ((m = re.exec(content)) !== null) {
-    messages[m[1]] = m[2];
+    messages[m[1]] = m[3];
   }
   return messages;
 }
@@ -248,13 +385,8 @@ async function compileDirectory(langFiles, localesDir) {
 
     let translated = null;
     if (USE_AI) {
-      process.stdout.write(`      🌐 Traduciendo con MyMemory (${Object.keys(toTranslate).length} claves)...`);
-      translated = await translateBatch(toTranslate, locale);
-      if (translated) {
-        console.log(` ✅ ${Object.keys(translated).length}/${Object.keys(toTranslate).length} traducidas`);
-      } else {
-        console.log(` ❌ falló, usando [PENDING]`);
-      }
+      console.log(`      🌐 Traduciendo ${Object.keys(toTranslate).length} claves → ${locale} (Lingva + MyMemory fallback)`);
+      translated = await translateBatch(toTranslate, locale, localeFile, existing, ids);
     }
 
     // Construir nuevo archivo de locale
@@ -290,7 +422,11 @@ async function main() {
   console.log('🔨 Compilando traducciones...\n');
 
   if (USE_AI) {
-    console.log('🌐 MyMemory: activado (sin key, sin registro)\n');
+    if (DEEPL_API_KEY) {
+      console.log('🌐 Motor de traducción: DeepL (primario) → Lingva (fallback) → MyMemory (fallback)\n');
+    } else {
+      console.log('🌐 Motor de traducción: Lingva (primario) → MyMemory (fallback)  [sin DEEPL_API_KEY]\n');
+    }
   }
 
   const langFiles = findLangFiles(SRC_DIR);

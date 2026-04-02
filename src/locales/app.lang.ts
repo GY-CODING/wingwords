@@ -1338,6 +1338,29 @@ const appMessages = defineMessages({
     defaultMessage: 'Ready when you are\u2026',
   },
   aiPanelTryAgain: { id: 'ai.panel.tryAgain', defaultMessage: 'Try again' },
+
+  // ── Profile view toggle ───────────────────────────────────────────────────
+  profileViewGrid: { id: 'profile.view.grid', defaultMessage: 'Grid View' },
+  profileViewList: { id: 'profile.view.list', defaultMessage: 'List View' },
+  profileViewTimeline: {
+    id: 'profile.view.timeline',
+    defaultMessage: 'Timeline View',
+  },
+  profileViewCalendar: {
+    id: 'profile.view.calendar',
+    defaultMessage: 'Calendar View',
+  },
+
+  // ── Translation banner ────────────────────────────────────────────────────
+  translationBannerTitle: {
+    id: 'translation.banner.title',
+    defaultMessage: 'Translations in progress',
+  },
+  translationBannerMessage: {
+    id: 'translation.banner.message',
+    defaultMessage:
+      "We're actively working on translating the app. If something doesn't look right, English is the default fallback language.",
+  },
 });
 
 export default appMessages;

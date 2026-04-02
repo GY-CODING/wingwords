@@ -25,6 +25,7 @@ import { DashboardMobile } from './components/DashboardMobile';
 import { FriendsActivityFeed } from './components/FriendsActivityFeed/FriendsActivityFeed';
 import { QuickActions } from './components/QuickActions/QuickActions';
 import { ReadingStatsCards } from './components/ReadingStatsCards/ReadingStatsCards';
+import { TranslationBanner } from './components/TranslationBanner/TranslationBanner';
 
 const MotionBox = motion(Box);
 
@@ -272,6 +273,18 @@ export default function DashboardPage() {
         },
       }}
     >
+      {/* Translation banner */}
+      <Box
+        sx={{
+          position: 'relative',
+          zIndex: 2,
+          px: { xs: 2, sm: 3, lg: 4 },
+          pt: { xs: 1.5, sm: 2 },
+        }}
+      >
+        <TranslationBanner />
+      </Box>
+
       {/* Mobile Dashboard */}
       {isMobile ? (
         <Box

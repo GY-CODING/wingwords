@@ -326,5 +326,11 @@
   "ai.panel.placeholder.recommend": "Pregunta por un libro, género o estado de ánimo…",
   "ai.panel.placeholder.discover": "Pide un género, estado de ánimo o estilo de autor…",
   "ai.panel.ready": "Listo cuando quieras…",
-  "ai.panel.tryAgain": "Reintentar"
+  "ai.panel.tryAgain": "Reintentar",
+  "profile.view.grid": "Vista de cuadrícula",
+  "profile.view.list": "Vista de lista",
+  "profile.view.timeline": "Vista de cronología",
+  "profile.view.calendar": "Vista de calendario",
+  "translation.banner.title": "Traducciones en progreso",
+  "translation.banner.message": "Estamos trabajando activamente en la traducción de la app. Si algo no cuadra, el inglés es el idioma de reserva por defecto."
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import useMergedBooksIncremental from '@/hooks/books/useMergedBooksIncremental';
+import { useTranslation } from '@/hooks/useTranslation';
 import { useSearchParams } from 'next/navigation';
 import { useMemo, useState, useEffect } from 'react';
 import { ViewType } from '../utils/profileTypes';
@@ -38,6 +39,7 @@ export function useProfilePage({
 }: UseProfilePageOptions): UseProfilePageResult {
   const searchParams = useSearchParams();
   const { tab, setTab } = useProfileTabs();
+  const { t } = useTranslation();
   const [view, setView] = useState<ViewType>('grid');
 
   useEffect(() => {
@@ -58,8 +60,9 @@ export function useProfilePage({
   const filters = useProfileFilters(basePath);
 
   const filterOptions = useMemo(
-    () => ProfileBookHelpers.generateFilterOptions(books),
-    [books]
+    () => ProfileBookHelpers.generateFilterOptions(books, t),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [books, t]
   );
 
   const filteredBooks = useMemo(() => {

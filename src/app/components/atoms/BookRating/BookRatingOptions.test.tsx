@@ -13,7 +13,7 @@ describe('BookRatingOptions', () => {
     );
 
     expect(wantToReadOption).toBeDefined();
-    expect(wantToReadOption?.label).toBe('Want to read');
+    expect(wantToReadOption?.labelKey).toBe('book.rating.status.wantToRead');
     expect(wantToReadOption?.icon).toBeDefined();
   });
 
@@ -23,7 +23,7 @@ describe('BookRatingOptions', () => {
     );
 
     expect(readingOption).toBeDefined();
-    expect(readingOption?.label).toBe('Reading');
+    expect(readingOption?.labelKey).toBe('book.rating.status.reading');
     expect(readingOption?.icon).toBeDefined();
   });
 
@@ -33,16 +33,16 @@ describe('BookRatingOptions', () => {
     );
 
     expect(readOption).toBeDefined();
-    expect(readOption?.label).toBe('Read');
+    expect(readOption?.labelKey).toBe('book.rating.status.read');
     expect(readOption?.icon).toBeDefined();
   });
 
   it('all options have required properties', () => {
     statusOptions.forEach((option) => {
-      expect(option).toHaveProperty('label');
+      expect(option).toHaveProperty('labelKey');
       expect(option).toHaveProperty('value');
       expect(option).toHaveProperty('icon');
-      expect(typeof option.label).toBe('string');
+      expect(typeof option.labelKey).toBe('string');
       expect(Object.values(EStatus)).toContain(option.value);
       expect(React.isValidElement(option.icon)).toBe(true);
     });
@@ -55,7 +55,7 @@ describe('BookRatingOptions', () => {
   });
 
   it('has unique labels for all options', () => {
-    const labels = statusOptions.map((option) => option.label);
+    const labels = statusOptions.map((option) => option.labelKey);
     const uniqueLabels = [...new Set(labels)];
     expect(labels).toHaveLength(uniqueLabels.length);
   });
@@ -68,8 +68,8 @@ describe('BookRatingOptions', () => {
 
   it('all labels are non-empty strings', () => {
     statusOptions.forEach((option) => {
-      expect(option.label).toBeTruthy();
-      expect(option.label.length).toBeGreaterThan(0);
+      expect(option.labelKey).toBeTruthy();
+      expect(option.labelKey.length).toBeGreaterThan(0);
     });
   });
 
@@ -98,11 +98,9 @@ describe('BookRatingOptions', () => {
   });
 
   it('exports StatusOption interface correctly', () => {
-    // This test ensures the interface is properly exported and used
     statusOptions.forEach((option) => {
-      // Should match StatusOption interface structure
       const keys = Object.keys(option);
-      expect(keys).toContain('label');
+      expect(keys).toContain('labelKey');
       expect(keys).toContain('value');
       expect(keys).toContain('icon');
       expect(keys).toHaveLength(3);
@@ -124,8 +122,8 @@ describe('BookRatingOptions', () => {
 
   it('maintains consistent naming convention', () => {
     statusOptions.forEach((option) => {
-      // Labels should be properly capitalized
-      expect(option.label).toMatch(/^[A-Z]/);
+      // labelKey should follow dot-notation i18n convention
+      expect(option.labelKey).toMatch(/^[a-z].*\..*/);
 
       // Values should match EStatus enum pattern
       expect(typeof option.value).toBe('string');

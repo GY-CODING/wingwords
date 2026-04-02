@@ -6,7 +6,6 @@ export enum Locale {
   EN = 'en',
   ES = 'es',
   GL = 'gl',
-  CA = 'ca',
   DE = 'de',
 }
 
@@ -21,7 +20,6 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   [Locale.EN]: 'English',
   [Locale.ES]: 'Español',
   [Locale.GL]: 'Galego',
-  [Locale.CA]: 'Català',
   [Locale.DE]: 'Deutsch',
 };
 
@@ -30,7 +28,6 @@ export const LOCALE_FLAGS: Record<Locale, string> = {
   [Locale.EN]: '🇬🇧',
   [Locale.ES]: '🇪🇸',
   [Locale.GL]: '🏴',
-  [Locale.CA]: '🏴',
   [Locale.DE]: '🇩🇪',
 };
 
