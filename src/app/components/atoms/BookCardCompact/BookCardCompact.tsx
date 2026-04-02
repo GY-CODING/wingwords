@@ -173,15 +173,20 @@ export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
   const statusInfo =
     statusConfig[currentStatus] ?? statusConfig[EBookStatus.WANT_TO_READ];
 
-  // Calculate progress if reading (userData.progress is a 0–1 fraction)
-  const progress =
-    currentStatus === EBookStatus.READING && book.userData?.progress
-      ? Math.round(book.userData.progress * 100)
-      : null;
-
+  // Calculate progress if reading (userData.progress is a 0–1 fraction OR absolute page count)
   const editionPages =
     BookHelpers.getSelectedEdition(book)?.pages ??
     (book.pageCount > 0 ? book.pageCount : null);
+
+  const rawProgress = book.userData?.progress;
+  const progress =
+    currentStatus === EBookStatus.READING && rawProgress
+      ? rawProgress <= 1
+        ? Math.round(rawProgress * 100)
+        : editionPages && editionPages > 0
+          ? Math.min(100, Math.round((rawProgress / editionPages) * 100))
+          : null
+      : null;
 
   return (
     <MotionBox

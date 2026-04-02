@@ -104,7 +104,7 @@ export const ReadingStatsMini = React.memo<ReadingStatsMiniProps>(
           onClick: () => router.push(`/profile?year=${yearToDisplay}`),
         },
       ],
-      [totalBooks, booksRead, booksReadThisYear, yearToDisplay, router]
+      [totalBooks, booksRead, booksReadThisYear, yearToDisplay, router, t]
     );
 
     if (isLoading) {

@@ -98,7 +98,7 @@ export const ReadingStatsCards = React.memo<ReadingStatsCardsProps>(
           onClick: () => router.push(`/profile?year=${yearToDisplay}`),
         },
       ],
-      [totalBooks, booksRead, booksReadThisYear, yearToDisplay, router]
+      [totalBooks, booksRead, booksReadThisYear, yearToDisplay, router, t]
     );
 
     return (
