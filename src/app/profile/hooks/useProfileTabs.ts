@@ -9,7 +9,7 @@ export function useProfileTabs() {
     const tabParam = searchParams.get('tab');
     if (tabParam !== null) {
       const tabIndex = parseInt(tabParam, 10);
-      if (!isNaN(tabIndex) && tabIndex >= 0 && tabIndex <= 3) {
+      if (!isNaN(tabIndex) && tabIndex >= 0 && tabIndex <= 5) {
         setTab(tabIndex);
       }
     }
