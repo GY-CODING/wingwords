@@ -3,6 +3,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { lora } from '@/utils/fonts/fonts';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import BarChartIcon from '@mui/icons-material/BarChart';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import { Box, Chip, Typography } from '@mui/material';
@@ -81,6 +82,13 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
       icon: <TimelineIcon sx={{ fontSize: 20 }} />,
       color: '#34d399',
       gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+    },
+    {
+      id: 4,
+      label: 'Lists',
+      icon: <FormatListBulletedIcon sx={{ fontSize: 20 }} />,
+      color: '#e879f9',
+      gradient: 'linear-gradient(135deg, #d946ef 0%, #a21caf 100%)',
     },
   ];
 

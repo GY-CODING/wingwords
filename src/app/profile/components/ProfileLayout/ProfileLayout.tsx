@@ -184,6 +184,7 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({
               userId={user.id as string}
               books={books}
               booksLoading={booksLoading}
+              isOwnProfile={isOwnProfile}
             >
               <BooksTab
                 books={books}
