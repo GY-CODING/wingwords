@@ -123,6 +123,14 @@ export async function POST(req: NextRequest) {
 
     const data = await response.json();
     if (data.errors) {
+      await sendLog(LogLevel.ERROR, LogMessage.HARDCOVER_BOOKS_SEARCH_FAILED, {
+        additionalData: {
+          query,
+          variables,
+          errors: data.errors,
+          errorMessage: data.errors[0]?.message,
+        },
+      });
       throw new Error(data.errors[0]?.message || 'GraphQL error');
     }
 
@@ -140,6 +148,15 @@ export async function POST(req: NextRequest) {
     } else if (data.data?.books_by_pk) {
       rawBooks = [data.data.books_by_pk];
     }
+
+    await sendLog(LogLevel.DEBUG, LogMessage.HARDCOVER_BOOKS_SEARCHED, {
+      additionalData: {
+        query,
+        rawCount: rawBooks.length,
+        rawSample: rawBooks.slice(0, 2),
+        dataKeys: Object.keys(data.data ?? {}),
+      },
+    });
 
     const mappedBooks = mapHardcoverBooksToList(rawBooks);
     await sendLog(LogLevel.INFO, LogMessage.HARDCOVER_BOOKS_SEARCHED, {

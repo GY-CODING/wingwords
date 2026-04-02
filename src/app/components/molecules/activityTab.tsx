@@ -11,7 +11,9 @@ import {
   getActivityType,
 } from '@/domain/activity.model';
 import type HardcoverBook from '@/domain/HardcoverBook';
+import { BookHelpers } from '@/domain/HardcoverBook';
 import { useHardcoverBatch } from '@/hooks/books/useHardcoverBatch';
+import useLibrary from '@/hooks/books/useLibrary';
 import { useActivities } from '@/hooks/useActivities';
 import { useTranslation } from '@/hooks/useTranslation';
 import { translateActivityMessage } from '@/hooks/activities/utils/activityHelpers';
@@ -493,7 +495,17 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ id }) => {
       ?.map((a: { bookId: any }) => a.bookId)
       .filter(Boolean) as string[]) || []
   );
+  const { data: libraryBooks } = useLibrary(user?.id as string | undefined);
   const [loadedCount, setLoadedCount] = useState(0);
+
+  // User edition cover overrides from library
+  const userCoverMap = useMemo(() => {
+    const map = new Map<string, string>();
+    libraryBooks?.forEach((book) => {
+      map.set(String(book.id), BookHelpers.getDisplayCoverUrl(book));
+    });
+    return map;
+  }, [libraryBooks]);
 
   // Crear un mapa de bookId -> imagen para acceso rápido
   const booksMap = useMemo(() => {
@@ -501,10 +513,12 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ id }) => {
     return new Map(
       books.map((book: HardcoverBook) => [
         String(book.id),
-        book.cover?.url || '/placeholder-book.png',
+        userCoverMap.get(String(book.id)) ??
+          book.cover?.url ??
+          '/placeholder-book.png',
       ])
     );
-  }, [books]);
+  }, [books, userCoverMap]);
 
   const handleImageLoad = () => {
     setLoadedCount((prev) => prev + 1);

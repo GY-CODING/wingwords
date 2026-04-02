@@ -2,7 +2,6 @@ import { Container, Box } from '@mui/material';
 import React from 'react';
 import { ProfileHeaderSkeleton } from '@/app/profile/components/ProfileHeader/ProfileHeaderSkeleton';
 import { BiographySkeleton } from '@/app/profile/components/BiographySection/BiographySkeleton';
-import { BooksFilterSkeleton } from '@/app/profile/components/BooksFilter/BooksFilterSkeleton';
 import { BooksListSkeleton } from '@/app/profile/components/BooksList/BooksListSkeleton';
 
 export default function ProfileSkeleton() {
@@ -39,7 +38,6 @@ export default function ProfileSkeleton() {
             gap: 4,
           }}
         >
-          <BooksFilterSkeleton />
           <BooksListSkeleton />
         </Box>
       </Box>

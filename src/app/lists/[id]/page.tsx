@@ -3,8 +3,14 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Box,
+  Button,
   Chip,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
   InputAdornment,
   Skeleton,
@@ -41,12 +47,13 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { lora } from '@/utils/fonts/fonts';
+import { useTranslation } from '@/hooks/useTranslation';
 import { useList } from '@/hooks/useList';
 import { useGyCodingUser } from '@/contexts/GyCodingUserContext';
 import { useHardcoverBatch } from '@/hooks/books/useHardcoverBatch';
-import useMergedBooksIncremental from '@/hooks/books/useMergedBooksIncremental';
+import useLibrary from '@/hooks/books/useLibrary';
 import { useDebounce } from '@/hooks/useDebounce';
 import HardcoverBook, { BookHelpers } from '@/domain/HardcoverBook';
 import { DEFAULT_COVER_IMAGE } from '@/utils/constants/constants';
@@ -61,35 +68,39 @@ interface EnrichedItem extends BookListItem {
   authorName: string;
   seriesName: string | null;
   status: EBookStatus | null;
+  isEnriching: boolean;
 }
 
 // ─── Status config ────────────────────────────────────────────────────────────
 
-const STATUS_CONFIG: Record<
+function useStatusConfig(): Record<
   string,
   { label: string; color: string; bg: string }
-> = {
-  [EBookStatus.READING]: {
-    label: 'Leyendo',
-    color: '#818cf8',
-    bg: 'rgba(129,140,248,0.8)',
-  },
-  [EBookStatus.READ]: {
-    label: 'Leído',
-    color: '#6ee7b7',
-    bg: 'rgba(110,231,183,0.75)',
-  },
-  [EBookStatus.WANT_TO_READ]: {
-    label: 'Por leer',
-    color: '#fbbf24',
-    bg: 'rgba(251,191,36,0.7)',
-  },
-  [EBookStatus.RATE]: {
-    label: 'Leído',
-    color: '#6ee7b7',
-    bg: 'rgba(110,231,183,0.75)',
-  },
-};
+> {
+  const { t } = useTranslation();
+  return {
+    [EBookStatus.READING]: {
+      label: t('lists.status.reading'),
+      color: '#818cf8',
+      bg: 'rgba(129,140,248,0.8)',
+    },
+    [EBookStatus.READ]: {
+      label: t('lists.status.read'),
+      color: '#6ee7b7',
+      bg: 'rgba(110,231,183,0.75)',
+    },
+    [EBookStatus.WANT_TO_READ]: {
+      label: t('lists.status.want-to-read'),
+      color: '#fbbf24',
+      bg: 'rgba(251,191,36,0.7)',
+    },
+    [EBookStatus.RATE]: {
+      label: t('lists.status.read'),
+      color: '#6ee7b7',
+      bg: 'rgba(110,231,183,0.75)',
+    },
+  };
+}
 
 // ─── BookGridCard ─────────────────────────────────────────────────────────────
 
@@ -112,8 +123,53 @@ const BookGridCard: React.FC<BookGridCardProps> = ({
     transition,
     isDragging,
   } = useSortable({ id: item.id });
-
+  const { t } = useTranslation();
+  const STATUS_CONFIG = useStatusConfig();
   const statusInfo = item.status ? STATUS_CONFIG[item.status] : null;
+
+  // While Hardcover enrichment is pending, show a placeholder skeleton
+  if (item.isEnriching) {
+    return (
+      <Box
+        ref={setNodeRef}
+        style={{ transform: CSS.Transform.toString(transform), transition }}
+        {...(canEdit ? { ...attributes, ...listeners } : {})}
+        sx={{
+          borderRadius: '16px',
+          overflow: 'hidden',
+          border: '1px solid rgba(255,255,255,0.06)',
+          background: 'rgba(255,255,255,0.03)',
+        }}
+      >
+        <Skeleton
+          variant="rectangular"
+          sx={{ paddingTop: '150%', bgcolor: 'rgba(255,255,255,0.07)' }}
+        />
+        <Box
+          sx={{
+            p: '14px 16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            background: 'rgba(255,255,255,0.02)',
+          }}
+        >
+          <Skeleton
+            variant="text"
+            width="75%"
+            height={16}
+            sx={{ bgcolor: 'rgba(255,255,255,0.06)' }}
+          />
+          <Skeleton
+            variant="text"
+            width="50%"
+            height={12}
+            sx={{ bgcolor: 'rgba(255,255,255,0.04)' }}
+          />
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -178,7 +234,7 @@ const BookGridCard: React.FC<BookGridCardProps> = ({
             transition: 'opacity 0.12s ease',
           }}
         >
-          <Tooltip title="Eliminar" placement="top">
+          <Tooltip title={t('lists.detail.remove')} placement="top">
             <IconButton
               size="small"
               onClick={(e) => {
@@ -300,6 +356,7 @@ const DragOverlayCard: React.FC<{ item: EnrichedItem; width: number }> = ({
   item,
   width,
 }) => {
+  const STATUS_CONFIG = useStatusConfig();
   const statusInfo = item.status ? STATUS_CONFIG[item.status] : null;
   return (
     <Box
@@ -406,13 +463,16 @@ const DragOverlayCard: React.FC<{ item: EnrichedItem; width: number }> = ({
 
 interface AddBookSearchProps {
   existingIds: Set<string>;
+  libraryBookIds: Set<string>;
   onAdd: (bookId: string) => Promise<void>;
 }
 
 const AddBookSearch: React.FC<AddBookSearchProps> = ({
   existingIds,
+  libraryBookIds,
   onAdd,
 }) => {
+  const { t } = useTranslation();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<HardcoverBook[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -426,23 +486,47 @@ const AddBookSearch: React.FC<AddBookSearchProps> = ({
     }
     let cancelled = false;
     setIsSearching(true);
+    console.debug('[AddBookSearch] Searching Hardcover:', {
+      query: debouncedQuery,
+    });
     fetch('/api/hardcover', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query: debouncedQuery }),
     })
-      .then((r) => r.json())
-      .then((data: HardcoverBook[]) => {
-        if (!cancelled) setResults(data.slice(0, 8));
+      .then(async (r) => {
+        const data = await r.json();
+        if (!r.ok) {
+          console.error('[AddBookSearch] Hardcover API error:', r.status, data);
+          return [];
+        }
+        console.debug('[AddBookSearch] Hardcover results:', {
+          count: data?.length,
+          sample: data?.slice(0, 2),
+        });
+        return data as HardcoverBook[];
       })
-      .catch(() => {})
+      .then((data) => {
+        if (!cancelled) {
+          // Sort: library books first, then the rest
+          const sorted = [...data].sort((a, b) => {
+            const aInLib = libraryBookIds.has(String(a.id)) ? 0 : 1;
+            const bInLib = libraryBookIds.has(String(b.id)) ? 0 : 1;
+            return aInLib - bInLib;
+          });
+          setResults(sorted.slice(0, 8));
+        }
+      })
+      .catch((err) => {
+        console.error('[AddBookSearch] Fetch failed:', err);
+      })
       .finally(() => {
         if (!cancelled) setIsSearching(false);
       });
     return () => {
       cancelled = true;
     };
-  }, [debouncedQuery]);
+  }, [debouncedQuery, libraryBookIds]);
 
   const handleAdd = async (book: HardcoverBook) => {
     const id = String(book.id);
@@ -456,7 +540,7 @@ const AddBookSearch: React.FC<AddBookSearchProps> = ({
       <TextField
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search books to add…"
+        placeholder={t('lists.detail.search.placeholder')}
         size="small"
         fullWidth
         slotProps={{
@@ -532,6 +616,7 @@ const AddBookSearch: React.FC<AddBookSearchProps> = ({
             results.map((book) => {
               const id = String(book.id);
               const already = existingIds.has(id);
+              const inLibrary = libraryBookIds.has(id);
               return (
                 <Box
                   key={id}
@@ -580,8 +665,29 @@ const AddBookSearch: React.FC<AddBookSearchProps> = ({
                   >
                     {BookHelpers.getDisplayTitle(book)}
                   </Typography>
+                  {inLibrary && !already && (
+                    <Chip
+                      label={t('lists.detail.in-library')}
+                      size="small"
+                      sx={{
+                        height: 18,
+                        fontSize: 9,
+                        fontFamily: lora.style.fontFamily,
+                        fontWeight: 600,
+                        background: 'rgba(168,85,247,0.12)',
+                        color: '#c084fc',
+                        border: '1px solid rgba(168,85,247,0.3)',
+                        flexShrink: 0,
+                        '& .MuiChip-label': { px: 1 },
+                      }}
+                    />
+                  )}
                   <Tooltip
-                    title={already ? 'Already in list' : 'Add to list'}
+                    title={
+                      already
+                        ? t('lists.detail.already-in-list')
+                        : t('lists.detail.add-to-list')
+                    }
                     placement="left"
                   >
                     <span>
@@ -677,15 +783,22 @@ const ListDetailSkeleton: React.FC = () => (
 export default function ListDetailPage() {
   const params = useParams();
   const listId = params.id as string;
+  const router = useRouter();
 
+  const { t } = useTranslation();
   const { user } = useGyCodingUser();
-  const { list, isLoading, removeBook, updateBook, addBook, updateMeta } =
-    useList(listId);
+  const {
+    list,
+    isLoading,
+    removeBook,
+    reorderBooks,
+    addBook,
+    updateMeta,
+    deleteList,
+  } = useList(listId);
 
-  // Fetch user's full library (cached from profile visit) to get userData per book
-  const { data: userMergedBooks } = useMergedBooksIncremental(
-    user?.id as string | undefined
-  );
+  // Fetch user's full library (Redux store, populated by useProfilePage) to get userData per book
+  const { data: userMergedBooks } = useLibrary(user?.id as string | undefined);
 
   // DnD state
   const [orderedIds, setOrderedIds] = useState<string[]>([]);
@@ -701,6 +814,10 @@ export default function ListDetailPage() {
   // Add books state
   const [showSearch, setShowSearch] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+
+  // Delete state
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (list) {
@@ -728,6 +845,11 @@ export default function ListDetailPage() {
     userMergedBooks?.forEach((book) => map.set(String(book.id), book));
     return map;
   }, [userMergedBooks]);
+
+  const libraryBookIds = useMemo(
+    () => new Set(userMergedBooks?.map((b) => String(b.id)) ?? []),
+    [userMergedBooks]
+  );
 
   const enrichMap = useMemo(() => {
     const map = new Map<
@@ -770,21 +892,24 @@ export default function ListDetailPage() {
   const itemMap = useMemo(() => {
     const map = new Map<string, EnrichedItem>();
     list?.books.forEach((b) => {
-      const enriched = enrichMap.get(b.id);
-      map.set(b.id, {
+      const id = String(b.id);
+      const enriched = enrichMap.get(id);
+      map.set(id, {
         ...b,
+        id,
         title: enriched?.title ?? b.title ?? '',
         coverUrl: enriched?.coverUrl ?? b.coverUrl ?? DEFAULT_COVER_IMAGE,
         authorName: enriched?.authorName ?? '',
         seriesName: enriched?.seriesName ?? null,
         status: enriched?.status ?? null,
+        isEnriching: !enriched,
       });
     });
     return map;
   }, [list?.books, enrichMap]);
 
   const sortedItems = orderedIds
-    .map((id) => itemMap.get(id))
+    .map((id) => itemMap.get(String(id)))
     .filter((i): i is EnrichedItem => !!i);
   const existingIds = useMemo(() => new Set(orderedIds), [orderedIds]);
   const activeItem = activeId ? (itemMap.get(activeId) ?? null) : null;
@@ -809,7 +934,7 @@ export default function ListDetailPage() {
     const newIndex = orderedIds.indexOf(over.id as string);
     const newOrder = arrayMove(orderedIds, oldIndex, newIndex);
     setOrderedIds(newOrder);
-    await updateBook(active.id as string, newIndex + 1);
+    await reorderBooks(newOrder);
   };
 
   // Edit handlers
@@ -834,9 +959,16 @@ export default function ListDetailPage() {
 
   // Add book handler
   const handleAddBook = async (bookId: string) => {
-    await addBook(bookId, orderedIds.length + 1);
+    await addBook(bookId);
     // Auto-update ordered ids
     setOrderedIds((prev) => (prev.includes(bookId) ? prev : [...prev, bookId]));
+  };
+
+  // Delete list handler
+  const handleDeleteList = async () => {
+    setIsDeleting(true);
+    await deleteList();
+    router.push('/profile?tab=1');
   };
 
   return (
@@ -849,11 +981,18 @@ export default function ListDetailPage() {
         minHeight: '100vh',
       }}
     >
-      {/* Back */}
-      <Box sx={{ mb: 3 }}>
+      {/* Back + delete */}
+      <Box
+        sx={{
+          mb: 3,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
         <IconButton
           component={Link}
-          href="/profile?tab=4"
+          href="/profile?tab=1"
           sx={{
             color: 'rgba(255,255,255,0.45)',
             gap: 0.5,
@@ -864,10 +1003,102 @@ export default function ListDetailPage() {
         >
           <ArrowBackIcon fontSize="small" />
           <Typography sx={{ fontFamily: lora.style.fontFamily, fontSize: 13 }}>
-            Lists
+            {t('profile.nav.lists')}
           </Typography>
         </IconButton>
+
+        {canEdit && list && (
+          <Tooltip title={t('lists.detail.delete-list')} placement="left">
+            <IconButton
+              onClick={() => setShowDeleteConfirm(true)}
+              sx={{
+                color: 'rgba(239,68,68,0.6)',
+                borderRadius: '9px',
+                border: '1px solid rgba(239,68,68,0.2)',
+                '&:hover': {
+                  color: '#ef4444',
+                  background: 'rgba(239,68,68,0.08)',
+                  borderColor: 'rgba(239,68,68,0.4)',
+                },
+              }}
+            >
+              <DeleteOutlineIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
+
+      {/* Delete confirmation dialog */}
+      <Dialog
+        open={showDeleteConfirm}
+        onClose={() => !isDeleting && setShowDeleteConfirm(false)}
+        PaperProps={{
+          sx: {
+            background: 'rgba(20,12,35,0.98)',
+            border: '1px solid rgba(239,68,68,0.2)',
+            borderRadius: '16px',
+            backdropFilter: 'blur(16px)',
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            fontFamily: lora.style.fontFamily,
+            color: '#fff',
+            fontWeight: 700,
+          }}
+        >
+          {t('lists.detail.delete-list')}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText
+            sx={{
+              fontFamily: lora.style.fontFamily,
+              color: 'rgba(255,255,255,0.55)',
+              fontSize: 14,
+            }}
+          >
+            {t('lists.detail.delete-list.confirm', { name: list?.name ?? '' })}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
+          <Button
+            onClick={() => setShowDeleteConfirm(false)}
+            disabled={isDeleting}
+            sx={{
+              fontFamily: lora.style.fontFamily,
+              textTransform: 'none',
+              color: 'rgba(255,255,255,0.5)',
+              '&:hover': { color: '#fff' },
+            }}
+          >
+            {t('lists.detail.cancel')}
+          </Button>
+          <Button
+            onClick={handleDeleteList}
+            disabled={isDeleting}
+            sx={{
+              fontFamily: lora.style.fontFamily,
+              textTransform: 'none',
+              fontWeight: 600,
+              background: 'rgba(239,68,68,0.15)',
+              color: '#ef4444',
+              border: '1px solid rgba(239,68,68,0.35)',
+              borderRadius: '9px',
+              px: 2.5,
+              '&:hover': {
+                background: 'rgba(239,68,68,0.25)',
+                borderColor: '#ef4444',
+              },
+              '&.Mui-disabled': { opacity: 0.5 },
+            }}
+          >
+            {isDeleting
+              ? t('lists.detail.deleting')
+              : t('lists.detail.delete-list')}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {isLoading ? (
         <ListDetailSkeleton />
@@ -882,7 +1113,7 @@ export default function ListDetailPage() {
               color: 'rgba(255,255,255,0.35)',
             }}
           >
-            List not found.
+            {t('lists.detail.not-found')}
           </Typography>
         </Box>
       ) : (
@@ -902,7 +1133,7 @@ export default function ListDetailPage() {
                 <TextField
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  placeholder="List name"
+                  placeholder={t('lists.detail.name.placeholder')}
                   size="small"
                   fullWidth
                   sx={{
@@ -923,7 +1154,7 @@ export default function ListDetailPage() {
                 <TextField
                   value={editDesc}
                   onChange={(e) => setEditDesc(e.target.value)}
-                  placeholder="Description (optional)"
+                  placeholder={t('lists.detail.description.placeholder')}
                   size="small"
                   multiline
                   rows={2}
@@ -943,7 +1174,7 @@ export default function ListDetailPage() {
                   }}
                 />
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                  <Tooltip title="Save">
+                  <Tooltip title={t('lists.detail.save')}>
                     <IconButton
                       onClick={saveEdit}
                       disabled={isSavingMeta || !editName.trim()}
@@ -959,7 +1190,7 @@ export default function ListDetailPage() {
                       <CheckIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Cancel">
+                  <Tooltip title={t('lists.detail.cancel')}>
                     <IconButton
                       onClick={cancelEdit}
                       size="small"
@@ -1004,7 +1235,10 @@ export default function ListDetailPage() {
                     {list.name}
                   </Typography>
                   {canEdit && (
-                    <Tooltip title="Edit name & description" placement="right">
+                    <Tooltip
+                      title={t('lists.detail.edit-meta')}
+                      placement="right"
+                    >
                       <IconButton
                         onClick={startEdit}
                         size="small"
@@ -1053,8 +1287,11 @@ export default function ListDetailPage() {
                       color: 'rgba(255,255,255,0.22)',
                     }}
                   >
-                    {sortedItems.length} book
-                    {sortedItems.length !== 1 ? 's' : ''}
+                    {sortedItems.length === 1
+                      ? t('lists.card.books', { count: sortedItems.length })
+                      : t('lists.card.books.plural', {
+                          count: sortedItems.length,
+                        })}
                     {canEdit && sortedItems.length > 1 && (
                       <Typography
                         component="span"
@@ -1064,7 +1301,7 @@ export default function ListDetailPage() {
                           fontSize: 11,
                         }}
                       >
-                        · drag to reorder
+                        · {t('lists.detail.drag-to-reorder')}
                       </Typography>
                     )}
                   </Typography>
@@ -1112,7 +1349,7 @@ export default function ListDetailPage() {
                           fontWeight: 600,
                         }}
                       >
-                        Add books
+                        {t('lists.detail.add-books')}
                       </Typography>
                     </Box>
                   )}
@@ -1125,6 +1362,7 @@ export default function ListDetailPage() {
               <Box ref={searchRef} sx={{ maxWidth: 520 }}>
                 <AddBookSearch
                   existingIds={existingIds}
+                  libraryBookIds={libraryBookIds}
                   onAdd={handleAddBook}
                 />
               </Box>
@@ -1141,7 +1379,7 @@ export default function ListDetailPage() {
                   fontSize: 14,
                 }}
               >
-                This list is empty. Add some books above.
+                {t('lists.detail.empty')}
               </Typography>
             </Box>
           ) : (
@@ -1152,7 +1390,7 @@ export default function ListDetailPage() {
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={orderedIds}
+                items={sortedItems.map((i) => i.id)}
                 strategy={rectSortingStrategy}
               >
                 <Box

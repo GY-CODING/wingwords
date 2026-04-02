@@ -9,10 +9,11 @@ import { lora } from '@/utils/fonts/fonts';
 import { DEFAULT_COVER_IMAGE } from '@/utils/constants/constants';
 import { BookList } from '@/domain/list.model';
 import { useHardcoverBatch } from '@/hooks/books/useHardcoverBatch';
-import useMergedBooksIncremental from '@/hooks/books/useMergedBooksIncremental';
+import useLibrary from '@/hooks/books/useLibrary';
 import { useGyCodingUser } from '@/contexts/GyCodingUserContext';
 import HardcoverBook, { BookHelpers } from '@/domain/HardcoverBook';
 import { EBookStatus } from '@gycoding/nebula';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const MotionBox = motion(Box);
 
@@ -68,6 +69,7 @@ const DonutChart: React.FC<{ percent: number; size?: number }> = ({
 export const ListCard: React.FC<ListCardProps> = ({ list }) => {
   const router = useRouter();
   const { user } = useGyCodingUser();
+  const { t } = useTranslation();
 
   // Covers for the fan
   const previewBooks = useMemo(
@@ -84,10 +86,8 @@ export const ListCard: React.FC<ListCardProps> = ({ list }) => {
   );
   const { data: hardcoverBooks } = useHardcoverBatch(previewIds);
 
-  // Read % from user's merged library (SWR-cached from profile visit)
-  const { data: userMergedBooks } = useMergedBooksIncremental(
-    user?.id as string | undefined
-  );
+  // Read % from user's merged library (Redux store, populated by useProfilePage)
+  const { data: userMergedBooks } = useLibrary(user?.id as string | undefined);
 
   // Build cover map from raw Hardcover data
   const hardcoverCoverMap = useMemo(() => {
@@ -313,7 +313,11 @@ export const ListCard: React.FC<ListCardProps> = ({ list }) => {
           )}
 
           <Chip
-            label={`${list.books.length} book${list.books.length !== 1 ? 's' : ''}`}
+            label={
+              list.books.length === 1
+                ? t('lists.card.books', { count: list.books.length })
+                : t('lists.card.books.plural', { count: list.books.length })
+            }
             size="small"
             sx={chipSx}
           />
@@ -342,7 +346,10 @@ export const ListCard: React.FC<ListCardProps> = ({ list }) => {
                   lineHeight: 1.3,
                 }}
               >
-                {readCount} / {list.books.length} read
+                {t('lists.card.read', {
+                  done: readCount,
+                  total: list.books.length,
+                })}
               </Typography>
             </Box>
           </Box>

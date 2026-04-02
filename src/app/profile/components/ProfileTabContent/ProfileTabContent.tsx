@@ -42,6 +42,16 @@ export function ProfileTabContent({
 
   if (tab === 1) {
     return (
+      <Box sx={{ mt: 4 }}>
+        <Suspense fallback={<CircularProgress />}>
+          <ListsTab isOwnProfile={isOwnProfile} />
+        </Suspense>
+      </Box>
+    );
+  }
+
+  if (tab === 2) {
+    return (
       <Box
         sx={{
           mt: 4,
@@ -57,7 +67,7 @@ export function ProfileTabContent({
     );
   }
 
-  if (tab === 2) {
+  if (tab === 3) {
     if (booksLoading) {
       return (
         <Box
@@ -89,7 +99,7 @@ export function ProfileTabContent({
     );
   }
 
-  if (tab === 3) {
+  if (tab === 4) {
     return (
       <Box
         sx={{
@@ -101,16 +111,6 @@ export function ProfileTabContent({
       >
         <Suspense fallback={<CircularProgress />}>
           <ActivityTab id={userId as UUID} />
-        </Suspense>
-      </Box>
-    );
-  }
-
-  if (tab === 4) {
-    return (
-      <Box sx={{ mt: 4 }}>
-        <Suspense fallback={<CircularProgress />}>
-          <ListsTab isOwnProfile={isOwnProfile} />
         </Suspense>
       </Box>
     );

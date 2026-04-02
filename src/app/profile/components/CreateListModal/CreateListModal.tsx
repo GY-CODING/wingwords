@@ -14,6 +14,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import { lora } from '@/utils/fonts/fonts';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface CreateListModalProps {
   open: boolean;
@@ -30,6 +31,7 @@ export const CreateListModal: React.FC<CreateListModalProps> = ({
 }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const { t } = useTranslation();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,7 +100,7 @@ export const CreateListModal: React.FC<CreateListModalProps> = ({
             flex: 1,
           }}
         >
-          New list
+          {t('lists.modal.title')}
         </Typography>
         <IconButton
           onClick={handleClose}
@@ -116,7 +118,7 @@ export const CreateListModal: React.FC<CreateListModalProps> = ({
           sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}
         >
           <TextField
-            label="Name"
+            label={t('lists.modal.name.label')}
             value={name}
             onChange={(e) => setName(e.target.value)}
             fullWidth
@@ -125,7 +127,7 @@ export const CreateListModal: React.FC<CreateListModalProps> = ({
             sx={inputSx}
           />
           <TextField
-            label="Description (optional)"
+            label={t('lists.modal.description.label')}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             fullWidth
@@ -151,7 +153,7 @@ export const CreateListModal: React.FC<CreateListModalProps> = ({
               '&:disabled': { opacity: 0.5 },
             }}
           >
-            {isSubmitting ? 'Creating…' : 'Create list'}
+            {isSubmitting ? t('lists.modal.creating') : t('lists.modal.create')}
           </Button>
         </Box>
       </DialogContent>

@@ -1,6 +1,6 @@
 'use client';
 
-import useMergedBooksIncremental from '@/hooks/books/useMergedBooksIncremental';
+import useLibrary from '@/hooks/books/useLibrary';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useSearchParams } from 'next/navigation';
 import { useMemo, useState, useEffect } from 'react';
@@ -56,7 +56,7 @@ export function useProfilePage({
     data: books = [],
     isLoading: booksLoading,
     isDone,
-  } = useMergedBooksIncremental(userId, 50);
+  } = useLibrary(userId, 50);
   const filters = useProfileFilters(basePath);
 
   const filterOptions = useMemo(

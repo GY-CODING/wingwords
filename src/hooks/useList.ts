@@ -3,8 +3,8 @@ import { BookList } from '@/domain/list.model';
 import {
   getListById,
   addBookToList,
-  updateBookInList,
   removeBookFromList,
+  deleteList as deleteListAction,
   updateList as updateListAction,
 } from '@/app/actions/accounts/user/lists/lists';
 
@@ -12,13 +12,14 @@ interface UseListReturn {
   list: BookList | null;
   isLoading: boolean;
   error: Error | null;
-  addBook: (bookId: string, order?: number) => Promise<void>;
-  updateBook: (bookId: string, order: number) => Promise<void>;
+  addBook: (bookId: string) => Promise<void>;
+  reorderBooks: (orderedBookIds: string[]) => Promise<void>;
   updateMeta: (payload: {
     name?: string;
     description?: string;
   }) => Promise<void>;
   removeBook: (bookId: string) => Promise<void>;
+  deleteList: () => Promise<void>;
 }
 
 export function useList(id: string | null): UseListReturn {
@@ -35,16 +36,30 @@ export function useList(id: string | null): UseListReturn {
 
   const { mutate } = useSWRConfig();
 
-  const addBook = async (bookId: string, order?: number) => {
+  const addBook = async (bookId: string) => {
     if (!id) return;
-    const updated = await addBookToList(id, bookId, order);
-    await mutate(cacheKey, updated, { revalidate: false });
+    await addBookToList(id, bookId);
+    await mutate(cacheKey);
   };
 
-  const updateBook = async (bookId: string, order: number) => {
-    if (!id) return;
-    const updated = await updateBookInList(id, bookId, order);
-    await mutate(cacheKey, updated, { revalidate: false });
+  const reorderBooks = async (orderedBookIds: string[]) => {
+    if (!id || !data) return;
+    // Use the list-level PATCH — must include name, description, and all books
+    const books = orderedBookIds.map((bookId, index) => ({
+      bookId,
+      order: index,
+    }));
+    try {
+      const updated = await updateListAction({
+        id,
+        name: data.name,
+        description: data.description,
+        books,
+      });
+      await mutate(cacheKey, updated, { revalidate: false });
+    } catch {
+      await mutate(cacheKey);
+    }
   };
 
   const updateMeta = async (payload: {
@@ -52,7 +67,13 @@ export function useList(id: string | null): UseListReturn {
     description?: string;
   }) => {
     if (!id) return;
-    const updated = await updateListAction({ id, ...payload });
+    // Must include the current books array — the GY API wipes books if omitted
+    const books =
+      data?.books.map((b, index) => ({
+        bookId: b.id,
+        order: b.order ?? index,
+      })) ?? [];
+    const updated = await updateListAction({ id, ...payload, books });
     await mutate(cacheKey, updated, { revalidate: false });
   };
 
@@ -80,8 +101,13 @@ export function useList(id: string | null): UseListReturn {
     isLoading,
     error: error ?? null,
     addBook,
-    updateBook,
+    reorderBooks,
     updateMeta,
     removeBook,
+    deleteList: async () => {
+      if (!id) return;
+      await deleteListAction(id);
+      await mutate(cacheKey, undefined, { revalidate: false });
+    },
   };
 }

@@ -30,7 +30,7 @@ export const QuickActions = React.memo(() => {
     {
       title: t('dashboard.quickActions.myStats'),
       icon: BarChartIcon,
-      onClick: () => router.push('/profile?tab=2'),
+      onClick: () => router.push('/profile?tab=3'),
     },
     {
       title: t('dashboard.quickActions.calendar'),
@@ -40,7 +40,7 @@ export const QuickActions = React.memo(() => {
     {
       title: t('dashboard.quickActions.hallOfFame'),
       icon: EmojiEventsIcon,
-      onClick: () => router.push('/profile?tab=1'),
+      onClick: () => router.push('/profile?tab=2'),
     },
     {
       title: t('dashboard.quickActions.community'),

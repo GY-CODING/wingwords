@@ -7,6 +7,7 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import { motion } from 'framer-motion';
 import { lora } from '@/utils/fonts/fonts';
 import { useLists } from '@/hooks/useLists';
+import { useTranslation } from '@/hooks/useTranslation';
 import { ListCard } from '../ListCard/ListCard';
 import { CreateListModal } from '../CreateListModal/CreateListModal';
 
@@ -17,23 +18,16 @@ interface ListsTabProps {
 }
 
 const ListsGridSkeleton: React.FC = () => (
-  <Box
-    sx={{
-      display: 'grid',
-      alignContent: 'center',
-      justifyItems: 'center',
-      gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 48%)' },
-      gap: 2,
-    }}
-  >
+  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
     {[1, 2, 3, 4].map((i) => (
       <Box
         key={i}
         sx={{
+          width: ['100%', '100%', 'calc(50% - 8px)'],
           borderRadius: '18px',
           overflow: 'hidden',
           display: 'flex',
-          minHeight: 180,
+          height: 200,
           border: '1px solid rgba(255,255,255,0.05)',
           background: 'rgba(255,255,255,0.02)',
         }}
@@ -41,12 +35,11 @@ const ListsGridSkeleton: React.FC = () => (
         {/* Left */}
         <Box
           sx={{
-            width: '40%',
+            width: '42%',
             p: '20px 24px',
             display: 'flex',
             flexDirection: 'column',
             gap: 1.5,
-            borderRight: '1px solid rgba(255,255,255,0.05)',
           }}
         >
           <Skeleton
@@ -98,8 +91,8 @@ const ListsGridSkeleton: React.FC = () => (
             </Box>
           </Box>
         </Box>
-        {/* Right */}
-        <Box sx={{ flex: 1, bgcolor: 'rgba(0,0,0,0.1)' }} />
+        {/* Right: fan placeholder */}
+        <Box sx={{ flex: 1, bgcolor: 'rgba(168,85,247,0.03)' }} />
       </Box>
     ))}
   </Box>
@@ -108,6 +101,7 @@ const ListsGridSkeleton: React.FC = () => (
 export const ListsTab: React.FC<ListsTabProps> = ({ isOwnProfile }) => {
   const { lists, isLoading, isCreating, createList } = useLists();
   const [modalOpen, setModalOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleCreate = async (payload: {
     name: string;
@@ -148,9 +142,7 @@ export const ListsTab: React.FC<ListsTabProps> = ({ isOwnProfile }) => {
             textAlign: 'center',
           }}
         >
-          {isOwnProfile
-            ? 'No lists yet. Create your first one!'
-            : 'No lists yet.'}
+          {isOwnProfile ? t('lists.tab.empty') : t('lists.tab.empty.other')}
         </Typography>
         {isOwnProfile && (
           <Button
@@ -170,7 +162,7 @@ export const ListsTab: React.FC<ListsTabProps> = ({ isOwnProfile }) => {
               },
             }}
           >
-            Create list
+            {t('lists.tab.create')}
           </Button>
         )}
 
@@ -216,7 +208,7 @@ export const ListsTab: React.FC<ListsTabProps> = ({ isOwnProfile }) => {
               },
             }}
           >
-            New list
+            {t('lists.tab.new-list')}
           </Button>
         </Box>
       )}

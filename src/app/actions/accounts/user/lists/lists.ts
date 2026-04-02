@@ -1,8 +1,29 @@
 'use server';
 
 import { BookList } from '@/domain/list.model';
+import { UUID } from 'crypto';
 import { headers } from 'next/headers';
 import { cookies } from 'next/headers';
+
+/**
+ * Maps raw API response to BookList domain model.
+ * The GY API returns `{ bookId, order }` per book entry, while the
+ * domain model uses `{ id, order }`. This normalizes the mismatch.
+ */
+function mapApiList(raw: unknown): BookList {
+  const r = raw as {
+    id: UUID;
+    name: string;
+    description?: string;
+    books?: { bookId: string; order: number }[];
+  };
+  return {
+    id: r.id,
+    name: r.name,
+    description: r.description,
+    books: (r.books ?? []).map((b) => ({ id: b.bookId, order: b.order })),
+  };
+}
 
 async function buildFetchOptions(
   method: string,
@@ -46,7 +67,7 @@ export async function getLists(): Promise<BookList[]> {
   }
 
   const data = await response.json();
-  return data as BookList[];
+  return (data as unknown[]).map(mapApiList);
 }
 
 export async function getListById(id: string): Promise<BookList> {
@@ -65,14 +86,17 @@ export async function getListById(id: string): Promise<BookList> {
   }
 
   const data = await response.json();
-  return data as BookList;
+  return mapApiList(data);
 }
 
 export async function createList(payload: {
   name: string;
   description?: string;
 }): Promise<BookList> {
-  const { protocol, host, init } = await buildFetchOptions('POST', payload);
+  const { protocol, host, init } = await buildFetchOptions('POST', {
+    ...payload,
+    books: [],
+  });
 
   const response = await fetch(`${protocol}://${host}/api/auth/lists`, init);
 
@@ -82,13 +106,14 @@ export async function createList(payload: {
   }
 
   const data = await response.json();
-  return data as BookList;
+  return mapApiList(data);
 }
 
 export async function updateList(payload: {
   id: string;
   name?: string;
   description?: string;
+  books: { bookId: string; order: number }[];
 }): Promise<BookList> {
   const { protocol, host, init } = await buildFetchOptions('PATCH', payload);
 
@@ -100,7 +125,7 @@ export async function updateList(payload: {
   }
 
   const data = await response.json();
-  return data as BookList;
+  return mapApiList(data);
 }
 
 export async function deleteList(id: string): Promise<void> {
@@ -121,13 +146,9 @@ export async function deleteList(id: string): Promise<void> {
 
 export async function addBookToList(
   listId: string,
-  bookId: string,
-  order?: number
+  bookId: string
 ): Promise<BookList> {
-  const { protocol, host, init } = await buildFetchOptions('POST', {
-    bookId,
-    order,
-  });
+  const { protocol, host, init } = await buildFetchOptions('POST', { bookId });
 
   const response = await fetch(
     `${protocol}://${host}/api/auth/lists/${listId}/books`,
@@ -142,7 +163,7 @@ export async function addBookToList(
   }
 
   const data = await response.json();
-  return data as BookList;
+  return mapApiList(data);
 }
 
 export async function updateBookInList(
@@ -168,19 +189,17 @@ export async function updateBookInList(
   }
 
   const data = await response.json();
-  return data as BookList;
+  return mapApiList(data);
 }
 
 export async function removeBookFromList(
   listId: string,
   bookId: string
 ): Promise<void> {
-  const { protocol, host, init } = await buildFetchOptions('DELETE', {
-    bookId,
-  });
+  const { protocol, host, init } = await buildFetchOptions('DELETE');
 
   const response = await fetch(
-    `${protocol}://${host}/api/auth/lists/${listId}/books`,
+    `${protocol}://${host}/api/auth/lists/${listId}/books/${bookId}`,
     init
   );
 
