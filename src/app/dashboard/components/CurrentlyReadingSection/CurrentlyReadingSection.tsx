@@ -18,6 +18,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 
 interface CurrentlyReadingSectionProps {
   books: HardcoverBook[];
@@ -92,6 +93,7 @@ const ReadingBookSkeleton = () => (
 
 export const CurrentlyReadingSection = React.memo<CurrentlyReadingSectionProps>(
   ({ books, isLoading }) => {
+    const { t } = useTranslation();
     const router = useRouter();
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -125,7 +127,7 @@ export const CurrentlyReadingSection = React.memo<CurrentlyReadingSectionProps>(
                 fontFamily: lora.style.fontFamily,
               }}
             >
-              No books currently reading
+              {t('dashboard.currentlyReading.empty')}
             </Typography>
             <Typography
               variant="body2"
@@ -134,7 +136,7 @@ export const CurrentlyReadingSection = React.memo<CurrentlyReadingSectionProps>(
                 fontFamily: lora.style.fontFamily,
               }}
             >
-              Start reading a book to see your progress here
+              {t('dashboard.currentlyReading.emptyHint')}
             </Typography>
           </Box>
         </motion.div>
@@ -179,7 +181,7 @@ export const CurrentlyReadingSection = React.memo<CurrentlyReadingSectionProps>(
                 fontWeight: 700,
               }}
             >
-              Currently Reading
+              {t('dashboard.currentlyReading.title')}
             </Typography>
             {hasMultiple && (
               <Typography
@@ -291,7 +293,8 @@ export const CurrentlyReadingSection = React.memo<CurrentlyReadingSectionProps>(
                               fontFamily: lora.style.fontFamily,
                             }}
                           >
-                            {Math.round(progressPercentage)}% completed
+                            {Math.round(progressPercentage)}%{' '}
+                            {t('dashboard.reading.completed')}
                           </Typography>
                           <Typography
                             variant="body2"

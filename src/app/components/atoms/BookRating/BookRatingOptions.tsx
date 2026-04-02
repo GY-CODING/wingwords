@@ -4,24 +4,24 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 
 export interface StatusOption {
-  label: string;
+  labelKey: string;
   value: EBookStatus;
   icon: JSX.Element;
 }
 
 export const statusOptions: StatusOption[] = [
   {
-    label: 'Want to read',
+    labelKey: 'book.rating.status.wantToRead',
     value: EBookStatus.WANT_TO_READ,
     icon: <BookmarkIcon />,
   },
   {
-    label: 'Reading',
+    labelKey: 'book.rating.status.reading',
     value: EBookStatus.READING,
     icon: <RemoveRedEyeIcon />,
   },
   {
-    label: 'Read',
+    labelKey: 'book.rating.status.read',
     value: EBookStatus.READ,
     icon: <CheckCircleIcon />,
   },

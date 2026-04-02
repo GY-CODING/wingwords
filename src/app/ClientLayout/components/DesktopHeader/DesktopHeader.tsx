@@ -1,4 +1,6 @@
 import { CustomButton } from '@/app/components/atoms/CustomButton/customButton';
+import { LocaleSwitcher } from '@/app/components/atoms/LocaleSwitcher/LocaleSwitcher';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { User } from '@/domain/user.model';
 import { lora } from '@/utils/fonts/fonts';
 import InboxIcon from '@mui/icons-material/Inbox';
@@ -9,7 +11,8 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { ProfileButton } from '../ProfileButton/ProfileButton';
 
-const MotionBox = motion(Box);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const MotionBox = motion(Box) as any;
 const MotionIconButton = motion(IconButton);
 
 interface DesktopHeaderProps {
@@ -32,7 +35,7 @@ export const DesktopHeader = ({
   onFriendRequestsClick,
 }: DesktopHeaderProps) => {
   const router = useRouter();
-
+  const { t } = useTranslation();
   return (
     <Box
       suppressHydrationWarning={true}
@@ -79,9 +82,6 @@ export const DesktopHeader = ({
         }}
       >
         <CustomButton
-          component={motion.button}
-          whileHover={{ scale: 1.05, y: -2 }}
-          whileTap={{ scale: 0.95 }}
           variant="outlined"
           onClick={() => router.push('/books')}
           sx={{
@@ -101,13 +101,10 @@ export const DesktopHeader = ({
           }}
           startIcon={<LocalLibraryIcon />}
         >
-          Library
+          {t('nav.library')}
         </CustomButton>
 
         <CustomButton
-          component={motion.button}
-          whileHover={{ scale: 1.05, y: -2 }}
-          whileTap={{ scale: 0.95 }}
           variant="outlined"
           onClick={() => router.push('/users/community')}
           sx={{
@@ -127,7 +124,7 @@ export const DesktopHeader = ({
           }}
           startIcon={<PersonIcon />}
         >
-          Community
+          {t('nav.community')}
         </CustomButton>
 
         {/* Friend Requests */}
@@ -178,6 +175,7 @@ export const DesktopHeader = ({
         )}
 
         {/* Profile/Login Button */}
+        <LocaleSwitcher />
         <ProfileButton user={user} isLoading={isLoading} />
       </Box>
     </Box>

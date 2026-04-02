@@ -11,6 +11,11 @@ import {
 } from '@/domain/activity.model';
 import { useActivityLike } from '@/hooks/activities/useActivityLike';
 import { FriendActivity } from '@/hooks/activities/useFriendsActivityFeed';
+import {
+  formatRelativeDateI18n,
+  translateActivityMessage,
+} from '@/hooks/activities/utils/activityHelpers';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { lora } from '@/utils/fonts/fonts';
 import { AutoStories } from '@mui/icons-material';
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
@@ -27,19 +32,6 @@ import React, {
 } from 'react';
 
 const MotionBox = motion(Box);
-
-const getActivityLabel = (type: ActivityType): string => {
-  const labels: Record<ActivityType, string> = {
-    [ActivityType.STARTED]: 'Started Reading',
-    [ActivityType.FINISHED]: 'Finished',
-    [ActivityType.RATED]: 'Rated',
-    [ActivityType.PROGRESS]: 'Progress Update',
-    [ActivityType.WANT_TO_READ]: 'Want to Read',
-    [ActivityType.REVIEWED]: 'Reviewed',
-    [ActivityType.OTHER]: 'Activity',
-  };
-  return labels[type] || 'Activity';
-};
 
 const MotionIconButton = motion(IconButton);
 
@@ -67,9 +59,20 @@ const FriendActivityItem = React.memo<{
     onUserClick,
     onLikeToggle,
   }) => {
+    const { t, locale } = useTranslation();
     const activityType = getActivityType(activity.message);
     const activityColor = getActivityColor(activityType);
-    const activityLabel = getActivityLabel(activityType);
+    const activityLabelMap: Record<ActivityType, string> = {
+      [ActivityType.STARTED]: t('dashboard.activity.started'),
+      [ActivityType.FINISHED]: t('dashboard.activity.finished'),
+      [ActivityType.RATED]: t('dashboard.activity.rated'),
+      [ActivityType.PROGRESS]: t('dashboard.activity.progress'),
+      [ActivityType.WANT_TO_READ]: t('dashboard.activity.wantToRead'),
+      [ActivityType.REVIEWED]: t('dashboard.activity.reviewed'),
+      [ActivityType.OTHER]: t('dashboard.activity.other'),
+    };
+    const activityLabel =
+      activityLabelMap[activityType] || t('dashboard.activity.other');
 
     // Optimistic likes state — initialized from real server data
     const [likes, setLikes] = useState<string[]>(activity.likes ?? []);
@@ -215,7 +218,7 @@ const FriendActivityItem = React.memo<{
                 fontFamily: lora.style.fontFamily,
               }}
             >
-              {activity.formattedDate}
+              {formatRelativeDateI18n(activity.date, locale)}
             </Typography>
           </Box>
 
@@ -266,7 +269,7 @@ const FriendActivityItem = React.memo<{
             '&:hover': activity.bookId ? { color: '#c084fc' } : {},
           }}
         >
-          {activity.message}
+          {translateActivityMessage(activity.message, t)}
         </Typography>
 
         {/* Activity Badges */}
@@ -403,57 +406,60 @@ const SkeletonItem: React.FC = () => (
   </Box>
 );
 
-const EmptyState: React.FC = () => (
-  <Box
-    sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      py: 8,
-      px: 4,
-      textAlign: 'center',
-    }}
-  >
+const EmptyState: React.FC = () => {
+  const { t } = useTranslation();
+  return (
     <Box
       sx={{
-        width: 80,
-        height: 80,
-        borderRadius: '50%',
-        backgroundColor: 'rgba(147, 51, 234, 0.08)',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        mb: 3,
+        py: 8,
+        px: 4,
+        textAlign: 'center',
       }}
     >
-      <AutoStories sx={{ fontSize: 40, color: 'rgba(147, 51, 234, 0.4)' }} />
+      <Box
+        sx={{
+          width: 80,
+          height: 80,
+          borderRadius: '50%',
+          backgroundColor: 'rgba(147, 51, 234, 0.08)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          mb: 3,
+        }}
+      >
+        <AutoStories sx={{ fontSize: 40, color: 'rgba(147, 51, 234, 0.4)' }} />
+      </Box>
+      <Typography
+        variant="h6"
+        sx={{
+          fontFamily: lora.style.fontFamily,
+          color: 'rgba(255, 255, 255, 0.7)',
+          mb: 1,
+          fontSize: '1.1rem',
+          fontWeight: 600,
+        }}
+      >
+        {t('dashboard.activity.empty')}
+      </Typography>
+      <Typography
+        variant="body2"
+        sx={{
+          fontFamily: lora.style.fontFamily,
+          color: 'rgba(255, 255, 255, 0.5)',
+          fontSize: '0.9rem',
+          maxWidth: 300,
+        }}
+      >
+        {t('dashboard.activity.emptyHint')}
+      </Typography>
     </Box>
-    <Typography
-      variant="h6"
-      sx={{
-        fontFamily: lora.style.fontFamily,
-        color: 'rgba(255, 255, 255, 0.7)',
-        mb: 1,
-        fontSize: '1.1rem',
-        fontWeight: 600,
-      }}
-    >
-      No friend activities yet
-    </Typography>
-    <Typography
-      variant="body2"
-      sx={{
-        fontFamily: lora.style.fontFamily,
-        color: 'rgba(255, 255, 255, 0.5)',
-        fontSize: '0.9rem',
-        maxWidth: 300,
-      }}
-    >
-      Add friends to see their reading activities here
-    </Typography>
-  </Box>
-);
+  );
+};
 
 interface FriendsActivityFeedProps {
   activities: FriendActivity[];

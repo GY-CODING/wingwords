@@ -2,6 +2,7 @@ import AnimatedAlert from '@/app/components/atoms/Alert/Alert';
 import { User } from '@/domain/friend.model';
 import { ESeverity } from '@/utils/constants/ESeverity';
 import { lora } from '@/utils/fonts/fonts';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
 import {
@@ -40,6 +41,7 @@ export function DiscoverTab({
   setSuccessMessage,
   setErrorMessage,
 }: DiscoverTabProps) {
+  const { t } = useTranslation();
   return (
     <MotionBox
       initial={{ opacity: 0, y: 10 }}
@@ -54,7 +56,7 @@ export function DiscoverTab({
       }}
     >
       <TextField
-        placeholder="Search for users to add..."
+        placeholder={t('community.discover.search.placeholder')}
         value={search}
         onChange={(e) => onSearchChange(e.target.value)}
         variant="outlined"
@@ -120,7 +122,7 @@ export function DiscoverTab({
               mt: 2,
             }}
           >
-            No users found. Try a different search.
+            {t('community.discover.noResults')}
           </Typography>
         ) : users.length === 0 ? (
           <Typography
@@ -132,7 +134,7 @@ export function DiscoverTab({
               textAlign: 'center',
             }}
           >
-            Start typing to discover new users to add as friends
+            {t('community.discover.empty')}
           </Typography>
         ) : (
           users.map((user) => (
@@ -222,7 +224,7 @@ export function DiscoverTab({
                     fontWeight: 700,
                   }}
                 >
-                  Friend
+                  {t('community.discover.friendBadge')}
                 </Box>
               ) : (
                 <MotionIconButton
@@ -258,13 +260,13 @@ export function DiscoverTab({
 
       <AnimatedAlert
         open={successMessage}
-        message={'Friend request sent successfully!'}
+        message={t('community.discover.requestSent')}
         onClose={() => setSuccessMessage(false)}
         severity={ESeverity.SUCCESS}
       />
       <AnimatedAlert
         open={errorMessage}
-        message={'Could not send friend request. Try again.'}
+        message={t('community.discover.requestError')}
         onClose={() => setErrorMessage(false)}
         severity={ESeverity.ERROR}
       />

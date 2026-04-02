@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState } from 'react';
+import { useTranslation } from '@/hooks/useTranslation';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { BooksFilterMobileDrawer } from './BooksFilterMobileDrawer';
@@ -72,13 +73,14 @@ export const BooksFilter: React.FC<BooksFilterProps> = ({
   onViewChange,
   isOwnProfile = true,
 }) => {
+  const { t } = useTranslation();
   // Opciones de ordenamiento
   const orderOptions = [
-    { label: 'Original', value: '' },
-    { label: 'Author', value: 'author' },
-    { label: 'Rating', value: 'rating' },
-    { label: 'Series', value: 'series' },
-    { label: 'Title', value: 'title' },
+    { label: t('profile.filter.order.original'), value: '' },
+    { label: t('profile.filter.author'), value: 'author' },
+    { label: t('profile.filter.rating'), value: 'rating' },
+    { label: t('profile.filter.series'), value: 'series' },
+    { label: t('profile.filter.order.title'), value: 'title' },
   ];
   const [orderMenuAnchor, setOrderMenuAnchor] = useState<null | HTMLElement>(
     null
@@ -89,22 +91,24 @@ export const BooksFilter: React.FC<BooksFilterProps> = ({
   const activeFilters = [
     statusFilter && {
       type: 'status',
-      label: `Status: ${statusOptions.find((o) => o.value === statusFilter)?.label}`,
+      label: t('profile.filter.active.status', {
+        value: statusOptions.find((o) => o.value === statusFilter)?.label,
+      }),
       value: statusFilter,
     },
     authorFilter && {
       type: 'author',
-      label: `Author: ${authorFilter}`,
+      label: t('profile.filter.active.author', { author: authorFilter }),
       value: authorFilter,
     },
     seriesFilter && {
       type: 'series',
-      label: `Series: ${seriesFilter}`,
+      label: t('profile.filter.active.series', { series: seriesFilter }),
       value: seriesFilter,
     },
     ratingFilter > 0 && {
       type: 'rating',
-      label: `Rating: ${ratingFilter}+`,
+      label: t('profile.filter.active.rating', { stars: ratingFilter }),
       value: ratingFilter,
     },
     search && { type: 'search', label: `"${search}"`, value: search },
@@ -279,7 +283,7 @@ export const BooksFilter: React.FC<BooksFilterProps> = ({
 
   // Rating options
   const ratingOptions = [
-    { label: 'All', value: 0 },
+    { label: t('profile.filter.all'), value: 0 },
     ...[1, 2, 3, 4, 5].map((star) => ({
       label: `${'★'.repeat(star)} ${star}${star < 5 ? '+' : ''}`,
       value: star,
@@ -394,7 +398,8 @@ export const BooksFilter: React.FC<BooksFilterProps> = ({
                 fontWeight: 600,
               }}
             >
-              Filters {activeFiltersCount > 0 && `(${activeFiltersCount})`}
+              {t('profile.filter.title')}{' '}
+              {activeFiltersCount > 0 && `(${activeFiltersCount})`}
             </Box>
           </Box>
           {filtersExpanded ? (
@@ -431,7 +436,7 @@ export const BooksFilter: React.FC<BooksFilterProps> = ({
               <TextField
                 value={search}
                 onChange={(e) => onSearchChange(e.target.value)}
-                placeholder="Search books..."
+                placeholder={t('profile.filter.search')}
                 variant="outlined"
                 size="small"
                 fullWidth
@@ -489,25 +494,25 @@ export const BooksFilter: React.FC<BooksFilterProps> = ({
                   ratingFilter,
                   onRatingChange,
                   ratingOptions,
-                  'Rating'
+                  t('profile.filter.rating')
                 )}
                 {renderSelect(
                   statusFilter ?? '',
                   onStatusChange,
                   statusOptions,
-                  'Status'
+                  t('profile.filter.status')
                 )}
                 {renderSelect(
                   authorFilter,
                   onAuthorChange,
                   authorOptions,
-                  'Author'
+                  t('profile.filter.author')
                 )}
                 {renderSelect(
                   seriesFilter,
                   onSeriesChange,
                   seriesOptions,
-                  'Series'
+                  t('profile.filter.series')
                 )}
                 {renderOrderButton()}
               </Box>

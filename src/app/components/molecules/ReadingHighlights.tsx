@@ -6,6 +6,7 @@ import RateReviewIcon from '@mui/icons-material/RateReview';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
 import { Box, Divider, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface ReadingHighlightsProps {
   readingCompletionRate: number;
@@ -99,6 +100,7 @@ const ReadingHighlights: React.FC<ReadingHighlightsProps> = ({
   totalBooks,
   fontFamily,
 }) => {
+  const { t } = useTranslation();
   const reviewRate =
     totalBooks > 0 ? Math.round((reviewedBooks / totalBooks) * 100) : 0;
 
@@ -158,7 +160,7 @@ const ReadingHighlights: React.FC<ReadingHighlightsProps> = ({
               maxWidth: 90,
             }}
           >
-            Completion rate
+            {t('stats.highlights.completionRate')}
           </Typography>
         </Box>
 
@@ -194,7 +196,7 @@ const ReadingHighlights: React.FC<ReadingHighlightsProps> = ({
               maxWidth: 90,
             }}
           >
-            Books reviewed
+            {t('stats.highlights.booksReviewed')}
           </Typography>
         </Box>
       </Box>
@@ -245,7 +247,7 @@ const ReadingHighlights: React.FC<ReadingHighlightsProps> = ({
               fontSize: '0.72rem',
             }}
           >
-            Series
+            {t('stats.highlights.series')}
           </Typography>
         </Box>
 

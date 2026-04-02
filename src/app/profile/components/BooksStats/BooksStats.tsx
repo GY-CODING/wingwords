@@ -1,4 +1,5 @@
 'use client';
+import { useTranslation } from '@/hooks/useTranslation';
 import { UserProfileBook } from '@/domain/user.model';
 import { lora } from '@/utils/fonts/fonts';
 import { EBookStatus } from '@gycoding/nebula';
@@ -81,6 +82,7 @@ const StatItem: React.FC<StatItemProps> = ({ icon, label, count, color }) => (
 );
 
 export const BooksStats: React.FC<BooksStatsProps> = ({ books }) => {
+  const { t } = useTranslation();
   const readingCount = books.filter(
     (book) => book.userData?.status === EBookStatus.READING
   ).length;
@@ -111,19 +113,19 @@ export const BooksStats: React.FC<BooksStatsProps> = ({ books }) => {
     >
       <StatItem
         icon={<MenuBookIcon />}
-        label="Reading"
+        label={t('profile.stats.reading')}
         count={readingCount}
         color="#818cf8"
       />
       <StatItem
         icon={<CheckCircleIcon />}
-        label="Read"
+        label={t('profile.stats.read')}
         count={readCount}
         color="#6ee7b7"
       />
       <StatItem
         icon={<BookmarkIcon />}
-        label="Want to Read"
+        label={t('profile.stats.wantToRead')}
         count={wantToReadCount}
         color="#fbbf24"
       />

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslation } from '@/hooks/useTranslation';
 import { Box, Typography } from '@mui/material';
 import { RadarChart } from '@mui/x-charts/RadarChart';
 import React from 'react';
@@ -31,50 +32,54 @@ const METRIC_COLORS = [
   '#818cf8',
 ];
 
-function buildMetrics(props: ReadingRadarProps): MetricDisplay[] {
+function buildMetrics(
+  props: ReadingRadarProps,
+  t: (id: string) => string
+): MetricDisplay[] {
   const safe = Math.max(props.readCount, 1);
 
   return [
     {
-      label: 'Completionist',
+      label: t('stats.radar.completionist'),
       score: Math.round(props.readingCompletionRate),
       color: METRIC_COLORS[0],
-      tooltip: "How much of your library you've actually finished.",
+      tooltip: t('stats.radar.tooltip.completionist'),
     },
     {
-      label: 'Critic',
+      label: t('stats.radar.critic'),
       score: Math.min(Math.round((props.reviewedBooks / safe) * 100), 100),
       color: METRIC_COLORS[1],
-      tooltip: 'How often you write a review after finishing a book.',
+      tooltip: t('stats.radar.tooltip.critic'),
     },
     {
-      label: 'Rater',
+      label: t('stats.radar.rater'),
       score: Math.min(Math.round((props.ratedBooks / safe) * 100), 100),
       color: METRIC_COLORS[2],
-      tooltip: 'How consistently you rate books after reading them.',
+      tooltip: t('stats.radar.tooltip.rater'),
     },
     {
-      label: 'Diverse',
+      label: t('stats.radar.diverse'),
       score: Math.min(Math.round((props.uniqueAuthors / safe) * 100), 100),
       color: METRIC_COLORS[3],
-      tooltip: 'How varied your reading is across different authors.',
+      tooltip: t('stats.radar.tooltip.diverse'),
     },
     {
-      label: 'Series Fan',
+      label: t('stats.radar.seriesFan'),
       score: Math.min(props.seriesTracked * 5, 100),
       color: METRIC_COLORS[4],
-      tooltip: 'How much you follow ongoing book series.',
+      tooltip: t('stats.radar.tooltip.seriesFan'),
     },
     {
-      label: 'Active',
+      label: t('stats.radar.active'),
       score: Math.min(Math.round((props.booksReadThisYear / 20) * 100), 100),
       color: METRIC_COLORS[5],
-      tooltip: 'Your reading pace this year vs. a 20-books goal.',
+      tooltip: t('stats.radar.tooltip.active'),
     },
   ];
 }
 
 const ReadingRadar: React.FC<ReadingRadarProps> = (props) => {
+  const { t } = useTranslation();
   const { readCount, booksReadThisYear, fontFamily } = props;
   const hasData = readCount > 0 || booksReadThisYear > 0;
 
@@ -99,13 +104,13 @@ const ReadingRadar: React.FC<ReadingRadarProps> = (props) => {
             px: 2,
           }}
         >
-          Add books to your library to unlock your reading profile
+          {t('stats.radar.noData')}
         </Typography>
       </Box>
     );
   }
 
-  const metrics = buildMetrics(props);
+  const metrics = buildMetrics(props, t);
   const radarData = metrics.map((m) => m.score);
 
   return (

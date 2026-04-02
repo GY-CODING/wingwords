@@ -9,19 +9,28 @@ import {
   GaugeReferenceArc,
 } from '@mui/x-charts/Gauge';
 import React from 'react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface AvgReadingDaysProps {
   avgReadingDays: number;
   fontFamily: string;
 }
 
-function getSpeedLabel(days: number): { label: string; color: string } {
+function getSpeedLabel(
+  days: number,
+  t: (id: string) => string
+): { label: string; color: string } {
   if (days === 0)
-    return { label: 'No data yet', color: 'rgba(255,255,255,0.4)' };
-  if (days <= 5) return { label: 'Speed reader', color: '#34d399' };
-  if (days <= 14) return { label: 'Steady reader', color: '#60a5fa' };
-  if (days <= 30) return { label: 'Casual reader', color: '#a855f7' };
-  return { label: 'Slow & steady', color: '#f59e0b' };
+    return {
+      label: t('stats.avg.noDataLabel'),
+      color: 'rgba(255,255,255,0.4)',
+    };
+  if (days <= 5) return { label: t('stats.avg.speedReader'), color: '#34d399' };
+  if (days <= 14)
+    return { label: t('stats.avg.steadyReader'), color: '#60a5fa' };
+  if (days <= 30)
+    return { label: t('stats.avg.casualReader'), color: '#a855f7' };
+  return { label: t('stats.avg.slowSteady'), color: '#f59e0b' };
 }
 
 // Gauge goes 0–60 days; clamp to 60 for display
@@ -31,7 +40,8 @@ const AvgReadingDays: React.FC<AvgReadingDaysProps> = ({
   avgReadingDays,
   fontFamily,
 }) => {
-  const { label, color } = getSpeedLabel(avgReadingDays);
+  const { t } = useTranslation();
+  const { label, color } = getSpeedLabel(avgReadingDays, t);
   const gaugeValue = Math.min(avgReadingDays, MAX_DAYS);
 
   if (avgReadingDays === 0) {
@@ -50,7 +60,7 @@ const AvgReadingDays: React.FC<AvgReadingDaysProps> = ({
         <Typography
           sx={{ color: 'rgba(255,255,255,0.5)', fontFamily, fontSize: 15 }}
         >
-          Add start & end dates to your books to see this stat
+          {t('stats.avg.noData')}
         </Typography>
       </Box>
     );
@@ -111,7 +121,7 @@ const AvgReadingDays: React.FC<AvgReadingDaysProps> = ({
               fontSize: '0.75rem',
             }}
           >
-            days
+            {t('stats.avg.days')}
           </Typography>
         </Box>
       </Box>
@@ -141,7 +151,7 @@ const AvgReadingDays: React.FC<AvgReadingDaysProps> = ({
             mt: 0.5,
           }}
         >
-          Avg. days per book
+          {t('stats.avg.perBook')}
         </Typography>
       </Box>
 
@@ -156,10 +166,10 @@ const AvgReadingDays: React.FC<AvgReadingDaysProps> = ({
         }}
       >
         {[
-          { label: '≤5d · Speed reader', color: '#34d399' },
-          { label: '≤14d · Steady', color: '#60a5fa' },
-          { label: '≤30d · Casual', color: '#a855f7' },
-          { label: '>30d · Slow & steady', color: '#f59e0b' },
+          { label: t('stats.avg.scale.speed'), color: '#34d399' },
+          { label: t('stats.avg.scale.steady'), color: '#60a5fa' },
+          { label: t('stats.avg.scale.casual'), color: '#a855f7' },
+          { label: t('stats.avg.scale.slow'), color: '#f59e0b' },
         ].map((item) => (
           <Box
             key={item.label}

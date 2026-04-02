@@ -1,5 +1,6 @@
 import HardcoverBook, { BookHelpers } from '@/domain/HardcoverBook';
 import { useBookDisplay } from '@/hooks/useBookDisplay';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { lora } from '@/utils/fonts/fonts';
 import { EBookStatus } from '@gycoding/nebula';
 import {
@@ -131,6 +132,7 @@ export const BookCardCompactSkeleton = () => {
 
 export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
   const router = useRouter();
+  const { t } = useTranslation();
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const { title, coverUrl } = useBookDisplay(book)!;
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
@@ -146,22 +148,22 @@ export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
   // Status badge configuration
   const statusConfig = {
     [EBookStatus.READING]: {
-      label: 'Reading',
+      label: t('book.rating.status.reading'),
       color: '#818cf8',
       bg: 'rgba(129, 140, 248, 0.8)',
     },
     [EBookStatus.READ]: {
-      label: 'Read',
+      label: t('book.rating.status.read'),
       color: '#6ee7b7',
       bg: 'rgba(110, 231, 183, 0.75)',
     },
     [EBookStatus.WANT_TO_READ]: {
-      label: 'Want to Read',
+      label: t('book.rating.status.wantToRead'),
       color: '#fbbf24',
       bg: 'rgba(251, 191, 36, 0.7)',
     },
     [EBookStatus.RATE]: {
-      label: 'Rated',
+      label: t('book.card.status.rated'),
       color: '#6ee7b7',
       bg: 'rgba(110, 231, 183, 0.75)',
     },
@@ -367,7 +369,7 @@ export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
                         letterSpacing: '0.04em',
                       }}
                     >
-                      Reading
+                      {t('book.rating.status.reading')}
                     </Typography>
                     <Typography
                       sx={{
@@ -438,7 +440,7 @@ export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
                     userSelect: 'none',
                   }}
                 >
-                  {editionPages} pages
+                  {t('book.card.pages', { count: editionPages })}
                 </Typography>
               ) : null}
             </Box>

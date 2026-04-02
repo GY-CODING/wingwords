@@ -4,6 +4,7 @@ import FriendCardSkeleton from '@/app/components/atoms/FriendCard/FriendCardSkel
 import { Friend } from '@/domain/friend.model';
 import { ESeverity } from '@/utils/constants/ESeverity';
 import { lora } from '@/utils/fonts/fonts';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import SearchIcon from '@mui/icons-material/Search';
 import { Box, InputAdornment, TextField, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
@@ -33,6 +34,7 @@ export function FriendsTab({
   setIsSuccessDelete,
 }: FriendsTabProps) {
   const [search, setSearch] = useState('');
+  const { t } = useTranslation();
 
   const filteredFriends = useMemo(() => {
     if (!data) return [];
@@ -55,7 +57,7 @@ export function FriendsTab({
       }}
     >
       <TextField
-        placeholder="Search in your friends..."
+        placeholder={t('community.friends.search.placeholder')}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         variant="outlined"
@@ -136,7 +138,9 @@ export function FriendsTab({
                 mt: 2,
               }}
             >
-              {search ? 'No friends found.' : "You don't have any friends yet."}
+              {search
+                ? t('community.friends.noResults')
+                : t('community.friends.empty')}
             </Typography>
           </Box>
         ) : (
@@ -155,13 +159,13 @@ export function FriendsTab({
         open={isSuccessDelete}
         onClose={() => setIsSuccessDelete(false)}
         severity={ESeverity.SUCCESS}
-        message="Friend deleted successfully."
+        message={t('community.friends.deleteSuccess')}
       />
       <AnimatedAlert
         open={!!errorDelete}
         onClose={() => setErrorDelete(null)}
         severity={ESeverity.ERROR}
-        message="Error deleting friend."
+        message={t('community.friends.deleteError')}
       />
     </MotionBox>
   );

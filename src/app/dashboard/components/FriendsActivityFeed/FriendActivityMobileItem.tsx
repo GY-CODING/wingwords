@@ -8,6 +8,11 @@ import {
   getActivityType,
 } from '@/domain/activity.model';
 import { FriendActivity } from '@/hooks/activities/useFriendsActivityFeed';
+import {
+  formatRelativeDateI18n,
+  translateActivityMessage,
+} from '@/hooks/activities/utils/activityHelpers';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { lora } from '@/utils/fonts/fonts';
 import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
 import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
@@ -17,16 +22,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 const MotionBox = motion(Box);
 const MotionIconButton = motion(IconButton);
-
-const ACTIVITY_LABELS: Record<ActivityType, string> = {
-  [ActivityType.STARTED]: 'Started',
-  [ActivityType.FINISHED]: 'Finished',
-  [ActivityType.RATED]: 'Rated',
-  [ActivityType.PROGRESS]: 'Progress',
-  [ActivityType.WANT_TO_READ]: 'Want to Read',
-  [ActivityType.REVIEWED]: 'Reviewed',
-  [ActivityType.OTHER]: 'Activity',
-};
 
 interface FriendActivityMobileItemProps {
   activity: FriendActivity;
@@ -107,9 +102,20 @@ export const FriendActivityMobileItem =
       onUserClick,
       onLikeToggle,
     }) => {
+      const { t, locale } = useTranslation();
       const activityType = getActivityType(activity.message);
       const activityColor = getActivityColor(activityType);
-      const activityLabel = ACTIVITY_LABELS[activityType] || 'Activity';
+      const activityLabelMap: Record<ActivityType, string> = {
+        [ActivityType.STARTED]: t('dashboard.activity.startedShort'),
+        [ActivityType.FINISHED]: t('dashboard.activity.finished'),
+        [ActivityType.RATED]: t('dashboard.activity.rated'),
+        [ActivityType.PROGRESS]: t('dashboard.activity.progressShort'),
+        [ActivityType.WANT_TO_READ]: t('dashboard.activity.wantToRead'),
+        [ActivityType.REVIEWED]: t('dashboard.activity.reviewed'),
+        [ActivityType.OTHER]: t('dashboard.activity.other'),
+      };
+      const activityLabel =
+        activityLabelMap[activityType] || t('dashboard.activity.other');
 
       // Optimistic likes state — initialized from real server data
       const [likes, setLikes] = useState<string[]>(activity.likes ?? []);
@@ -247,7 +253,7 @@ export const FriendActivityMobileItem =
                       color: 'rgba(255, 255, 255, 0.3)',
                     }}
                   >
-                    · {activity.formattedDate}
+                    · {formatRelativeDateI18n(activity.date, locale)}
                   </Typography>
                 </Box>
               )}
@@ -304,7 +310,7 @@ export const FriendActivityMobileItem =
               '&:active': activity.bookId ? { color: '#c084fc' } : {},
             }}
           >
-            {activity.message}
+            {translateActivityMessage(activity.message, t)}
           </Typography>
 
           {/* Footer: Like button + count */}

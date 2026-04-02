@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
+import { useTranslation } from '@/hooks/useTranslation';
 import type HardcoverBook from '@/domain/HardcoverBook';
 import type { UserProfileBook } from '@/domain/user.model';
 import { DEFAULT_COVER_IMAGE } from '@/utils/constants/constants';
@@ -36,6 +37,7 @@ const MotionPaper = motion(Paper);
 
 export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
   const router = useRouter();
+  const { t, locale } = useTranslation();
   const [hoveredBookId, setHoveredBookId] = useState<string | null>(null);
 
   // Procesar libros y calcular datos
@@ -114,7 +116,7 @@ export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
 
   const formatDate = (date: Date | null) => {
     if (!date) return '';
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString(locale, {
       month: 'short',
       year: 'numeric',
     });
@@ -122,7 +124,7 @@ export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
 
   const formatDateRange = (start: Date | null, end: Date | null) => {
     if (!start) return '';
-    if (!end) return `${formatDate(start)} - Now`;
+    if (!end) return `${formatDate(start)} - ${t('profile.timeline.now')}`;
     return `${formatDate(start)} - ${formatDate(end)}`;
   };
 
@@ -164,7 +166,7 @@ export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
             textAlign: 'center',
           }}
         >
-          No reading history yet
+          {t('profile.timeline.empty.title')}
         </Typography>
         <Typography
           sx={{
@@ -175,7 +177,7 @@ export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
             maxWidth: 400,
           }}
         >
-          Start tracking your reading journey with start and end dates
+          {t('profile.timeline.empty.subtitle')}
         </Typography>
       </MotionBox>
     );
@@ -212,7 +214,7 @@ export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
             WebkitTextFillColor: 'transparent',
           }}
         >
-          Reading Journey
+          {t('profile.timeline.title')}
         </Typography>
         <Typography
           sx={{
@@ -222,7 +224,7 @@ export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
             mb: 3,
           }}
         >
-          Your adventure through {timelineBooks.length} books
+          {t('profile.timeline.subtitle', { count: timelineBooks.length })}
         </Typography>
 
         {/* Quick stats */}
@@ -236,7 +238,11 @@ export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
         >
           <Chip
             icon={<CheckCircleIcon />}
-            label={`${timelineBooks.filter((b) => b.userData?.status === EBookStatus.READ).length} completed`}
+            label={t('profile.timeline.completed', {
+              count: timelineBooks.filter(
+                (b) => b.userData?.status === EBookStatus.READ
+              ).length,
+            })}
             sx={{
               background: 'rgba(52, 211, 153, 0.12)',
               color: '#34d399',
@@ -248,7 +254,11 @@ export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
           />
           <Chip
             icon={<AutoStoriesIcon />}
-            label={`${timelineBooks.filter((b) => b.userData?.status === EBookStatus.READING).length} reading`}
+            label={t('profile.timeline.reading', {
+              count: timelineBooks.filter(
+                (b) => b.userData?.status === EBookStatus.READING
+              ).length,
+            })}
             sx={{
               background: 'rgba(96, 165, 250, 0.12)',
               color: '#60a5fa',
@@ -260,7 +270,12 @@ export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
           />
           <Chip
             icon={<SpeedIcon />}
-            label={`${Math.round(timelineBooks.reduce((sum, b) => sum + b.pagesPerDay, 0) / timelineBooks.length)} pages/day avg`}
+            label={t('profile.timeline.pagesPerDay', {
+              count: Math.round(
+                timelineBooks.reduce((sum, b) => sum + b.pagesPerDay, 0) /
+                  timelineBooks.length
+              ),
+            })}
             sx={{
               background: 'rgba(245, 158, 11, 0.12)',
               color: '#f59e0b',

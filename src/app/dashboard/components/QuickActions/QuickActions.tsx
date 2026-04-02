@@ -1,6 +1,7 @@
 'use client';
 
 import { lora } from '@/utils/fonts/fonts';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
@@ -17,36 +18,37 @@ import React from 'react';
  * Memoizado porque no depende de datos que cambien frecuentemente.
  */
 export const QuickActions = React.memo(() => {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const actions = [
     {
-      title: 'Books',
+      title: t('dashboard.quickActions.books'),
       icon: SearchIcon,
       onClick: () => router.push('/books'),
     },
     {
-      title: 'My Stats',
+      title: t('dashboard.quickActions.myStats'),
       icon: BarChartIcon,
       onClick: () => router.push('/profile?tab=2'),
     },
     {
-      title: 'Calendar',
+      title: t('dashboard.quickActions.calendar'),
       icon: CalendarMonthIcon,
       onClick: () => router.push('/profile?view=calendar'),
     },
     {
-      title: 'Hall of Fame',
+      title: t('dashboard.quickActions.hallOfFame'),
       icon: EmojiEventsIcon,
       onClick: () => router.push('/profile?tab=1'),
     },
     {
-      title: 'Community',
+      title: t('dashboard.quickActions.community'),
       icon: PeopleIcon,
       onClick: () => router.push('/users/community'),
     },
     {
-      title: 'Timeline',
+      title: t('dashboard.quickActions.timeline'),
       icon: TimelineIcon,
       onClick: () => router.push('/profile?view=timeline'),
     },
@@ -63,7 +65,7 @@ export const QuickActions = React.memo(() => {
           fontFamily: lora.style.fontFamily,
         }}
       >
-        Quick Actions
+        {t('dashboard.quickActions.title')}
       </Typography>
 
       <Box

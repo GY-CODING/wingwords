@@ -28,6 +28,7 @@ import AnimatedAlert from './components/atoms/Alert/Alert';
 
 import { DesktopHeader } from './ClientLayout/components/DesktopHeader/DesktopHeader';
 import { FriendRequestsPanel } from './ClientLayout/components/FriendRequestsPanel/FriendRequestsPanel';
+import { I18nProvider } from '@/lib/i18n/I18nProvider';
 import {
   BOTTOM_NAV_HEIGHT,
   MobileBottomNav,
@@ -188,11 +189,13 @@ export default function ClientLayout({
 }) {
   return (
     <Provider store={store}>
-      <Auth0Provider>
-        <GyCodingUserProvider>
-          <ClientLayoutContent>{children}</ClientLayoutContent>
-        </GyCodingUserProvider>
-      </Auth0Provider>
+      <I18nProvider>
+        <Auth0Provider>
+          <GyCodingUserProvider>
+            <ClientLayoutContent>{children}</ClientLayoutContent>
+          </GyCodingUserProvider>
+        </Auth0Provider>
+      </I18nProvider>
     </Provider>
   );
 }

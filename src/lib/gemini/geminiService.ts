@@ -32,15 +32,17 @@ export interface RecommendationRequest {
   currentUserBooks: BookContext[];
   userQuestion?: string;
   history?: HistoryMessage[];
+  language?: string;
 }
 
 export interface DiscoverRequest {
   currentUserBooks: BookContext[];
   userQuestion?: string;
   history?: HistoryMessage[];
+  language?: string;
 }
 
-const SYSTEM_PROMPT = `You are an expert literary advisor on GyCoding Books, a social reading platform.
+const SYSTEM_PROMPT_BASE = `You are an expert literary advisor on GyCoding Books, a social reading platform.
 Your role is very specific: given two readers' libraries, you must recommend books FROM THE OTHER USER'S LIBRARY that the current user would enjoy, based on shared tastes, genres, authors, and themes revealed by what the current user has already read and rated.
 
 Rules:
@@ -48,9 +50,28 @@ Rules:
 - Analyse the current user's library to infer their preferences: favourite genres, authors, themes, writing styles, and the ratings they give.
 - Cross-reference those preferences against the other user's books, prioritising titles the other user rated highly.
 - Explain WHY each recommendation suits the current user, referencing specific books they have read.
-- Always respond in the same language the user writes in.
 - Use **bold** for book titles and author names.
 - Be concise, warm, and enthusiastic — like a knowledgeable friend who loves books.`;
+
+const DISCOVER_SYSTEM_PROMPT_BASE = `You are an expert literary advisor on GyCoding Books, a social reading platform.
+Your role is to analyse a reader's personal library and recommend NEW books or sagas they have NOT yet read, based on their demonstrated tastes.
+
+Rules:
+- NEVER recommend books that already appear in the user's library.
+- Infer the user's taste from their read books and ratings: favourite genres, authors, themes, writing styles, pacing, and tone.
+- Recommend 4 to 6 specific titles or sagas that match their taste, covering a mix of popular and hidden gems.
+- For each recommendation explain WHY it suits this reader, referencing specific books they have already enjoyed.
+- Include the author name and, if applicable, the series name.
+- Use **bold** for book titles, author names, and series names.
+- Be concise, warm, and enthusiastic — like a knowledgeable bookseller who knows you well.`;
+
+function buildSystemInstruction(base: string, language?: string): string {
+  const langLine =
+    language === 'es'
+      ? '- CRITICAL: Respond ALWAYS in Spanish (Español), regardless of the language of any user message. Write every word of your response in Spanish.'
+      : '- CRITICAL: Respond ALWAYS in English, regardless of the language of any user message. Write every word of your response in English.';
+  return base + '\n' + langLine;
+}
 
 function formatBookList(books: BookContext[]): string {
   if (books.length === 0) return '(no books recorded)';
@@ -87,19 +108,6 @@ ${libraryContext}`;
 Analyse my reading history and tastes, then recommend 3 to 5 books from ${targetUserName}'s library that I would genuinely love. For each recommendation, briefly explain why it fits my taste by referencing books I have already read.
 ${libraryContext}`;
 }
-
-const DISCOVER_SYSTEM_PROMPT = `You are an expert literary advisor on GyCoding Books, a social reading platform.
-Your role is to analyse a reader's personal library and recommend NEW books or sagas they have NOT yet read, based on their demonstrated tastes.
-
-Rules:
-- NEVER recommend books that already appear in the user's library.
-- Infer the user's taste from their read books and ratings: favourite genres, authors, themes, writing styles, pacing, and tone.
-- Recommend 4 to 6 specific titles or sagas that match their taste, covering a mix of popular and hidden gems.
-- For each recommendation explain WHY it suits this reader, referencing specific books they have already enjoyed.
-- Include the author name and, if applicable, the series name.
-- Always respond in the same language the user writes in.
-- Use **bold** for book titles, author names, and series names.
-- Be concise, warm, and enthusiastic — like a knowledgeable bookseller who knows you well.`;
 
 function buildDiscoverPrompt(request: DiscoverRequest): string {
   const { currentUserBooks, userQuestion } = request;
@@ -158,7 +166,10 @@ export async function* streamDiscoverRecommendations(
     model: GEMINI_MODEL,
     contents,
     config: {
-      systemInstruction: DISCOVER_SYSTEM_PROMPT,
+      systemInstruction: buildSystemInstruction(
+        DISCOVER_SYSTEM_PROMPT_BASE,
+        request.language
+      ),
       temperature: 0.85,
       maxOutputTokens: 4096,
       thinkingConfig: { thinkingBudget: 0 },
@@ -188,7 +199,10 @@ export async function* streamBookRecommendations(
     model: GEMINI_MODEL,
     contents,
     config: {
-      systemInstruction: SYSTEM_PROMPT,
+      systemInstruction: buildSystemInstruction(
+        SYSTEM_PROMPT_BASE,
+        request.language
+      ),
       temperature: 0.8,
       maxOutputTokens: 4096,
       thinkingConfig: { thinkingBudget: 0 },

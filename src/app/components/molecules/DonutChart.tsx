@@ -1,3 +1,6 @@
+'use client';
+
+import { useTranslation } from '@/hooks/useTranslation';
 import { lora } from '@/utils/fonts/fonts';
 import { Box, Typography } from '@mui/material';
 import { PieChart } from '@mui/x-charts/PieChart';
@@ -15,6 +18,7 @@ const STATUS_COLORS: Record<string, string> = {
 const FALLBACK_COLORS = ['#a855f7', '#c084fc', '#818cf8', '#e879f9'];
 
 export default function DonutChart({ bookStatus }: DonutChartProps) {
+  const { t } = useTranslation();
   // Guard clause: si no hay datos o está vacío
   if (!bookStatus || Object.keys(bookStatus).length === 0) {
     return (
@@ -35,7 +39,7 @@ export default function DonutChart({ bookStatus }: DonutChartProps) {
             fontSize: 16,
           }}
         >
-          No book status data available
+          {t('stats.donut.noData')}
         </Typography>
       </Box>
     );
@@ -45,13 +49,11 @@ export default function DonutChart({ bookStatus }: DonutChartProps) {
   const formatStatusLabel = (status: string): string => {
     switch (status) {
       case 'READ':
-        return 'Read';
+        return t('stats.status.read');
       case 'READING':
-        return 'Reading';
+        return t('stats.status.reading');
       case 'WANT_TO_READ':
-        return 'Want to read';
-      case 'READ':
-        return 'Read';
+        return t('stats.status.wantToRead');
       default:
         return status;
     }
@@ -82,7 +84,7 @@ export default function DonutChart({ bookStatus }: DonutChartProps) {
             fontSize: 16,
           }}
         >
-          No books with valid status
+          {t('stats.donut.noValidStatus')}
         </Typography>
       </Box>
     );

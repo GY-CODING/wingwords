@@ -26,6 +26,7 @@ import {
 } from '@/hooks/useBookRecommendations';
 import { User } from '@/domain/user.model';
 import { lora } from '@/utils/fonts/fonts';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 
 interface Props {
   currentUserId: string;
@@ -230,6 +231,7 @@ export default function AIRecommendationsPanel({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const hasLoadedRef = useRef(false);
 
+  const { t, locale } = useTranslation();
   const isDiscover = mode === 'discover';
   const headerUser = isDiscover ? currentUser : (targetUser ?? currentUser);
 
@@ -255,9 +257,14 @@ export default function AIRecommendationsPanel({
     if (!hasLoadedRef.current) {
       hasLoadedRef.current = true;
       if (isDiscover) {
-        getDiscoverRecommendations(currentUserId);
+        getDiscoverRecommendations(currentUserId, locale);
       } else {
-        getRecommendations(targetUserId!, currentUserId, targetUser!.username);
+        getRecommendations(
+          targetUserId!,
+          currentUserId,
+          targetUser!.username,
+          locale
+        );
       }
     }
   };
@@ -269,9 +276,15 @@ export default function AIRecommendationsPanel({
     if (!q || isLoading) return;
     setInputValue('');
     if (isDiscover) {
-      await askDiscoverQuestion(q, currentUserId);
+      await askDiscoverQuestion(q, currentUserId, locale);
     } else {
-      await askQuestion(q, targetUserId!, currentUserId, targetUser!.username);
+      await askQuestion(
+        q,
+        targetUserId!,
+        currentUserId,
+        targetUser!.username,
+        locale
+      );
     }
   };
 
@@ -283,12 +296,14 @@ export default function AIRecommendationsPanel({
   };
 
   const tooltipLabel = isDiscover
-    ? 'Discover new books with AI'
-    : 'AI Book Recommendations';
-  const headerLabel = isDiscover ? 'Book Discoverer' : 'AI Book Advisor';
+    ? t('ai.panel.tooltip.discover')
+    : t('ai.panel.tooltip.recommend');
+  const headerLabel = isDiscover
+    ? t('ai.panel.header.discoverer')
+    : t('ai.panel.header.advisor');
   const inputPlaceholder = isDiscover
-    ? 'Ask for a genre, mood, or author style…'
-    : 'Ask about a book, genre, or mood…';
+    ? t('ai.panel.placeholder.discover')
+    : t('ai.panel.placeholder.recommend');
 
   return (
     <>
@@ -437,7 +452,7 @@ export default function AIRecommendationsPanel({
                   fontFamily: lora.style.fontFamily,
                 }}
               >
-                Ready when you are…
+                {t('ai.panel.ready')}
               </Typography>
             </Box>
           )}
@@ -480,7 +495,7 @@ export default function AIRecommendationsPanel({
                   '&:disabled': { opacity: 0.5, cursor: 'not-allowed' },
                 }}
               >
-                Try again
+                {t('ai.panel.tryAgain')}
               </Box>
             </Box>
           )}

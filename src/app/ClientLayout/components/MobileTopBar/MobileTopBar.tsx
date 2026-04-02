@@ -1,6 +1,7 @@
 'use client';
 
 import { UserAvatar } from '@/app/components/atoms/UserAvatar';
+import { LocaleSwitcher } from '@/app/components/atoms/LocaleSwitcher/LocaleSwitcher';
 import { User } from '@/domain/user.model';
 import { lora } from '@/utils/fonts/fonts';
 import InboxRoundedIcon from '@mui/icons-material/InboxRounded';
@@ -122,6 +123,7 @@ export const MobileTopBar = React.memo<MobileTopBarProps>(
           )}
 
           {/* User Avatar */}
+          <LocaleSwitcher />
           {isLoading ? (
             <Skeleton
               variant="circular"

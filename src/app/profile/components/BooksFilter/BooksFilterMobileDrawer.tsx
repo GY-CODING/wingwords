@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from '@/hooks/useTranslation';
 import {
   Drawer,
   Box,
@@ -72,6 +73,7 @@ export const BooksFilterMobileDrawer: React.FC<
   onViewChange,
   isOwnProfile = true,
 }) => {
+  const { t } = useTranslation();
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
@@ -83,13 +85,13 @@ export const BooksFilterMobileDrawer: React.FC<
     };
   }, [open]);
   const orderOptions = [
-    { label: 'Author', value: 'author' },
-    { label: 'Rating', value: 'rating' },
-    { label: 'Series', value: 'series' },
-    { label: 'Title', value: 'title' },
+    { label: t('profile.filter.author'), value: 'author' },
+    { label: t('profile.filter.rating'), value: 'rating' },
+    { label: t('profile.filter.series'), value: 'series' },
+    { label: t('profile.filter.order.title'), value: 'title' },
   ];
   const ratingOptions = [
-    { label: 'All', value: 0 },
+    { label: t('profile.filter.all'), value: 0 },
     ...[1, 2, 3, 4, 5].map((star) => ({
       label: `${'★'.repeat(star)} ${star}${star < 5 ? '+' : ''}`,
       value: star,
@@ -148,7 +150,7 @@ export const BooksFilterMobileDrawer: React.FC<
               letterSpacing: '.05rem',
             }}
           >
-            Filters
+            {t('profile.filter.title')}
           </Typography>
 
           {/* BooksViewToggle - solo si view y onViewChange están presentes */}
@@ -164,7 +166,7 @@ export const BooksFilterMobileDrawer: React.FC<
           <TextField
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search books..."
+            placeholder={t('profile.filter.search')}
             variant="outlined"
             size="small"
             sx={{
@@ -266,7 +268,7 @@ export const BooksFilterMobileDrawer: React.FC<
                   fontFamily: lora.style.fontFamily,
                 }}
               >
-                Status
+                {t('profile.filter.status')}
               </MenuItem>
               {statusOptions.map((opt) => (
                 <MenuItem
@@ -312,7 +314,7 @@ export const BooksFilterMobileDrawer: React.FC<
                   fontFamily: lora.style.fontFamily,
                 }}
               >
-                Author
+                {t('profile.filter.author')}
               </MenuItem>
               {authorOptions.map((opt) => (
                 <MenuItem
@@ -358,7 +360,7 @@ export const BooksFilterMobileDrawer: React.FC<
                   fontFamily: lora.style.fontFamily,
                 }}
               >
-                Series
+                {t('profile.filter.series')}
               </MenuItem>
               {seriesOptions.map((opt) => (
                 <MenuItem
@@ -383,7 +385,7 @@ export const BooksFilterMobileDrawer: React.FC<
                 fontFamily: lora.style.fontFamily,
               }}
             >
-              Order by
+              {t('profile.filter.orderBy')}
             </Typography>
             <FormControl sx={{ minWidth: 110 }}>
               <Select

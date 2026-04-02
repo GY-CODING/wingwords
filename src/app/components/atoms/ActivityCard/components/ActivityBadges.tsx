@@ -6,6 +6,7 @@ import {
   extractRating,
   extractReview,
 } from '@/domain/activity.model';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { BarChart, Comment, Star } from '@mui/icons-material';
 import { Box, Chip } from '@mui/material';
 import React from 'react';
@@ -15,6 +16,7 @@ interface ActivityBadgesProps {
 }
 
 export const ActivityBadges: React.FC<ActivityBadgesProps> = ({ activity }) => {
+  const { t } = useTranslation();
   const progress = extractProgress(activity.message);
   const rating = extractRating(activity.message);
   const review = extractReview(activity.message);
@@ -46,7 +48,7 @@ export const ActivityBadges: React.FC<ActivityBadgesProps> = ({ activity }) => {
       {rating !== null && (
         <Chip
           icon={<Star sx={{ fontSize: 16 }} />}
-          label={`${rating} stars`}
+          label={`${rating} ${t('activity.badge.stars')}`}
           size="small"
           sx={{
             backgroundColor: 'rgba(147, 51, 234, 0.1)',
@@ -62,7 +64,7 @@ export const ActivityBadges: React.FC<ActivityBadgesProps> = ({ activity }) => {
       {review !== null && (
         <Chip
           icon={<Comment sx={{ fontSize: 16 }} />}
-          label="Review"
+          label={t('activity.badge.review')}
           size="small"
           sx={{
             backgroundColor: 'rgba(147, 51, 234, 0.1)',

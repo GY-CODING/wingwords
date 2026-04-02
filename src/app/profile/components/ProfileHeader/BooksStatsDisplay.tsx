@@ -1,3 +1,4 @@
+import { useTranslation } from '@/hooks/useTranslation';
 import { UserProfileBook } from '@/domain/user.model';
 import { lora } from '@/utils/fonts/fonts';
 import { EBookStatus } from '@gycoding/nebula';
@@ -16,6 +17,7 @@ export const BooksStatsDisplay: React.FC<BooksStatsDisplayProps> = ({
   books,
   compact = false,
 }) => {
+  const { t } = useTranslation();
   const readCount = books.filter(
     (b) => b.userData?.status === EBookStatus.READ
   ).length;
@@ -88,7 +90,7 @@ export const BooksStatsDisplay: React.FC<BooksStatsDisplayProps> = ({
             fontFamily: lora.style.fontFamily,
           }}
         >
-          Read:
+          {t('profile.stats.read')}:
         </Typography>
         <Typography
           sx={{
@@ -113,7 +115,7 @@ export const BooksStatsDisplay: React.FC<BooksStatsDisplayProps> = ({
             fontFamily: lora.style.fontFamily,
           }}
         >
-          Reading:
+          {t('profile.stats.reading')}:
         </Typography>
         <Typography
           sx={{
@@ -138,7 +140,7 @@ export const BooksStatsDisplay: React.FC<BooksStatsDisplayProps> = ({
             fontFamily: lora.style.fontFamily,
           }}
         >
-          Want to Read:
+          {t('profile.stats.wantToRead')}:
         </Typography>
         <Typography
           sx={{

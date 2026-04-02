@@ -18,6 +18,7 @@ import { useGoodreadsImport } from './hooks/useGoodreadsImport';
 import { useHardcoverCsvImport } from './hooks/useHardcoverCsvImport';
 import { useGoodreadsImportSave } from './hooks/useGoodreadsImportSave';
 import { detectCsvFormat } from '@/utils/hardcoverParser';
+import { useTranslation } from '@/hooks/useTranslation';
 
 function ProfilePageContent() {
   const user = useSelector(
@@ -28,6 +29,7 @@ function ProfilePageContent() {
     basePath: '/profile',
   });
   const { count: friendsCount, isLoading: isLoadingFriends } = useFriends();
+  const { t } = useTranslation();
   const biography = useProfileBiography(user);
 
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -100,13 +102,13 @@ function ProfilePageContent() {
       <AnimatedAlert
         open={biography.isUpdatedBiography}
         onClose={() => biography.setIsUpdatedBiography(false)}
-        message="Biography updated successfully"
+        message={t('profile.biography.updateSuccess')}
         severity={ESeverity.SUCCESS}
       />
       <AnimatedAlert
         open={biography.isErrorBiography}
         onClose={() => biography.setIsErrorBiography(false)}
-        message="Error updating biography"
+        message={t('profile.biography.updateError')}
         severity={ESeverity.ERROR}
       />
       <AIRecommendationsPanel

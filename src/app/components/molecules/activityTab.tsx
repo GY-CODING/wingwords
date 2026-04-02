@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/display-name */
 import {
   Activity,
   ActivityType,
-  cleanMessage,
   extractProgress,
   extractRating,
   getActivityColor,
@@ -13,6 +13,8 @@ import {
 import type HardcoverBook from '@/domain/HardcoverBook';
 import { useHardcoverBatch } from '@/hooks/books/useHardcoverBatch';
 import { useActivities } from '@/hooks/useActivities';
+import { useTranslation } from '@/hooks/useTranslation';
+import { translateActivityMessage } from '@/hooks/activities/utils/activityHelpers';
 import { lora } from '@/utils/fonts/fonts';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import BookIcon from '@mui/icons-material/Book';
@@ -186,7 +188,8 @@ const ActivityItem: React.FC<{
     const activityColor = getActivityColor(activityType);
     const progress = extractProgress(activity.message);
     const rating = extractRating(activity.message);
-    const displayMessage = cleanMessage(activity.message);
+    const { t } = useTranslation();
+    const displayMessage = translateActivityMessage(activity.message, t);
 
     const router = useRouter();
     const [likes, setLikes] = useState<string[]>(activity.likes ?? []);
@@ -433,58 +436,62 @@ const SkeletonActivityItem: React.FC = React.memo(() => (
 ));
 
 // Empty State Component
-const EmptyState: React.FC = React.memo(() => (
-  <Box
-    sx={{
-      mt: 6,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: 2,
-    }}
-  >
+const EmptyState: React.FC = React.memo(() => {
+  const { t } = useTranslation();
+  return (
     <Box
       sx={{
-        fontSize: 80,
-        background: 'linear-gradient(135deg, #9333ea, #c084fc)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text',
+        mt: 6,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 2,
       }}
     >
-      🕐
-    </Box>
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-      <Typography
-        variant="h5"
+      <Box
         sx={{
-          color: '#fff',
-          fontFamily: lora.style.fontFamily,
-          fontWeight: 700,
+          fontSize: 80,
+          background: 'linear-gradient(135deg, #9333ea, #c084fc)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
         }}
       >
-        No Activity Yet
-      </Typography>
-      <Typography
-        variant="body1"
-        sx={{
-          color: '#AAAAAA',
-          fontFamily: lora.style.fontFamily,
-        }}
-      >
-        Your reading activities will appear here
-      </Typography>
+        🕐
+      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <Typography
+          variant="h5"
+          sx={{
+            color: '#fff',
+            fontFamily: lora.style.fontFamily,
+            fontWeight: 700,
+          }}
+        >
+          {t('activity.empty.title')}
+        </Typography>
+        <Typography
+          variant="body1"
+          sx={{
+            color: '#AAAAAA',
+            fontFamily: lora.style.fontFamily,
+          }}
+        >
+          {t('activity.empty.subtitle')}
+        </Typography>
+      </Box>
     </Box>
-  </Box>
-));
-
+  );
+});
 // Main Component
 const ActivityTab: React.FC<ActivityTabProps> = ({ id }) => {
   const { user } = useGyCodingUser();
   const { toggleLike } = useActivityLike();
   const { data: activities, isLoading } = useActivities(id);
   const { data: books } = useHardcoverBatch(
-    (activities?.map((a) => a.bookId).filter(Boolean) as string[]) || []
+    (activities
+      ?.map((a: { bookId: any }) => a.bookId)
+      .filter(Boolean) as string[]) || []
   );
   const [loadedCount, setLoadedCount] = useState(0);
 

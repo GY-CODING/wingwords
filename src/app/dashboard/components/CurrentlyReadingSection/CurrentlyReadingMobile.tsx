@@ -17,6 +17,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 
 const MotionBox = motion(Box);
 
@@ -83,6 +84,7 @@ const CurrentlyReadingMobileSkeleton: React.FC = () => (
 
 export const CurrentlyReadingMobile = React.memo<CurrentlyReadingMobileProps>(
   ({ books, isLoading }) => {
+    const { t } = useTranslation();
     const router = useRouter();
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -111,7 +113,7 @@ export const CurrentlyReadingMobile = React.memo<CurrentlyReadingMobileProps>(
               color: 'rgba(255, 255, 255, 0.4)',
             }}
           >
-            No book in progress
+            {t('dashboard.currentlyReading.emptyMobile')}
           </Typography>
         </Box>
       );

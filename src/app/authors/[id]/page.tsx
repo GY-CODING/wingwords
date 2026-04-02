@@ -1,6 +1,7 @@
 'use client';
 
 import { useAuthor } from '@/hooks/useAuthor';
+import { useTranslation } from '@/hooks/useTranslation';
 import { lora } from '@/utils/fonts/fonts';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import CakeIcon from '@mui/icons-material/Cake';
@@ -227,6 +228,7 @@ export default function AuthorPage() {
   const params = useParams();
   const id = parseInt(params.id as string, 10);
   const { author, isLoading, notFound } = useAuthor(id);
+  const { t } = useTranslation();
   const [page, setPage] = useState(0);
   const PAGE_SIZE = 20;
   if (isLoading) {
@@ -261,7 +263,7 @@ export default function AuthorPage() {
             fontSize: '1.2rem',
           }}
         >
-          Author not found.
+          {t('author.notFound')}
         </Typography>
       </Box>
     );
@@ -390,7 +392,7 @@ export default function AuthorPage() {
                   textTransform: 'uppercase',
                 }}
               >
-                Author
+                {t('author.badge')}
               </Typography>
             </MotionBox>
 
@@ -435,8 +437,8 @@ export default function AuthorPage() {
                   }}
                 >
                   {author.booksCount > 0
-                    ? `${author.booksCount} books`
-                    : `${author.books.length} books`}
+                    ? t('author.books', { count: author.booksCount })
+                    : t('author.books', { count: author.books.length })}
                 </Typography>
               </Box>
               {author.bornYear && (
@@ -451,7 +453,7 @@ export default function AuthorPage() {
                       fontSize: '0.85rem',
                     }}
                   >
-                    b. {author.bornYear}
+                    {t('author.bornYear', { year: author.bornYear })}
                   </Typography>
                 </Box>
               )}
@@ -488,7 +490,7 @@ export default function AuthorPage() {
                 color: 'rgba(255,255,255,0.85)',
               }}
             >
-              Books
+              {t('author.booksSection')}
             </Typography>
             {author.books.length > 0 && (
               <Box
@@ -522,7 +524,7 @@ export default function AuthorPage() {
                 fontSize: '0.95rem',
               }}
             >
-              No books found for this author.
+              {t('author.noBooksFound')}
             </Typography>
           ) : (
             (() => {

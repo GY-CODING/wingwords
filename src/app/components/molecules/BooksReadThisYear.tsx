@@ -6,6 +6,7 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import { Box, Chip, Typography } from '@mui/material';
 import { BarChart } from '@mui/x-charts/BarChart';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface BooksReadThisYearProps {
   booksReadThisYear: number;
@@ -18,6 +19,7 @@ const BooksReadThisYear: React.FC<BooksReadThisYearProps> = ({
   booksReadLastYear,
   fontFamily,
 }) => {
+  const { t } = useTranslation();
   const [displayCount, setDisplayCount] = useState(0);
   const currentYear = new Date().getFullYear();
   const lastYear = currentYear - 1;
@@ -52,10 +54,10 @@ const BooksReadThisYear: React.FC<BooksReadThisYearProps> = ({
     diff > 0 ? '#34d399' : diff < 0 ? '#f87171' : 'rgba(255,255,255,0.5)';
   const trendLabel =
     diff > 0
-      ? `+${diff} vs ${lastYear}`
+      ? t('stats.booksYear.trendUp', { diff, year: lastYear })
       : diff < 0
-        ? `${diff} vs ${lastYear}`
-        : `Same as ${lastYear}`;
+        ? t('stats.booksYear.trendDown', { diff, year: lastYear })
+        : t('stats.booksYear.trendSame', { year: lastYear });
 
   const barData = [
     {
@@ -99,7 +101,7 @@ const BooksReadThisYear: React.FC<BooksReadThisYearProps> = ({
             mt: 0.5,
           }}
         >
-          books read in {currentYear}
+          {t('stats.booksYear.read', { year: currentYear })}
         </Typography>
       </Box>
 

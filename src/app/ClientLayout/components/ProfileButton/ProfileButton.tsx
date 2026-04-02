@@ -1,5 +1,6 @@
 import { CustomButton } from '@/app/components/atoms/CustomButton/customButton';
 import Profile from '@/app/components/organisms/Profile';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { User } from '@/domain/user.model';
 import { lora } from '@/utils/fonts/fonts';
 import { Box, Skeleton } from '@mui/material';
@@ -15,6 +16,7 @@ interface ProfileButtonProps {
  * según el estado de autenticación
  */
 export const ProfileButton = ({ user, isLoading }: ProfileButtonProps) => {
+  const { t } = useTranslation();
   if (isLoading) {
     return (
       <Box
@@ -61,7 +63,7 @@ export const ProfileButton = ({ user, isLoading }: ProfileButtonProps) => {
           },
         }}
       >
-        Login
+        {t('nav.login')}
       </CustomButton>
     </a>
   );

@@ -1,4 +1,5 @@
 import { lora } from '@/utils/fonts/fonts';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { Box, Typography } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -11,8 +12,14 @@ interface TabNavigationProps {
 }
 
 const TABS = [
-  { label: 'Discover', icon: <ExploreIcon sx={{ fontSize: 18 }} /> },
-  { label: 'Friends', icon: <PeopleIcon sx={{ fontSize: 18 }} /> },
+  {
+    labelKey: 'community.tab.discover',
+    icon: <ExploreIcon sx={{ fontSize: 18 }} />,
+  },
+  {
+    labelKey: 'community.tab.friends',
+    icon: <PeopleIcon sx={{ fontSize: 18 }} />,
+  },
 ];
 
 export function TabNavigation({
@@ -20,6 +27,7 @@ export function TabNavigation({
   friendsCount,
   onTabChange,
 }: TabNavigationProps) {
+  const { t } = useTranslation();
   return (
     <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
       <Box
@@ -32,12 +40,12 @@ export function TabNavigation({
           gap: '4px',
         }}
       >
-        {TABS.map(({ label, icon }, index) => {
+        {TABS.map(({ labelKey, icon }, index) => {
           const isActive = tab === index;
           const isFriendsTab = index === 1;
           return (
             <Box
-              key={label}
+              key={labelKey}
               onClick={() => onTabChange(index)}
               sx={{
                 display: 'flex',
@@ -81,7 +89,7 @@ export function TabNavigation({
                   letterSpacing: '0.01em',
                 }}
               >
-                {label}
+                {t(labelKey)}
               </Typography>
               {isFriendsTab &&
                 friendsCount !== undefined &&

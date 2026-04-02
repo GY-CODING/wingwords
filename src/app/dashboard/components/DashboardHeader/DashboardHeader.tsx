@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Avatar, Typography, Skeleton } from '@mui/material';
 import { motion } from 'framer-motion';
 import { lora } from '@/utils/fonts/fonts';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { User } from '@/domain/user.model';
 import WavingHandIcon from '@mui/icons-material/WavingHand';
 
@@ -16,14 +17,15 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   user,
   isLoading,
 }) => {
-  const [greeting, setGreeting] = useState('Hello');
+  const { t } = useTranslation();
+  const [greeting, setGreeting] = useState(t('dashboard.greeting.hello'));
 
   useEffect(() => {
     const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Good Morning');
-    else if (hour < 18) setGreeting('Good Afternoon');
-    else setGreeting('Good Evening');
-  }, []);
+    if (hour < 12) setGreeting(t('dashboard.greeting.morning'));
+    else if (hour < 18) setGreeting(t('dashboard.greeting.afternoon'));
+    else setGreeting(t('dashboard.greeting.evening'));
+  }, [t]);
 
   return (
     <motion.div

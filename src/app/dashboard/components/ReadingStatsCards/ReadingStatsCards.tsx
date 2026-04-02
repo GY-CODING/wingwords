@@ -8,6 +8,7 @@ import { Box, Paper, Skeleton, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import React, { useMemo } from 'react';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 
 interface ReadingStatsCardsProps {
   totalBooks: number;
@@ -68,6 +69,7 @@ const StatCardSkeleton: React.FC = () => (
  */
 export const ReadingStatsCards = React.memo<ReadingStatsCardsProps>(
   ({ totalBooks, booksRead, booksReadThisYear, displayYear, isLoading }) => {
+    const { t } = useTranslation();
     const router = useRouter();
     const currentYear = new Date().getFullYear();
     const yearToDisplay = displayYear || currentYear;
@@ -75,21 +77,21 @@ export const ReadingStatsCards = React.memo<ReadingStatsCardsProps>(
     const cards = useMemo(
       () => [
         {
-          title: 'Total Books',
+          title: t('dashboard.stats.totalBooks'),
           value: totalBooks,
           icon: MenuBookIcon,
           color: '#818cf8',
           onClick: () => router.push('/profile'),
         },
         {
-          title: 'Books Read',
+          title: t('dashboard.stats.booksRead'),
           value: booksRead,
           icon: CheckCircleIcon,
           color: '#6ee7b7',
           onClick: () => router.push('/profile?status=read'),
         },
         {
-          title: `Read in ${yearToDisplay}`,
+          title: `${t('dashboard.stats.readIn')} ${yearToDisplay}`,
           value: booksReadThisYear,
           icon: TrendingUpIcon,
           color: '#fbbf24',
@@ -117,7 +119,7 @@ export const ReadingStatsCards = React.memo<ReadingStatsCardsProps>(
             fontFamily: lora.style.fontFamily,
           }}
         >
-          Reading Stats
+          {t('dashboard.stats.title')}
         </Typography>
 
         {isLoading

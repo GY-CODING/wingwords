@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { lora } from '@/utils/fonts/fonts';
 
 import { useGyCodingUser } from '@/contexts/GyCodingUserContext';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { useUsersTab } from './hooks/useUsersTab';
 import { useUserSearch } from './hooks/useUserSearch';
 import { TabNavigation } from './components/TabNavigation/TabNavigation';
@@ -28,6 +29,7 @@ interface CommunityHeroProps {
 }
 
 function CommunityHero({ tab, friendsCount, onTabChange }: CommunityHeroProps) {
+  const { t } = useTranslation();
   return (
     <Box
       sx={{
@@ -63,7 +65,7 @@ function CommunityHero({ tab, friendsCount, onTabChange }: CommunityHeroProps) {
             textTransform: 'uppercase',
           }}
         >
-          Social Reading
+          {t('community.hero.eyebrow')}
         </Typography>
       </MotionBox>
 
@@ -89,7 +91,7 @@ function CommunityHero({ tab, friendsCount, onTabChange }: CommunityHeroProps) {
             paddingBottom: 2,
           }}
         >
-          Community
+          {t('community.hero.title')}
         </Typography>
         <Typography
           sx={{
@@ -100,7 +102,7 @@ function CommunityHero({ tab, friendsCount, onTabChange }: CommunityHeroProps) {
             letterSpacing: '0.02em',
           }}
         >
-          Discover new readers &amp; connect with friends
+          {t('community.hero.subtitle')}
         </Typography>
       </MotionBox>
 

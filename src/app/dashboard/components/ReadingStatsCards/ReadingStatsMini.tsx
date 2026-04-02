@@ -8,6 +8,7 @@ import { Box, Paper, Skeleton, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import React, { useMemo } from 'react';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 
 const MotionBox = motion(Box);
 
@@ -74,6 +75,7 @@ const StatMiniSkeleton: React.FC = () => (
  */
 export const ReadingStatsMini = React.memo<ReadingStatsMiniProps>(
   ({ totalBooks, booksRead, booksReadThisYear, displayYear, isLoading }) => {
+    const { t } = useTranslation();
     const router = useRouter();
     const currentYear = new Date().getFullYear();
     const yearToDisplay = displayYear || currentYear;
@@ -81,14 +83,14 @@ export const ReadingStatsMini = React.memo<ReadingStatsMiniProps>(
     const cards = useMemo(
       () => [
         {
-          label: 'Library',
+          label: t('dashboard.stats.library'),
           value: totalBooks,
           icon: MenuBookIcon,
           color: '#818cf8',
           onClick: () => router.push('/profile'),
         },
         {
-          label: 'Read',
+          label: t('dashboard.stats.read'),
           value: booksRead,
           icon: CheckCircleIcon,
           color: '#6ee7b7',

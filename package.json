@@ -25,7 +25,10 @@
     "test:e2e:production": "cypress run --config baseUrl=https://wingwords.gycoding.com",
     "prune": "ts-prune",
     "prune:report": "ts-prune --project tsconfig.json | tee unused-exports.txt",
-    "prune:strict": "ts-prune --error"
+    "prune:strict": "ts-prune --error",
+    "i18n:compile": "node scripts/compile-translations.cjs --no-ai",
+    "i18n:translate": "node scripts/compile-translations.cjs",
+    "i18n:check": "node scripts/check-translations.cjs"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.10.0",

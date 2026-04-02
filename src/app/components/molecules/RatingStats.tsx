@@ -1,4 +1,7 @@
+'use client';
+
 import React from 'react';
+import { useTranslation } from '@/hooks/useTranslation';
 import { SparkLineChart } from '@mui/x-charts/SparkLineChart';
 import { Box, Typography } from '@mui/material';
 import { Star } from '@mui/icons-material';
@@ -21,6 +24,7 @@ const WHOLE_LABELS = RATING_LEVELS.map((l) =>
 );
 
 const RatingStats: React.FC<RatingStatsProps> = ({ ratings, fontFamily }) => {
+  const { t } = useTranslation();
   // Guard clause
   if (!ratings || ratings.totalRatedBooks === 0) {
     return (
@@ -41,7 +45,7 @@ const RatingStats: React.FC<RatingStatsProps> = ({ ratings, fontFamily }) => {
             fontSize: 16,
           }}
         >
-          No ratings available yet
+          {t('stats.rating.noData')}
         </Typography>
       </Box>
     );
@@ -93,7 +97,7 @@ const RatingStats: React.FC<RatingStatsProps> = ({ ratings, fontFamily }) => {
             fontSize: '1.1rem',
           }}
         >
-          Average rating • {ratings.totalRatedBooks} books
+          {t('stats.rating.average', { count: ratings.totalRatedBooks })}
         </Typography>
       </Box>
 

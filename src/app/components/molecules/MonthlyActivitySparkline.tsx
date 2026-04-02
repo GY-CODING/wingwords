@@ -6,6 +6,7 @@ import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import { Box, Chip, Typography } from '@mui/material';
 import { SparkLineChart } from '@mui/x-charts/SparkLineChart';
 import React from 'react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const MONTHS = [
   'Jan',
@@ -42,6 +43,11 @@ const MonthlyActivitySparkline: React.FC<MonthlyActivitySparklineProps> = ({
   booksReadThisYear,
   fontFamily,
 }) => {
+  const { t, locale } = useTranslation();
+  // Build localised short month names (Jan/Ene etc.) for display text
+  const localizedMonths = Array.from({ length: 12 }, (_, i) =>
+    new Date(2024, i, 1).toLocaleString(locale, { month: 'short' })
+  );
   const currentMonth = new Date().getMonth();
   const activeData = monthlyBooksRead.slice(0, currentMonth + 1);
   const peakValue = activeData.length > 0 ? Math.max(...activeData) : 0;
@@ -72,7 +78,7 @@ const MonthlyActivitySparkline: React.FC<MonthlyActivitySparklineProps> = ({
             px: 2,
           }}
         >
-          Finish some books this year to see your monthly activity
+          {t('stats.monthly.noData')}
         </Typography>
       </Box>
     );
@@ -118,7 +124,7 @@ const MonthlyActivitySparkline: React.FC<MonthlyActivitySparklineProps> = ({
               fontSize: '0.75rem',
             }}
           >
-            Books this year
+            {t('stats.monthly.booksThisYear')}
           </Typography>
         </Box>
 
@@ -142,7 +148,9 @@ const MonthlyActivitySparkline: React.FC<MonthlyActivitySparklineProps> = ({
                 fontSize: '0.75rem',
               }}
             >
-              Best in {MONTHS[peakMonthIndex]}
+              {t('stats.monthly.bestIn', {
+                month: localizedMonths[peakMonthIndex],
+              })}
             </Typography>
           </Box>
         )}
@@ -167,7 +175,7 @@ const MonthlyActivitySparkline: React.FC<MonthlyActivitySparklineProps> = ({
                 fontSize: '0.75rem',
               }}
             >
-              Month streak
+              {t('stats.monthly.streak')}
             </Typography>
           </Box>
         )}
@@ -235,7 +243,10 @@ const MonthlyActivitySparkline: React.FC<MonthlyActivitySparklineProps> = ({
         {peakValue > 0 && peakMonthIndex >= 0 && (
           <Chip
             icon={<AutoStoriesIcon sx={{ fontSize: 12 }} />}
-            label={`Peak: ${MONTHS[peakMonthIndex]} — ${peakValue} book${peakValue !== 1 ? 's' : ''}`}
+            label={t('stats.monthly.peakChip', {
+              month: localizedMonths[peakMonthIndex],
+              count: peakValue,
+            })}
             size="small"
             sx={{
               backgroundColor: 'rgba(168,85,247,0.12)',
@@ -250,7 +261,7 @@ const MonthlyActivitySparkline: React.FC<MonthlyActivitySparklineProps> = ({
         {streak > 1 && (
           <Chip
             icon={<LocalFireDepartmentIcon sx={{ fontSize: 12 }} />}
-            label={`${streak}-month reading streak`}
+            label={t('stats.monthly.streakChip', { count: streak })}
             size="small"
             sx={{
               backgroundColor: 'rgba(245,158,11,0.12)',

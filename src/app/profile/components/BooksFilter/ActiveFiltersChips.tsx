@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Box, Chip, Button } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
@@ -25,6 +26,7 @@ export const ActiveFiltersChips: React.FC<ActiveFiltersChipsProps> = ({
   onRemove,
   onClearAll,
 }) => {
+  const { t } = useTranslation();
   if (activeFilters.length === 0) return null;
 
   return (
@@ -113,7 +115,7 @@ export const ActiveFiltersChips: React.FC<ActiveFiltersChipsProps> = ({
             },
           }}
         >
-          Clear All
+          {t('profile.filter.clearAll')}
         </Button>
       )}
     </Box>

@@ -14,18 +14,24 @@ interface UseBookRecommendationsReturn {
   getRecommendations: (
     targetUserId: string,
     currentUserId: string,
-    targetUserName: string
+    targetUserName: string,
+    language?: string
   ) => Promise<void>;
-  getDiscoverRecommendations: (currentUserId: string) => Promise<void>;
+  getDiscoverRecommendations: (
+    currentUserId: string,
+    language?: string
+  ) => Promise<void>;
   askQuestion: (
     question: string,
     targetUserId: string,
     currentUserId: string,
-    targetUserName: string
+    targetUserName: string,
+    language?: string
   ) => Promise<void>;
   askDiscoverQuestion: (
     question: string,
-    currentUserId: string
+    currentUserId: string,
+    language?: string
   ) => Promise<void>;
   retry: () => Promise<void>;
   clearMessages: () => void;
@@ -162,9 +168,10 @@ export function useBookRecommendations(): UseBookRecommendationsReturn {
     async (
       targetUserId: string,
       currentUserId: string,
-      targetUserName: string
+      targetUserName: string,
+      language?: string
     ) => {
-      const cacheKey = `recommend:${currentUserId}:${targetUserId}`;
+      const cacheKey = `recommend:${currentUserId}:${targetUserId}:${language ?? 'en'}`;
       const cached = getCached(cacheKey);
       if (cached) {
         setMessagesSync(cached);
@@ -176,6 +183,7 @@ export function useBookRecommendations(): UseBookRecommendationsReturn {
         currentUserId,
         targetUserName,
         mode: 'recommend',
+        language,
       };
       lastInitialBodyRef.current = body;
       setMessagesSync([]);
@@ -189,15 +197,19 @@ export function useBookRecommendations(): UseBookRecommendationsReturn {
   );
 
   const getDiscoverRecommendations = useCallback(
-    async (currentUserId: string) => {
-      const cacheKey = `discover:${currentUserId}`;
+    async (currentUserId: string, language?: string) => {
+      const cacheKey = `discover:${currentUserId}:${language ?? 'en'}`;
       const cached = getCached(cacheKey);
       if (cached) {
         setMessagesSync(cached);
         return;
       }
 
-      const body: Record<string, unknown> = { currentUserId, mode: 'discover' };
+      const body: Record<string, unknown> = {
+        currentUserId,
+        mode: 'discover',
+        language,
+      };
       lastInitialBodyRef.current = body;
       setMessagesSync([]);
       await streamResponse(body);
@@ -214,7 +226,8 @@ export function useBookRecommendations(): UseBookRecommendationsReturn {
       question: string,
       targetUserId: string,
       currentUserId: string,
-      targetUserName: string
+      targetUserName: string,
+      language?: string
     ) => {
       const history = messagesRef.current.slice(-MAX_HISTORY).map((m) => ({
         role: m.role === 'assistant' ? 'model' : 'user',
@@ -228,6 +241,7 @@ export function useBookRecommendations(): UseBookRecommendationsReturn {
           question,
           mode: 'recommend',
           history,
+          language,
         },
         question
       );
@@ -236,13 +250,13 @@ export function useBookRecommendations(): UseBookRecommendationsReturn {
   );
 
   const askDiscoverQuestion = useCallback(
-    async (question: string, currentUserId: string) => {
+    async (question: string, currentUserId: string, language?: string) => {
       const history = messagesRef.current.slice(-MAX_HISTORY).map((m) => ({
         role: m.role === 'assistant' ? 'model' : 'user',
         text: m.content,
       })) as { role: 'user' | 'model'; text: string }[];
       await streamResponse(
-        { currentUserId, question, mode: 'discover', history },
+        { currentUserId, question, mode: 'discover', history, language },
         question
       );
     },
