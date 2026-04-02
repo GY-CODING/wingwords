@@ -1,3 +1,4 @@
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { User } from '@/domain/user.model';
 import { lora } from '@/utils/fonts/fonts';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -10,6 +11,7 @@ interface ProfileProps {
 }
 
 export default function Profile({ user }: ProfileProps): JSX.Element {
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef<HTMLDivElement>(null);
 
@@ -189,7 +191,7 @@ export default function Profile({ user }: ProfileProps): JSX.Element {
                             color: 'rgba(255,255,255,0.75)',
                           }}
                         >
-                          Profile
+                          {t('nav.profile')}
                         </Box>
                       </Box>
                     </Link>
@@ -234,7 +236,7 @@ export default function Profile({ user }: ProfileProps): JSX.Element {
                             color: 'rgba(255, 100, 100, 0.8)',
                           }}
                         >
-                          Logout
+                          {t('nav.logout')}
                         </Box>
                       </Box>
                     </a>

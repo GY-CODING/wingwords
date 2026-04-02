@@ -1,4 +1,5 @@
 'use client';
+import { useTranslation } from '@/hooks/useTranslation';
 import { lora } from '@/utils/fonts/fonts';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
@@ -35,6 +36,7 @@ export const BiographySection: React.FC<BiographySectionProps> = ({
 }) => {
   const isEditActive = canEdit && isEditing;
   const canStartEdit = canEdit && !!onEdit;
+  const { t } = useTranslation();
 
   return (
     <Box
@@ -60,7 +62,7 @@ export const BiographySection: React.FC<BiographySectionProps> = ({
               maxRows={8}
               value={biography}
               onChange={(e) => onChange(e.target.value)}
-              placeholder="Write your biography here…"
+              placeholder={t('profile.biography.placeholder')}
               fullWidth
               inputProps={{ maxLength: MAX_LENGTH }}
               onKeyDown={(e) => {
@@ -121,7 +123,10 @@ export const BiographySection: React.FC<BiographySectionProps> = ({
               >
                 {biography.length}/{MAX_LENGTH}
               </Typography>
-              <Tooltip title="Cancel (Esc)" placement="top">
+              <Tooltip
+                title={t('profile.biography.cancelTooltip')}
+                placement="top"
+              >
                 <IconButton
                   onClick={onCancel}
                   disabled={isLoading}
@@ -140,7 +145,10 @@ export const BiographySection: React.FC<BiographySectionProps> = ({
                   <CloseIcon sx={{ fontSize: 15 }} />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Save (Ctrl+Enter)" placement="top">
+              <Tooltip
+                title={t('profile.biography.saveTooltip')}
+                placement="top"
+              >
                 <IconButton
                   onMouseDown={(e) => {
                     e.preventDefault();

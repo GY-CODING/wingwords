@@ -1,4 +1,5 @@
 'use client';
+import { useTranslation } from '@/hooks/useTranslation';
 import { lora } from '@/utils/fonts/fonts';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import BarChartIcon from '@mui/icons-material/BarChart';
@@ -38,6 +39,7 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
   basePath = '/profile',
 }) => {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const handleTabClick = (tabId: number) => {
     if (tabId === 0) {
@@ -52,7 +54,7 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
   const navigationItems: NavigationItem[] = [
     {
       id: 0,
-      label: 'Library',
+      label: t('profile.nav.library'),
       icon: <AutoStoriesIcon sx={{ fontSize: 20 }} />,
       color: '#a855f7',
       gradient: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)',
@@ -60,7 +62,7 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
     },
     {
       id: 1,
-      label: 'Hall of Fame',
+      label: t('profile.nav.hallOfFame'),
       icon: <WorkspacePremiumIcon sx={{ fontSize: 20 }} />,
       color: '#f59e0b',
       gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
@@ -68,14 +70,14 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
     },
     {
       id: 2,
-      label: 'Stats',
+      label: t('profile.nav.stats'),
       icon: <BarChartIcon sx={{ fontSize: 20 }} />,
       color: '#60a5fa',
       gradient: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
     },
     {
       id: 3,
-      label: 'Activity',
+      label: t('profile.nav.activity'),
       icon: <TimelineIcon sx={{ fontSize: 20 }} />,
       color: '#34d399',
       gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',

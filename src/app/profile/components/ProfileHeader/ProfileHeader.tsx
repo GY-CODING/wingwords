@@ -25,6 +25,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { BiographySection } from '../BiographySection/BiographySection';
 import { BooksStatsDisplay } from './BooksStatsDisplay';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface ProfileHeaderProps {
   user: ProfileUser;
@@ -69,6 +70,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onAddFriend,
   onRemoveFriend,
 }) => {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
@@ -159,7 +161,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               ) : (
                 <Chip
                   icon={<PeopleIcon />}
-                  label={`${friendsCount} friends`}
+                  label={t('profile.header.friends', { count: friendsCount })}
                   size="small"
                   sx={{
                     background: 'rgba(147, 51, 234, 0.12)',
@@ -311,7 +313,9 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                         component="a"
                         href="/users/community?tab=1"
                         icon={<PeopleIcon />}
-                        label={`${friendsCount} friends`}
+                        label={t('profile.header.friends', {
+                          count: friendsCount,
+                        })}
                         size="small"
                         clickable
                         sx={{
@@ -427,28 +431,23 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     }}
                   >
                     <Tooltip
-                      title={isCopied ? 'Copied!' : 'Share Profile'}
+                      title={
+                        isCopied
+                          ? t('profile.tooltip.copied')
+                          : t('profile.tooltip.share')
+                      }
                       placement="top"
                     >
                       <IconButton
                         onClick={handleShareProfile}
                         sx={{
-                          background: isCopied
-                            ? 'rgba(52, 211, 153, 0.12)'
-                            : 'rgba(147, 51, 234, 0.12)',
+                          background: 'rgba(147, 51, 234, 0.12)',
                           backdropFilter: 'blur(10px)',
-                          border: isCopied
-                            ? '1px solid rgba(52, 211, 153, 0.4)'
-                            : '1px solid rgba(147, 51, 234, 0.4)',
-                          color: isCopied ? '#34d399' : '#e9d5ff',
-                          transition: 'all 0.2s ease',
+                          border: '1px solid rgba(147, 51, 234, 0.4)',
+                          color: '#e9d5ff',
                           '&:hover': {
-                            background: isCopied
-                              ? 'rgba(52, 211, 153, 0.18)'
-                              : 'rgba(147, 51, 234, 0.18)',
-                            border: isCopied
-                              ? '1px solid rgba(52, 211, 153, 0.6)'
-                              : '1px solid rgba(147, 51, 234, 0.6)',
+                            background: 'rgba(147, 51, 234, 0.25)',
+                            borderColor: '#a855f7',
                           },
                         }}
                       >
@@ -459,7 +458,10 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                         )}
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Edit Account" placement="top">
+                    <Tooltip
+                      title={t('profile.tooltip.editAccount')}
+                      placement="top"
+                    >
                       <IconButton
                         component="a"
                         href="https://accounts.gycoding.com"
@@ -478,7 +480,10 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                         <LaunchIcon fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Edit Profile" placement="top">
+                    <Tooltip
+                      title={t('profile.tooltip.editProfile')}
+                      placement="top"
+                    >
                       <IconButton
                         onClick={onEditProfile}
                         sx={{
@@ -496,7 +501,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                       </IconButton>
                     </Tooltip>
                     <Tooltip
-                      title="Import from Goodreads or Hardcover"
+                      title={t('profile.tooltip.import')}
                       placement="top"
                     >
                       <IconButton
@@ -515,7 +520,10 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                         <FileDownload fontSize="small" />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Log Out" placement="top">
+                    <Tooltip
+                      title={t('profile.tooltip.logOut')}
+                      placement="top"
+                    >
                       <IconButton
                         component="a"
                         href={'/auth/logout?federated=true'}
@@ -550,7 +558,11 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     }}
                   >
                     <Tooltip
-                      title={isCopied ? 'Copied!' : 'Share Profile'}
+                      title={
+                        isCopied
+                          ? t('profile.tooltip.copied')
+                          : t('profile.tooltip.share')
+                      }
                       placement="top"
                     >
                       <IconButton
@@ -582,7 +594,11 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                       </IconButton>
                     </Tooltip>
                     <Tooltip
-                      title={isFriend ? 'Remove friend' : 'Add friend'}
+                      title={
+                        isFriend
+                          ? t('profile.tooltip.removeFriend')
+                          : t('profile.tooltip.addFriend')
+                      }
                       placement="top"
                     >
                       <span>

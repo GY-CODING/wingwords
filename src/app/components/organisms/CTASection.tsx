@@ -1,7 +1,8 @@
 'use client';
 
 import { useAnimations } from '@/hooks/useAnimations';
-import { CTA_FEATURES } from '@/utils/constants/homepage.constants';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
+import { CTA_FEATURE_KEYS } from '@/utils/constants/homepage.constants';
 import { lora } from '@/utils/fonts/fonts';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -16,6 +17,7 @@ const MotionBox = motion(Box);
  * Anima a los usuarios a unirse a la comunidad
  */
 export const CTASection = () => {
+  const { t } = useTranslation();
   const { fadeIn, scaleIn } = useAnimations();
 
   return (
@@ -129,7 +131,7 @@ export const CTASection = () => {
               letterSpacing: '0.02rem',
             }}
           >
-            Connect with Fellow Book Lovers
+            {t('landing.cta.title')}
           </Typography>
         </MotionBox>
 
@@ -152,9 +154,7 @@ export const CTASection = () => {
               px: { xs: 0, md: 4 },
             }}
           >
-            Build meaningful connections with readers who share your literary
-            interests. Follow their activities, exchange recommendations, and
-            grow your reading community.
+            {t('landing.cta.description')}
           </Typography>
         </MotionBox>
 
@@ -173,11 +173,11 @@ export const CTASection = () => {
             mb: 4,
           }}
         >
-          {CTA_FEATURES.map((feature, index) => (
+          {CTA_FEATURE_KEYS.map((key, index) => (
             <Chip
               key={index}
               icon={<CheckCircleIcon sx={{ color: '#a855f7 !important' }} />}
-              label={feature}
+              label={t(key)}
               sx={{
                 backgroundColor: 'rgba(147, 51, 234, 0.15)',
                 border: '1px solid rgba(147, 51, 234, 0.3)',
@@ -226,7 +226,7 @@ export const CTASection = () => {
                 },
               }}
             >
-              Find Readers
+              {t('landing.cta.button')}
             </Button>
           </Link>
         </MotionBox>

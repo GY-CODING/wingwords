@@ -14,6 +14,7 @@ import BookRatingMenu from './BookRatingMenu';
 import { statusOptions } from './BookRatingOptions';
 import { useBookRatingState } from './hooks/useBookRatingState';
 import { BookRatingProps } from './types';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 export const BookRating = ({
   bookId,
   apiBook,
@@ -59,6 +60,7 @@ export const BookRating = ({
   const displayStatusOption = statusOptions.find(
     (opt) => opt.value === displayStatus
   );
+  const { t } = useTranslation();
 
   return (
     <Box
@@ -116,11 +118,13 @@ export const BookRating = ({
             },
           }}
         >
-          {displayStatusOption?.label || 'Want to read'}
+          {displayStatusOption
+            ? t(displayStatusOption.labelKey)
+            : t('book.rating.status.wantToRead')}
         </Button>
         {!user && !isUserLoading && (
           <Typography variant="caption" sx={{ color: '#666' }}>
-            Sign in to rate this book
+            {t('book.rating.signIn')}
           </Typography>
         )}
         {/* Desktop menu */}

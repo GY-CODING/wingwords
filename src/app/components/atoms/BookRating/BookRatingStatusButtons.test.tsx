@@ -15,21 +15,35 @@ jest.mock('@mui/material', () => ({
   ),
 }));
 
+// Mock i18n
+jest.mock('@/lib/i18n/I18nProvider', () => ({
+  useTranslation: () => ({
+    t: (key: string) =>
+      ({
+        'book.rating.status.wantToRead': 'Want to read',
+        'book.rating.status.reading': 'Reading',
+        'book.rating.status.read': 'Read',
+      })[key] ?? key,
+    locale: 'en',
+    setLocale: jest.fn(),
+  }),
+}));
+
 // Mock the BookRatingOptions to avoid icon import issues
 jest.mock('./BookRatingOptions', () => ({
   statusOptions: [
     {
-      label: 'Want to read',
+      labelKey: 'book.rating.status.wantToRead',
       value: 'WANT_TO_READ',
       icon: <span data-testid="bookmark-icon">BookmarkIcon</span>,
     },
     {
-      label: 'Reading',
+      labelKey: 'book.rating.status.reading',
       value: 'READING',
       icon: <span data-testid="eye-icon">RemoveRedEyeIcon</span>,
     },
     {
-      label: 'Read',
+      labelKey: 'book.rating.status.read',
       value: 'READ',
       icon: <span data-testid="check-icon">CheckCircleIcon</span>,
     },

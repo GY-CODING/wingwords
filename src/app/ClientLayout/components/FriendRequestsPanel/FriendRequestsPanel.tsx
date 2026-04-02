@@ -1,5 +1,6 @@
 import FriendRequest from '@/app/components/atoms/FriendRequest/FriendRequest';
 import { FriendRequestWithUser } from '@/domain/friend.model';
+import { useTranslation } from '@/hooks/useTranslation';
 import { lora } from '@/utils/fonts/fonts';
 import { ECommands } from '@/utils/constants/ECommands';
 import CloseIcon from '@mui/icons-material/Close';
@@ -33,6 +34,7 @@ export const FriendRequestsPanel = ({
   onClose,
   onManageRequest,
 }: FriendRequestsPanelProps) => {
+  const { t } = useTranslation();
   if (!isOpen) return null;
 
   return (
@@ -113,7 +115,7 @@ export const FriendRequestsPanel = ({
                   letterSpacing: '0.02rem',
                 }}
               >
-                Friend Requests
+                {t('friends.requests.title')}
               </Typography>
               {(friendRequestsWithUsers?.length ?? 0) > 0 && (
                 <Box
@@ -216,7 +218,7 @@ export const FriendRequestsPanel = ({
                     textAlign: 'center',
                   }}
                 >
-                  No pending friend requests
+                  {t('friends.requests.empty')}
                 </Typography>
               </Box>
             )}

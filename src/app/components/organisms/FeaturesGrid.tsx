@@ -7,6 +7,7 @@ import { lora } from '@/utils/fonts/fonts';
 import { FEATURES } from '@/utils/constants/homepage.constants';
 import { useAnimations } from '@/hooks/useAnimations';
 import { FeatureCard } from '@/app/components/atoms/FeatureCard';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 
 const MotionBox = motion(Box);
 
@@ -15,6 +16,7 @@ const MotionBox = motion(Box);
  * Muestra las 6 funcionalidades principales de la aplicación
  */
 export const FeaturesGrid = () => {
+  const { t } = useTranslation();
   const { containerStagger } = useAnimations();
 
   return (
@@ -46,7 +48,7 @@ export const FeaturesGrid = () => {
             letterSpacing: '0.02rem',
           }}
         >
-          Everything You Need to Read Better
+          {t('landing.features.section.title')}
         </Typography>
         <Typography
           variant="body1"
@@ -59,8 +61,7 @@ export const FeaturesGrid = () => {
             lineHeight: 1.7,
           }}
         >
-          All the features you need to track, discover, and share your reading
-          journey
+          {t('landing.features.section.subtitle')}
         </Typography>
       </MotionBox>
 
@@ -83,7 +84,15 @@ export const FeaturesGrid = () => {
         }}
       >
         {FEATURES.map((feature, index) => (
-          <FeatureCard key={index} feature={feature} />
+          <FeatureCard
+            key={index}
+            feature={{
+              icon: feature.icon,
+              color: feature.color,
+              title: t(feature.titleKey),
+              description: t(feature.descriptionKey),
+            }}
+          />
         ))}
       </MotionBox>
     </Box>

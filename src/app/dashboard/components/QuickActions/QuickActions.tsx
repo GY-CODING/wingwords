@@ -1,13 +1,14 @@
 'use client';
 
 import { lora } from '@/utils/fonts/fonts';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import PeopleIcon from '@mui/icons-material/People';
 import SearchIcon from '@mui/icons-material/Search';
 import TimelineIcon from '@mui/icons-material/Timeline';
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Paper, Tooltip, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -17,36 +18,37 @@ import React from 'react';
  * Memoizado porque no depende de datos que cambien frecuentemente.
  */
 export const QuickActions = React.memo(() => {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const actions = [
     {
-      title: 'Books',
+      title: t('dashboard.quickActions.books'),
       icon: SearchIcon,
       onClick: () => router.push('/books'),
     },
     {
-      title: 'My Stats',
+      title: t('dashboard.quickActions.myStats'),
       icon: BarChartIcon,
       onClick: () => router.push('/profile?tab=2'),
     },
     {
-      title: 'Calendar',
+      title: t('dashboard.quickActions.calendar'),
       icon: CalendarMonthIcon,
       onClick: () => router.push('/profile?view=calendar'),
     },
     {
-      title: 'Hall of Fame',
+      title: t('dashboard.quickActions.hallOfFame'),
       icon: EmojiEventsIcon,
       onClick: () => router.push('/profile?tab=1'),
     },
     {
-      title: 'Community',
+      title: t('dashboard.quickActions.community'),
       icon: PeopleIcon,
       onClick: () => router.push('/users/community'),
     },
     {
-      title: 'Timeline',
+      title: t('dashboard.quickActions.timeline'),
       icon: TimelineIcon,
       onClick: () => router.push('/profile?view=timeline'),
     },
@@ -63,7 +65,7 @@ export const QuickActions = React.memo(() => {
           fontFamily: lora.style.fontFamily,
         }}
       >
-        Quick Actions
+        {t('dashboard.quickActions.title')}
       </Typography>
 
       <Box
@@ -114,17 +116,21 @@ export const QuickActions = React.memo(() => {
                 >
                   <Icon sx={{ color: '#a855f7', fontSize: 18 }} />
                 </Box>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: 'rgba(255, 255, 255, 0.8)',
-                    fontWeight: 600,
-                    fontSize: '0.75rem',
-                    fontFamily: lora.style.fontFamily,
-                  }}
-                >
-                  {action.title}
-                </Typography>
+                <Tooltip title={action.title} placement="top" arrow>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'rgba(255, 255, 255, 0.8)',
+                      fontWeight: 600,
+                      fontSize: '0.75rem',
+                      fontFamily: lora.style.fontFamily,
+                    }}
+                  >
+                    {action.title.length > 11
+                      ? `${action.title.slice(0, 10)}…`
+                      : action.title}
+                  </Typography>
+                </Tooltip>
               </Paper>
             </motion.div>
           );

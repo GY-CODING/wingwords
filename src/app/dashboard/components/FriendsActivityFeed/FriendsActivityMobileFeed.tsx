@@ -2,6 +2,7 @@
 
 import { useActivityLike } from '@/hooks/activities/useActivityLike';
 import { FriendActivity } from '@/hooks/activities/useFriendsActivityFeed';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { lora } from '@/utils/fonts/fonts';
 import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded';
 import { Box, Typography } from '@mui/material';
@@ -22,56 +23,59 @@ interface FriendsActivityMobileFeedProps {
 /**
  * Empty state minimalista para el feed móvil.
  */
-const EmptyStateMobile: React.FC = () => (
-  <Box
-    sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      py: 6,
-      px: 3,
-      textAlign: 'center',
-    }}
-  >
+const EmptyStateMobile: React.FC = () => {
+  const { t } = useTranslation();
+  return (
     <Box
       sx={{
-        width: 56,
-        height: 56,
-        borderRadius: '50%',
-        background: 'rgba(147, 51, 234, 0.08)',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        mb: 2,
+        py: 6,
+        px: 3,
+        textAlign: 'center',
       }}
     >
-      <AutoStoriesRoundedIcon
-        sx={{ fontSize: 28, color: 'rgba(147, 51, 234, 0.4)' }}
-      />
+      <Box
+        sx={{
+          width: 56,
+          height: 56,
+          borderRadius: '50%',
+          background: 'rgba(147, 51, 234, 0.08)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          mb: 2,
+        }}
+      >
+        <AutoStoriesRoundedIcon
+          sx={{ fontSize: 28, color: 'rgba(147, 51, 234, 0.4)' }}
+        />
+      </Box>
+      <Typography
+        sx={{
+          fontFamily: lora.style.fontFamily,
+          fontSize: '0.9rem',
+          fontWeight: 600,
+          color: 'rgba(255, 255, 255, 0.5)',
+          mb: 0.5,
+        }}
+      >
+        {t('dashboard.activity.emptyMobile')}
+      </Typography>
+      <Typography
+        sx={{
+          fontSize: '0.75rem',
+          color: 'rgba(255, 255, 255, 0.3)',
+          maxWidth: 240,
+        }}
+      >
+        {t('dashboard.activity.emptyMobileHint')}
+      </Typography>
     </Box>
-    <Typography
-      sx={{
-        fontFamily: lora.style.fontFamily,
-        fontSize: '0.9rem',
-        fontWeight: 600,
-        color: 'rgba(255, 255, 255, 0.5)',
-        mb: 0.5,
-      }}
-    >
-      No activity yet
-    </Typography>
-    <Typography
-      sx={{
-        fontSize: '0.75rem',
-        color: 'rgba(255, 255, 255, 0.3)',
-        maxWidth: 240,
-      }}
-    >
-      Add friends to see their reading updates here
-    </Typography>
-  </Box>
-);
+  );
+};
 
 /**
  * Feed de actividades de amigos para mobile.

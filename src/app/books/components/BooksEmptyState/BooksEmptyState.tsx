@@ -1,6 +1,7 @@
 'use client';
 
 import { lora } from '@/utils/fonts/fonts';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import TuneIcon from '@mui/icons-material/Tune';
 import { Box, Typography } from '@mui/material';
@@ -111,6 +112,7 @@ export const BooksEmptyState: React.FC<BooksEmptyStateProps> = ({
   onResetFilters,
 }) => {
   const [animationData, setAnimationData] = useState<object | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetch('/lottie/book_searcher.json')
@@ -122,9 +124,9 @@ export const BooksEmptyState: React.FC<BooksEmptyStateProps> = ({
     return (
       <EmptyFeedback
         icon={<TuneIcon />}
-        title="No matches for these filters"
-        subtitle="Try adjusting or removing some filters to see more results."
-        action="Clear all filters"
+        title={t('library.empty.noFiltersMatch.title')}
+        subtitle={t('library.empty.noFiltersMatch.subtitle')}
+        action={t('library.empty.noFiltersMatch.action')}
         onAction={onResetFilters}
       />
     );
@@ -134,8 +136,8 @@ export const BooksEmptyState: React.FC<BooksEmptyStateProps> = ({
     return (
       <EmptyFeedback
         icon={<SearchOffIcon />}
-        title="No books found"
-        subtitle="We couldn't find anything for that query. Try different keywords."
+        title={t('library.empty.noResults.title')}
+        subtitle={t('library.empty.noResults.subtitle')}
       />
     );
   }
@@ -169,7 +171,7 @@ export const BooksEmptyState: React.FC<BooksEmptyStateProps> = ({
           mt: -1,
         }}
       >
-        Type a title, author or series to get started
+        {t('library.empty.initial')}
       </Typography>
     </MotionBox>
   );

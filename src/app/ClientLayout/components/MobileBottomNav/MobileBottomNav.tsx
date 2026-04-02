@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { Box, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
@@ -133,6 +134,7 @@ interface MobileBottomNavProps {
  */
 export const MobileBottomNav = React.memo<MobileBottomNavProps>(
   ({ friendRequestsCount = 0, isLoggedIn = false }) => {
+    const { t } = useTranslation();
     const pathname = usePathname();
     const router = useRouter();
 
@@ -185,13 +187,15 @@ export const MobileBottomNav = React.memo<MobileBottomNavProps>(
         >
           {navItems.map((item, index) => (
             <NavItem
-              key={item.label}
-              label={item.label}
+              key={item.labelKey}
+              label={t(item.labelKey)}
               icon={item.icon}
               isActive={activeIndex === index}
               onClick={() => handleNavClick(item.route)}
               badge={
-                item.label === 'Community' ? friendRequestsCount : undefined
+                item.route === '/users/community'
+                  ? friendRequestsCount
+                  : undefined
               }
             />
           ))}

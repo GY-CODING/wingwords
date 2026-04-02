@@ -3,11 +3,17 @@ import { EBookStatus } from '@gycoding/nebula';
 import { ProfileFilterOptions, ProfileFilters } from './profileTypes';
 
 export class ProfileBookHelpers {
-  static generateFilterOptions(books: HardcoverBook[]): ProfileFilterOptions {
+  static generateFilterOptions(
+    books: HardcoverBook[],
+    t: (key: string) => string
+  ): ProfileFilterOptions {
     const statusOptions = [
-      { label: 'Reading', value: EBookStatus.READING },
-      { label: 'Read', value: EBookStatus.READ },
-      { label: 'Want to read', value: EBookStatus.WANT_TO_READ },
+      { label: t('book.rating.status.reading'), value: EBookStatus.READING },
+      { label: t('book.rating.status.read'), value: EBookStatus.READ },
+      {
+        label: t('book.rating.status.wantToRead'),
+        value: EBookStatus.WANT_TO_READ,
+      },
     ];
 
     const authorOptions = Array.from(

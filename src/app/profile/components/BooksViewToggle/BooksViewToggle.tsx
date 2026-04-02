@@ -7,6 +7,7 @@ import { Box, IconButton, Tooltip } from '@mui/material';
 import { motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const MotionBox = motion(Box);
 
@@ -25,6 +26,7 @@ export const BooksViewToggle: React.FC<BooksViewToggleProps> = ({
 }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   const handleViewChange = (newView: ViewType) => {
     router.push(`${pathname}?view=${newView}`);
@@ -36,10 +38,18 @@ export const BooksViewToggle: React.FC<BooksViewToggleProps> = ({
     icon: React.ReactElement;
     label: string;
   }[] = [
-    { type: 'grid', icon: <GridViewIcon />, label: 'Grid View' },
-    { type: 'list', icon: <ViewListIcon />, label: 'List View' },
-    { type: 'timeline', icon: <TimelineIcon />, label: 'Timeline View' },
-    { type: 'calendar', icon: <CalendarMonthIcon />, label: 'Calendar View' },
+    { type: 'grid', icon: <GridViewIcon />, label: t('profile.view.grid') },
+    { type: 'list', icon: <ViewListIcon />, label: t('profile.view.list') },
+    {
+      type: 'timeline',
+      icon: <TimelineIcon />,
+      label: t('profile.view.timeline'),
+    },
+    {
+      type: 'calendar',
+      icon: <CalendarMonthIcon />,
+      label: t('profile.view.calendar'),
+    },
   ];
 
   return (

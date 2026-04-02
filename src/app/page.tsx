@@ -8,6 +8,7 @@ import { FeaturesGrid } from './components/organisms/FeaturesGrid';
 import { Footer } from './components/organisms/Footer';
 import { Hero } from './components/organisms/Hero';
 import DashboardPage from './dashboard/page';
+import { TranslationBanner } from './components/TranslationBanner';
 
 const LoadingSkeleton = () => (
   <Box
@@ -53,6 +54,16 @@ const LandingPage = () => (
       },
     }}
   >
+    <Box
+      sx={{
+        position: 'relative',
+        zIndex: 2,
+        px: { xs: 2, sm: 3, md: 4 },
+        pt: { xs: 2, sm: 2.5 },
+      }}
+    >
+      <TranslationBanner />
+    </Box>
     <Container
       maxWidth="lg"
       sx={{

@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
+import { useTranslation } from '@/hooks/useTranslation';
 import { lora } from '@/utils/fonts/fonts';
 import { Box, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
@@ -15,6 +16,7 @@ const PageCountKPI: React.FC<PageCountKPIProps> = ({
   wantToReadPages = 0,
   fontFamily,
 }) => {
+  const { t } = useTranslation();
   // Guard clause
   if (totalPages === 0 && wantToReadPages === 0) {
     return (
@@ -35,7 +37,7 @@ const PageCountKPI: React.FC<PageCountKPIProps> = ({
             fontSize: 16,
           }}
         >
-          No page data available
+          {t('stats.pages.noData')}
         </Typography>
       </Box>
     );
@@ -111,7 +113,7 @@ const PageCountKPI: React.FC<PageCountKPIProps> = ({
             mt: 1,
           }}
         >
-          Pages Read
+          {t('stats.pages.read')}
         </Typography>
       </Box>
 
@@ -157,7 +159,7 @@ const PageCountKPI: React.FC<PageCountKPIProps> = ({
             fontSize: '0.9rem',
           }}
         >
-          Goal: {goalPages.toLocaleString()} pages
+          {t('stats.pages.goal', { pages: goalPages.toLocaleString() })}
         </Typography>
         <Typography
           sx={{
@@ -170,8 +172,7 @@ const PageCountKPI: React.FC<PageCountKPIProps> = ({
             textAlign: 'center',
           }}
         >
-          The total goal value is an addition of read pages and want to read
-          pages
+          {t('stats.pages.goalHint')}
         </Typography>
       </Box>
     </Box>

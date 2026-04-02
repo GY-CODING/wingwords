@@ -3,6 +3,19 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import BookRatingProgressInput from './BookRatingProgressInput';
 
+// Mock i18n
+jest.mock('@/lib/i18n/I18nProvider', () => ({
+  useTranslation: () => ({
+    t: (key: string) =>
+      ({
+        'book.rating.progress': 'Progress',
+        'book.progress.pages.suffix': 'pages.',
+      })[key] ?? key,
+    locale: 'en',
+    setLocale: jest.fn(),
+  }),
+}));
+
 // Mock Material-UI components
 jest.mock('@mui/material', () => ({
   Box: ({ children, ...props }: any) => <div {...props}>{children}</div>,

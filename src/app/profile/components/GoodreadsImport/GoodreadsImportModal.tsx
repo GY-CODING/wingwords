@@ -40,6 +40,7 @@ import type {
   SaveProgress,
   SaveStatus,
 } from '../../hooks/useGoodreadsImportSave';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const SlideUp = React.forwardRef<
   unknown,
@@ -71,13 +72,6 @@ interface GoodreadsImportModalProps {
   libraryBookIds?: Set<string>;
   importSource?: 'goodreads' | 'hardcover';
 }
-
-const SHELF_LABELS: Record<GoodreadsShelf | 'all', string> = {
-  all: 'All',
-  read: 'Read',
-  'to-read': 'To Read',
-  'currently-reading': 'Reading',
-};
 
 export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
   open,
@@ -112,6 +106,14 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { t } = useTranslation();
+
+  const shelfLabels: Record<GoodreadsShelf | 'all', string> = {
+    all: t('profile.import.shelf.all'),
+    read: t('profile.import.shelf.read'),
+    'to-read': t('profile.import.shelf.toRead'),
+    'currently-reading': t('profile.import.shelf.reading'),
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -231,7 +233,7 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
               color: '#fff',
             }}
           >
-            Import CSV
+            {t('profile.import.title')}
           </Typography>
           {status === 'idle' ? (
             <Box sx={{ display: 'flex', gap: 0.75 }}>
@@ -264,8 +266,8 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
             <Chip
               label={
                 importSource === 'hardcover'
-                  ? 'Hardcover detected'
-                  : 'Goodreads detected'
+                  ? t('profile.import.chip.hardcoverDetected')
+                  : t('profile.import.chip.goodreadsDetected')
               }
               size="small"
               sx={{
@@ -323,7 +325,7 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                 fontFamily: lora.style.fontFamily,
               }}
             >
-              Parsing CSV…
+              {t('profile.import.status.parsing')}
             </Typography>
           </Box>
         )}
@@ -342,14 +344,14 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
             <Typography
               sx={{ color: '#f87171', fontFamily: lora.style.fontFamily }}
             >
-              {errorMessage ?? 'Something went wrong.'}
+              {errorMessage ?? t('profile.import.error.generic')}
             </Typography>
             <Button
               variant="outlined"
               onClick={onReset}
               sx={{ borderColor: 'rgba(147,51,234,0.4)', color: '#e9d5ff' }}
             >
-              Try again
+              {t('profile.import.action.tryAgain')}
             </Button>
           </Box>
         )}
@@ -372,7 +374,7 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                 fontFamily: lora.style.fontFamily,
               }}
             >
-              Saving to your library…
+              {t('profile.import.status.saving')}
             </Typography>
             <Box
               sx={{
@@ -390,8 +392,10 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                     fontFamily: lora.style.fontFamily,
                   }}
                 >
-                  {saveProgress.successCount} saved · {saveProgress.errorCount}{' '}
-                  failed
+                  {t('profile.import.progress.status', {
+                    saved: saveProgress.successCount,
+                    failed: saveProgress.errorCount,
+                  })}
                 </Typography>
                 <Typography
                   sx={{
@@ -440,12 +444,14 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                 color: '#fff',
               }}
             >
-              Import complete!
+              {t('profile.import.status.done')}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
               {saveProgress.successCount > 0 && (
                 <Chip
-                  label={`${saveProgress.successCount} saved`}
+                  label={t('profile.import.chip.saved', {
+                    count: saveProgress.successCount,
+                  })}
                   sx={{
                     background: 'rgba(52,211,153,0.12)',
                     color: '#34d399',
@@ -456,7 +462,9 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
               )}
               {saveProgress.errorCount > 0 && (
                 <Chip
-                  label={`${saveProgress.errorCount} failed`}
+                  label={t('profile.import.chip.failed', {
+                    count: saveProgress.errorCount,
+                  })}
                   sx={{
                     background: 'rgba(248,113,113,0.1)',
                     color: '#f87171',
@@ -488,7 +496,7 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                       mb: 1,
                     }}
                   >
-                    Could not be saved:
+                    {t('profile.import.error.couldNotSave')}
                   </Typography>
                   <Box
                     sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}
@@ -533,12 +541,11 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                 textTransform: 'none',
               }}
             >
-              Close
+              {t('profile.import.action.close')}
             </Button>
           </Box>
         )}
 
-        {/* Save error */}
         {hasSaveError && (
           <Box
             sx={{
@@ -552,7 +559,7 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
             <Typography
               sx={{ color: '#f87171', fontFamily: lora.style.fontFamily }}
             >
-              {saveError ?? 'Import failed.'}
+              {saveError ?? t('profile.import.error.importFailed')}
             </Typography>
             <Button
               variant="outlined"
@@ -564,7 +571,7 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                 textTransform: 'none',
               }}
             >
-              Try again
+              {t('profile.import.action.tryAgain')}
             </Button>
           </Box>
         )}
@@ -585,8 +592,8 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                     }}
                   >
                     {importSource === 'hardcover'
-                      ? 'Fetching your Hardcover library…'
-                      : 'Searching Hardcover…'}
+                      ? t('profile.import.status.fetchingHardcover')
+                      : t('profile.import.status.searching')}
                   </Typography>
                   <Typography
                     sx={{
@@ -631,7 +638,7 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                   fontFamily: lora.style.fontFamily,
                 }}
               >
-                Filter:
+                {t('profile.import.filter.label')}
               </Typography>
               <ToggleButtonGroup
                 value={shelfFilter}
@@ -657,7 +664,7 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                 {(['all', 'read', 'to-read', 'currently-reading'] as const).map(
                   (s) => (
                     <ToggleButton key={s} value={s}>
-                      {SHELF_LABELS[s]}
+                      {shelfLabels[s]}
                     </ToggleButton>
                   )
                 )}
@@ -684,10 +691,14 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                       '&:hover': { color: '#e9d5ff' },
                     }}
                   >
-                    {allSelected ? 'Deselect all' : 'Select all'}
+                    {allSelected
+                      ? t('profile.import.action.deselectAll')
+                      : t('profile.import.action.selectAll')}
                   </Button>
                   <Chip
-                    label={`${selectedResults.length} selected`}
+                    label={t('profile.import.chip.selected', {
+                      count: selectedResults.length,
+                    })}
                     size="small"
                     sx={{
                       background: 'rgba(52,211,153,0.12)',
@@ -722,7 +733,7 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                     py: 4,
                   }}
                 >
-                  No books in this shelf.
+                  {t('profile.import.empty.shelf')}
                 </Typography>
               )}
               {foundResults.map((result) => (
@@ -761,7 +772,9 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                         fontWeight: 600,
                       }}
                     >
-                      Not found on Hardcover ({notFoundResults.length})
+                      {t('profile.import.notFound', {
+                        count: notFoundResults.length,
+                      })}
                     </Typography>
                   </Box>
                   <Box
@@ -835,7 +848,7 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                     textTransform: 'none',
                   }}
                 >
-                  Upload another file
+                  {t('profile.import.action.uploadAnother')}
                 </Button>
                 <Box
                   sx={{
@@ -853,8 +866,9 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                         fontFamily: lora.style.fontFamily,
                       }}
                     >
-                      {alreadyInLibraryCount} already in your library (data will
-                      be updated)
+                      {t('profile.import.alreadyInLibrary', {
+                        count: alreadyInLibraryCount,
+                      })}
                     </Typography>
                   )}
                   <Button
@@ -878,8 +892,13 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
                       },
                     }}
                   >
-                    Import {selectedResults.length} book
-                    {selectedResults.length !== 1 ? 's' : ''}
+                    {selectedResults.length === 1
+                      ? t('profile.import.action.importSingular', {
+                          count: selectedResults.length,
+                        })
+                      : t('profile.import.action.importPlural', {
+                          count: selectedResults.length,
+                        })}
                   </Button>
                 </Box>
               </Box>
@@ -901,102 +920,108 @@ interface UploadStepProps {
 const UploadStep: React.FC<UploadStepProps> = ({
   fileInputRef,
   onFileChange,
-}) => (
-  <Box
-    sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: 3,
-      py: 4,
-    }}
-  >
+}) => {
+  const { t } = useTranslation();
+  return (
     <Box
       sx={{
-        width: 72,
-        height: 72,
-        borderRadius: '50%',
-        background: 'rgba(147,51,234,0.1)',
-        border: '2px dashed rgba(147,51,234,0.4)',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        gap: 3,
+        py: 4,
       }}
     >
-      <FileUploadIcon sx={{ color: '#a855f7', fontSize: 32 }} />
-    </Box>
-    <Box sx={{ textAlign: 'center' }}>
-      <Typography
+      <Box
         sx={{
+          width: 72,
+          height: 72,
+          borderRadius: '50%',
+          background: 'rgba(147,51,234,0.1)',
+          border: '2px dashed rgba(147,51,234,0.4)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <FileUploadIcon sx={{ color: '#a855f7', fontSize: 32 }} />
+      </Box>
+      <Box sx={{ textAlign: 'center' }}>
+        <Typography
+          sx={{
+            fontFamily: lora.style.fontFamily,
+            fontWeight: 600,
+            fontSize: 18,
+            color: '#fff',
+            mb: 1,
+          }}
+        >
+          {t('profile.import.upload.title')}
+        </Typography>
+        <Box
+          sx={{ display: 'flex', justifyContent: 'center', gap: 1, mb: 1.5 }}
+        >
+          <Chip
+            label="Goodreads"
+            size="small"
+            sx={{
+              background: 'rgba(236,109,80,0.1)',
+              color: '#f6a98a',
+              border: '1px solid rgba(236,109,80,0.25)',
+              fontFamily: lora.style.fontFamily,
+              fontSize: 12,
+            }}
+          />
+          <Chip
+            label="Hardcover"
+            size="small"
+            sx={{
+              background: 'rgba(99,179,237,0.1)',
+              color: '#90cdf4',
+              border: '1px solid rgba(99,179,237,0.25)',
+              fontFamily: lora.style.fontFamily,
+              fontSize: 12,
+            }}
+          />
+        </Box>
+        <Typography
+          sx={{
+            color: 'rgba(255,255,255,0.4)',
+            fontSize: 13,
+            fontFamily: lora.style.fontFamily,
+          }}
+        >
+          {t('profile.import.upload.hint')}
+        </Typography>
+      </Box>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".csv,text/csv,text/plain,application/csv"
+        style={{ display: 'none' }}
+        onChange={onFileChange}
+      />
+      <Button
+        variant="contained"
+        onClick={() => fileInputRef.current?.click()}
+        sx={{
+          background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
+          color: '#fff',
           fontFamily: lora.style.fontFamily,
           fontWeight: 600,
-          fontSize: 18,
-          color: '#fff',
-          mb: 1,
+          borderRadius: '12px',
+          px: 4,
+          py: 1.2,
+          '&:hover': {
+            background: 'linear-gradient(135deg, #6d28d9, #9333ea)',
+          },
         }}
       >
-        Upload your library export
-      </Typography>
-      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mb: 1.5 }}>
-        <Chip
-          label="Goodreads"
-          size="small"
-          sx={{
-            background: 'rgba(236,109,80,0.1)',
-            color: '#f6a98a',
-            border: '1px solid rgba(236,109,80,0.25)',
-            fontFamily: lora.style.fontFamily,
-            fontSize: 12,
-          }}
-        />
-        <Chip
-          label="Hardcover"
-          size="small"
-          sx={{
-            background: 'rgba(99,179,237,0.1)',
-            color: '#90cdf4',
-            border: '1px solid rgba(99,179,237,0.25)',
-            fontFamily: lora.style.fontFamily,
-            fontSize: 12,
-          }}
-        />
-      </Box>
-      <Typography
-        sx={{
-          color: 'rgba(255,255,255,0.4)',
-          fontSize: 13,
-          fontFamily: lora.style.fontFamily,
-        }}
-      >
-        The format is detected automatically.
-      </Typography>
+        {t('profile.import.upload.button')}
+      </Button>
     </Box>
-    <input
-      ref={fileInputRef}
-      type="file"
-      accept=".csv,text/csv,text/plain,application/csv"
-      style={{ display: 'none' }}
-      onChange={onFileChange}
-    />
-    <Button
-      variant="contained"
-      onClick={() => fileInputRef.current?.click()}
-      sx={{
-        background: 'linear-gradient(135deg, #7c3aed, #a855f7)',
-        color: '#fff',
-        fontFamily: lora.style.fontFamily,
-        fontWeight: 600,
-        borderRadius: '12px',
-        px: 4,
-        py: 1.2,
-        '&:hover': { background: 'linear-gradient(135deg, #6d28d9, #9333ea)' },
-      }}
-    >
-      Choose CSV file
-    </Button>
-  </Box>
-);
-
+  );
+};
 // ─── BookResultRow ───────────────────────────────────────────────────────────
 
 interface BookResultRowProps {

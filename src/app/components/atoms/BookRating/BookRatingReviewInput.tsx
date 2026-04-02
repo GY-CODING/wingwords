@@ -1,5 +1,7 @@
+'use client';
 import React from 'react';
 import { TextField, Box } from '@mui/material';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 
 interface BookRatingReviewInputProps {
   tempReview: string;
@@ -14,6 +16,7 @@ const BookRatingReviewInput: React.FC<BookRatingReviewInputProps> = ({
   fontFamily = 'inherit',
   isLoading = false,
 }) => {
+  const { t } = useTranslation();
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
       <TextField
@@ -21,7 +24,7 @@ const BookRatingReviewInput: React.FC<BookRatingReviewInputProps> = ({
         rows={3}
         value={tempReview}
         onChange={(e) => setTempReview(e.target.value)}
-        placeholder="Write your review..."
+        placeholder={t('book.rating.review.placeholder')}
         disabled={isLoading}
         sx={{
           background: 'rgba(255, 255, 255, 0.03)',

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { useTranslation } from '@/hooks/useTranslation';
 import { lora } from '@/utils/fonts/fonts';
 import { EBookStatus } from '@gycoding/nebula';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
@@ -130,6 +131,7 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
   onViewChange,
   isOwnProfile = true,
 }) => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [orderMenuAnchor, setOrderMenuAnchor] = useState<null | HTMLElement>(
@@ -140,39 +142,41 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
 
   // Opciones de ordenamiento
   const orderOptions = [
-    { label: 'Original', value: '' },
-    { label: 'Author', value: 'author' },
-    { label: 'Rating', value: 'rating' },
-    { label: 'Series', value: 'series' },
-    { label: 'Title', value: 'title' },
+    { label: t('profile.filter.order.original'), value: '' },
+    { label: t('profile.filter.author'), value: 'author' },
+    { label: t('profile.filter.rating'), value: 'rating' },
+    { label: t('profile.filter.series'), value: 'series' },
+    { label: t('profile.filter.order.title'), value: 'title' },
   ];
 
   // Active filters calculation
   const activeFilters = [
     statusFilter && {
       type: 'status',
-      label: `Status: ${statusOptions.find((o) => o.value === statusFilter)?.label}`,
+      label: t('profile.filter.active.status', {
+        value: statusOptions.find((o) => o.value === statusFilter)?.label,
+      }),
       value: statusFilter,
     },
     authorFilter && {
       type: 'author',
-      label: `Author: ${authorFilter}`,
+      label: t('profile.filter.active.author', { author: authorFilter }),
       value: authorFilter,
     },
     seriesFilter && {
       type: 'series',
-      label: `Series: ${seriesFilter}`,
+      label: t('profile.filter.active.series', { series: seriesFilter }),
       value: seriesFilter,
     },
     ratingFilter &&
       ratingFilter > 0 && {
         type: 'rating',
-        label: `Rating: ${'★'.repeat(ratingFilter)}+`,
+        label: t('profile.filter.active.rating', { stars: ratingFilter }),
         value: ratingFilter,
       },
     search && {
       type: 'search',
-      label: `Search: ${search}`,
+      label: `"${search}"`,
       value: search,
     },
   ].filter(Boolean);
@@ -222,7 +226,7 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
 
   // Rating options
   const ratingOptions = [
-    { label: 'All', value: 0 },
+    { label: t('profile.filter.all'), value: 0 },
     ...[1, 2, 3, 4, 5].map((star) => ({
       label: `${'★'.repeat(star)} ${star}${star < 5 ? '+' : ''}`,
       value: star,
@@ -297,7 +301,7 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
   };
 
   const renderOrderButton = () => (
-    <Tooltip title="Sort" arrow>
+    <Tooltip title={t('profile.filter.sort')} arrow>
       <MotionIconButton
         onClick={handleOrderMenuOpen}
         whileHover={{ scale: 1.05 }}
@@ -327,7 +331,7 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
     return (
       <>
         {/* Botón de filtros */}
-        <Tooltip title="Filters & Views" arrow>
+        <Tooltip title={t('profile.filter.title')} arrow>
           <Badge badgeContent={activeFiltersCount} color="secondary">
             <MotionIconButton
               onClick={() => setMobileDrawerOpen(true)}
@@ -410,7 +414,11 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
 
         {/* Botón de expandir/colapsar filtros */}
         <Tooltip
-          title={filtersExpanded ? 'Hide Filters' : 'Show Filters'}
+          title={
+            filtersExpanded
+              ? t('library.filters.hide')
+              : t('profile.filter.title')
+          }
           arrow
         >
           <MotionIconButton
@@ -498,7 +506,7 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
               <TextField
                 value={search}
                 onChange={(e) => onSearchChange(e.target.value)}
-                placeholder="Search books..."
+                placeholder={t('profile.filter.search')}
                 size="small"
                 fullWidth
                 sx={{
@@ -537,7 +545,7 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
               {/* Status chips */}
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 <Chip
-                  label="All"
+                  label={t('profile.filter.all')}
                   size="small"
                   onClick={() => onStatusChange(null)}
                   sx={{
@@ -628,19 +636,19 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
                   authorFilter,
                   onAuthorChange,
                   authorOptions,
-                  'Author'
+                  t('profile.filter.author')
                 )}
                 {renderSelect(
                   seriesFilter,
                   onSeriesChange,
                   seriesOptions,
-                  'Series'
+                  t('profile.filter.series')
                 )}
                 {renderSelect(
                   ratingFilter,
                   onRatingChange,
                   ratingOptions,
-                  'Rating'
+                  t('profile.filter.rating')
                 )}
                 {renderOrderButton()}
                 {orderBy && (

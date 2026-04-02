@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { lora } from '@/utils/fonts/fonts';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import TuneIcon from '@mui/icons-material/Tune';
 import CloseIcon from '@mui/icons-material/Close';
 import SortIcon from '@mui/icons-material/Sort';
@@ -61,17 +62,20 @@ const sectionLabelSx = {
   mb: 0.75,
 };
 
-const SORT_OPTIONS: Array<{ label: string; value: BooksSortBy }> = [
-  { label: 'Relevance', value: 'relevance' },
-  { label: 'Rating ↓', value: 'rating_desc' },
-  { label: 'Title A–Z', value: 'title_asc' },
-  { label: 'Title Z–A', value: 'title_desc' },
+const SORT_OPTION_KEYS: Array<{ labelKey: string; value: BooksSortBy }> = [
+  { labelKey: 'library.filters.sort.relevance', value: 'relevance' },
+  { labelKey: 'library.filters.sort.ratingDesc', value: 'rating_desc' },
+  { labelKey: 'library.filters.sort.titleAsc', value: 'title_asc' },
+  { labelKey: 'library.filters.sort.titleDesc', value: 'title_desc' },
 ];
 
-const SERIES_OPTIONS: Array<{ label: string; value: BooksSeriesFilter }> = [
-  { label: 'All', value: 'all' },
-  { label: 'Series', value: 'series_only' },
-  { label: 'Standalone', value: 'standalone' },
+const SERIES_OPTION_KEYS: Array<{
+  labelKey: string;
+  value: BooksSeriesFilter;
+}> = [
+  { labelKey: 'library.filters.series.all', value: 'all' },
+  { labelKey: 'library.filters.series.seriesOnly', value: 'series_only' },
+  { labelKey: 'library.filters.series.standalone', value: 'standalone' },
 ];
 
 export const BooksFilters: React.FC<BooksFiltersProps> = ({
@@ -86,6 +90,7 @@ export const BooksFilters: React.FC<BooksFiltersProps> = ({
 }) => {
   const [expanded, setExpanded] = React.useState(false);
   const hasFilters = activeFiltersCount > 0;
+  const { t } = useTranslation();
 
   return (
     <Box>
@@ -116,7 +121,9 @@ export const BooksFilters: React.FC<BooksFiltersProps> = ({
           >
             {resultsCount}
           </Box>{' '}
-          result{resultsCount !== 1 ? 's' : ''}
+          {resultsCount !== 1
+            ? t('library.filters.results.plural')
+            : t('library.filters.results.singular')}
         </Typography>
 
         {/* Sort */}
@@ -168,9 +175,9 @@ export const BooksFilters: React.FC<BooksFiltersProps> = ({
               },
             }}
           >
-            {SORT_OPTIONS.map((opt) => (
+            {SORT_OPTION_KEYS.map((opt) => (
               <MenuItem key={opt.value} value={opt.value}>
-                {opt.label}
+                {t(opt.labelKey)}
               </MenuItem>
             ))}
           </Select>
@@ -190,7 +197,7 @@ export const BooksFilters: React.FC<BooksFiltersProps> = ({
         {/* Active filters badge */}
         {hasFilters && (
           <Chip
-            label={`${activeFiltersCount} filter${activeFiltersCount > 1 ? 's' : ''}`}
+            label={`${activeFiltersCount} ${activeFiltersCount > 1 ? t('library.filters.filter.plural') : t('library.filters.filter.singular')}`}
             onDelete={onReset}
             size="small"
             sx={{
@@ -214,7 +221,9 @@ export const BooksFilters: React.FC<BooksFiltersProps> = ({
               <TuneIcon sx={{ fontSize: '15px !important' }} />
             )
           }
-          label={expanded ? 'Hide' : 'Filters'}
+          label={
+            expanded ? t('library.filters.hide') : t('library.filters.show')
+          }
           onClick={() => setExpanded((v) => !v)}
           size="small"
           sx={{
@@ -248,10 +257,12 @@ export const BooksFilters: React.FC<BooksFiltersProps> = ({
           {/* Author */}
           {filterOptions.authorOptions.length > 0 && (
             <Box sx={{ minWidth: 0 }}>
-              <Typography sx={sectionLabelSx}>Author</Typography>
+              <Typography sx={sectionLabelSx}>
+                {t('library.filters.section.author')}
+              </Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
                 <Chip
-                  label="All"
+                  label={t('library.filters.all')}
                   onClick={() => onAuthorChange('')}
                   sx={chipSx(filters.author === '')}
                 />
@@ -271,12 +282,14 @@ export const BooksFilters: React.FC<BooksFiltersProps> = ({
 
           {/* Series */}
           <Box>
-            <Typography sx={sectionLabelSx}>Type</Typography>
+            <Typography sx={sectionLabelSx}>
+              {t('library.filters.section.type')}
+            </Typography>
             <Box sx={{ display: 'flex', gap: 0.75 }}>
-              {SERIES_OPTIONS.map((opt) => (
+              {SERIES_OPTION_KEYS.map((opt) => (
                 <Chip
                   key={opt.value}
-                  label={opt.label}
+                  label={t(opt.labelKey)}
                   onClick={() => onSeriesChange(opt.value)}
                   sx={chipSx(filters.series === opt.value)}
                 />

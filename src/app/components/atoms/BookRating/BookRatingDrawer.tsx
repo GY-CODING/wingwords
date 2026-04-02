@@ -1,3 +1,5 @@
+'use client';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
@@ -39,6 +41,8 @@ const BookRatingDrawer: React.FC<Props> = ({
   fontFamily = 'inherit',
   handleDeleteBook,
 }) => {
+  const { t } = useTranslation();
+
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
@@ -96,7 +100,7 @@ const BookRatingDrawer: React.FC<Props> = ({
               fontFamily,
             }}
           >
-            Book Details
+            {t('book.rating.title')}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
             {isBookSaved && handleDeleteBook && (
@@ -139,7 +143,7 @@ const BookRatingDrawer: React.FC<Props> = ({
                 fontFamily,
               }}
             >
-              Rating
+              {t('book.rating.section.rating')}
             </Typography>
             <RatingStars
               rating={state.tempRating}
@@ -170,7 +174,7 @@ const BookRatingDrawer: React.FC<Props> = ({
                 fontFamily,
               }}
             >
-              Status
+              {t('book.rating.section.status')}
             </Typography>
             <BookRatingStatusButtons
               tempStatus={state.tempStatus}
@@ -201,14 +205,14 @@ const BookRatingDrawer: React.FC<Props> = ({
                 fontFamily,
               }}
             >
-              Reading Period
+              {t('book.rating.section.readingPeriod')}
             </Typography>
             <Stack direction="row" gap={2}>
               <TextField
                 type="date"
                 value={state.tempStartDate}
                 onChange={(e) => handlers.setTempStartDate(e.target.value)}
-                label="Start"
+                label={t('book.rating.start')}
                 InputLabelProps={{ shrink: true }}
                 sx={{
                   flex: 1,
@@ -240,7 +244,7 @@ const BookRatingDrawer: React.FC<Props> = ({
                 type="date"
                 value={state.tempEndDate}
                 onChange={(e) => handlers.setTempEndDate(e.target.value)}
-                label="End"
+                label={t('book.rating.end')}
                 InputLabelProps={{ shrink: true }}
                 sx={{
                   flex: 1,
@@ -295,7 +299,7 @@ const BookRatingDrawer: React.FC<Props> = ({
               },
             }}
           >
-            Apply Changes
+            {t('book.rating.apply')}
           </Button>
         </Stack>
       </Box>

@@ -1,5 +1,6 @@
 import { MenuItem } from '@/domain/menu.model';
 import { User } from '@/domain/user.model';
+import { useTranslation } from '@/hooks/useTranslation';
 import { lora } from '@/utils/fonts/fonts';
 import CloseIcon from '@mui/icons-material/Close';
 import InboxIcon from '@mui/icons-material/Inbox';
@@ -50,6 +51,7 @@ export const MobileDrawer = React.memo(
     onMenuItemClick,
     onFriendRequestsClick,
   }: MobileDrawerProps) => {
+    const { t } = useTranslation();
     return (
       <Drawer
         anchor="left"
@@ -234,7 +236,7 @@ export const MobileDrawer = React.memo(
                   )}
                 </ListItemIcon>
                 <ListItemText
-                  primary="Friend Requests"
+                  primary={t('friends.requests.title')}
                   sx={{
                     '& .MuiListItemText-primary': {
                       fontWeight: 600,

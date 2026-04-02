@@ -132,19 +132,18 @@ function mergeBookContext(
   books: GyBook[],
   titleMap: Map<string, { title: string; author: string }>
 ): BookContext[] {
-  return books
-    .map((b) => {
-      const info = titleMap.get(b.id);
-      if (!info) return null;
-      return {
-        id: b.id,
-        title: info.title,
-        author: info.author,
-        rating: b.userData?.rating,
-        status: b.userData?.status,
-      } satisfies BookContext;
-    })
-    .filter((b): b is BookContext => b !== null);
+  return books.flatMap((b) => {
+    const info = titleMap.get(b.id);
+    if (!info) return [];
+    const entry: BookContext = {
+      id: b.id,
+      title: info.title,
+      author: info.author,
+    };
+    if (b.userData?.rating !== undefined) entry.rating = b.userData.rating;
+    if (b.userData?.status !== undefined) entry.status = b.userData.status;
+    return [entry];
+  });
 }
 
 export async function POST(req: NextRequest) {
@@ -162,6 +161,7 @@ export async function POST(req: NextRequest) {
       question,
       mode,
       history,
+      language,
     } = body as {
       targetUserId?: string;
       currentUserId?: string;
@@ -169,6 +169,7 @@ export async function POST(req: NextRequest) {
       question?: string;
       mode?: 'recommend' | 'discover';
       history?: HistoryMessage[];
+      language?: string;
     };
 
     const baseUrl = process.env.GY_API?.replace(/['"]/g, '');
@@ -222,6 +223,7 @@ export async function POST(req: NextRequest) {
         currentUserBooks: currentBookContext,
         userQuestion: question,
         history: trimmedHistory,
+        language,
       });
 
       const readable = new ReadableStream({
@@ -267,6 +269,7 @@ export async function POST(req: NextRequest) {
       currentUserBooks: currentBookContext,
       userQuestion: question,
       history: trimmedHistory,
+      language,
     });
 
     const readable = new ReadableStream({

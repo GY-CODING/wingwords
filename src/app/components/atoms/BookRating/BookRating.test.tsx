@@ -11,6 +11,30 @@ import { ApiBook } from '@/domain/apiBook.model';
 // Mock dependencies
 jest.mock('@/hooks/useUser');
 jest.mock('@/hooks/useRemoveBook');
+jest.mock('@/lib/i18n/I18nProvider', () => ({
+  useTranslation: () => ({
+    t: (key: string) =>
+      ({
+        'book.rating.status.wantToRead': 'Want to read',
+        'book.rating.status.reading': 'Reading',
+        'book.rating.status.read': 'Read',
+        'book.rating.signIn': 'Sign in to rate this book',
+        'book.rating.title': 'Book details',
+        'book.rating.section.rating': 'Rating',
+        'book.rating.section.status': 'Status',
+        'book.rating.section.readingPeriod': 'Reading period',
+        'book.rating.startDate': 'Start date',
+        'book.rating.endDate': 'End date',
+        'book.rating.start': 'Start',
+        'book.rating.end': 'End',
+        'book.rating.apply': 'Apply changes',
+        'book.rating.review.placeholder': 'Write your review...',
+        'book.rating.progress': 'Progress',
+      })[key] ?? key,
+    locale: 'en',
+    setLocale: jest.fn(),
+  }),
+}));
 jest.mock('@/utils/fonts/fonts', () => ({
   lora: { style: { fontFamily: 'lora' } },
 }));

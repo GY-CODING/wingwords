@@ -1,6 +1,8 @@
+'use client';
 import type HardcoverBook from '@/domain/HardcoverBook';
 import { useStats } from '@/hooks/useStats';
 import { useStatsFromBooks } from '@/hooks/useStatsFromBooks';
+import { useTranslation } from '@/hooks/useTranslation';
 import { RootState } from '@/store';
 import { lora } from '@/utils/fonts/fonts';
 import { Box, Typography } from '@mui/material';
@@ -39,6 +41,7 @@ export default function StatsComponent({
   booksLoading = false,
 }: StatsComponentProps) {
   const storedStats = useSelector((state: RootState) => state.stats);
+  const { t } = useTranslation();
   const isCurrentUser = storedStats.userId === id.toString();
 
   // Hook de stats desde libros (si están disponibles)
@@ -97,7 +100,7 @@ export default function StatsComponent({
             fontSize: 18,
           }}
         >
-          Error loading statistics: {error.message}
+          {t('stats.error', { message: error.message })}
         </Typography>
       </Box>
     );
@@ -129,7 +132,7 @@ export default function StatsComponent({
             fontSize: 18,
           }}
         >
-          No statistics available yet. Start adding books to your library!
+          {t('stats.empty')}
         </Typography>
       </Box>
     );
@@ -146,7 +149,7 @@ export default function StatsComponent({
         alignItems: 'stretch',
       }}
     >
-      <StatCard title="Rating Stats" delay={0.1}>
+      <StatCard title={t('stats.ratingStats')} delay={0.1}>
         <RatingStats
           ratings={
             data?.ratings || {
@@ -159,11 +162,11 @@ export default function StatsComponent({
         />
       </StatCard>
       {data.bookStatus && Object.keys(data.bookStatus).length > 0 && (
-        <StatCard title="Book status" delay={0.2}>
+        <StatCard title={t('stats.bookStatus')} delay={0.2}>
           <DonutChart bookStatus={data?.bookStatus} />
         </StatCard>
       )}
-      <StatCard title="Page Count" delay={0.3}>
+      <StatCard title={t('stats.pageCount')} delay={0.3}>
         <PageCountKPI
           totalPages={data?.totalPages || 0}
           wantToReadPages={data?.wantToReadPages || 0}
@@ -171,7 +174,7 @@ export default function StatsComponent({
           fontFamily={lora.style.fontFamily}
         />
       </StatCard>
-      <StatCard title="Reader DNA" delay={0.4}>
+      <StatCard title={t('stats.readerDna')} delay={0.4}>
         <ReadingRadar
           readingCompletionRate={data?.readingCompletionRate || 0}
           reviewedBooks={data?.reviewedBooks || 0}
@@ -183,27 +186,27 @@ export default function StatsComponent({
           fontFamily={lora.style.fontFamily}
         />
       </StatCard>
-      <StatCard title="Books this year" delay={0.5}>
+      <StatCard title={t('stats.booksThisYear')} delay={0.5}>
         <BooksReadThisYear
           booksReadThisYear={data?.booksReadThisYear || 0}
           booksReadLastYear={data?.booksReadLastYear || 0}
           fontFamily={lora.style.fontFamily}
         />
       </StatCard>
-      <StatCard title="Monthly Activity" delay={0.6}>
+      <StatCard title={t('stats.monthlyActivity')} delay={0.6}>
         <MonthlyActivitySparkline
           monthlyBooksRead={data?.monthlyBooksRead || Array(12).fill(0)}
           booksReadThisYear={data?.booksReadThisYear || 0}
           fontFamily={lora.style.fontFamily}
         />
       </StatCard>
-      <StatCard title="Reading pace" delay={0.7}>
+      <StatCard title={t('stats.readingPace')} delay={0.7}>
         <AvgReadingDays
           avgReadingDays={data?.avgReadingDays || 0}
           fontFamily={lora.style.fontFamily}
         />
       </StatCard>
-      <StatCard title="Reading highlights" delay={0.8}>
+      <StatCard title={t('stats.readingHighlights')} delay={0.8}>
         <ReadingHighlights
           readingCompletionRate={data?.readingCompletionRate || 0}
           reviewedBooks={data?.reviewedBooks || 0}
@@ -214,7 +217,7 @@ export default function StatsComponent({
         />
       </StatCard>
       {data.authors && Object.keys(data.authors).length > 0 && (
-        <StatCard title="Authors read" delay={0.9}>
+        <StatCard title={t('stats.authorsRead')} delay={0.9}>
           <AuthorsBarChart authors={data?.authors} />
         </StatCard>
       )}

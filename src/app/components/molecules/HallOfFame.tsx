@@ -5,6 +5,7 @@ import AnimatedAlert from '@/app/components/atoms/Alert/Alert';
 import { useGyCodingUser } from '@/contexts/GyCodingUserContext';
 import { useHallOfFame } from '@/hooks/useHallOfFame';
 import { useUpdateHallOfFame } from '@/hooks/useUpdateHallOfFame';
+import { useTranslation } from '@/hooks/useTranslation';
 import { lora } from '@/utils/fonts/fonts';
 import { ESeverity } from '@/utils/constants/ESeverity';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
@@ -20,6 +21,7 @@ const MotionBox = motion(Box);
 
 export default function HallOfFame({ userId }: { userId: string }) {
   const { user } = useGyCodingUser();
+  const { t } = useTranslation();
   const { isLoading, error, quote, books } = useHallOfFame(userId);
   const {
     handleUpdateHallOfFame,
@@ -44,7 +46,7 @@ export default function HallOfFame({ userId }: { userId: string }) {
     return (
       <Box sx={{ color: 'white', textAlign: 'center', p: 4 }}>
         <Typography variant="h6" color="white">
-          Error loading Hall of Fame.
+          {t('hallOfFame.error.load')}
         </Typography>
       </Box>
     );
@@ -90,13 +92,13 @@ export default function HallOfFame({ userId }: { userId: string }) {
         )}
         <AnimatedAlert
           open={isUpdated}
-          message="Quote updated successfully!"
+          message={t('hallOfFame.quote.updated')}
           severity={ESeverity.SUCCESS}
           onClose={() => setIsUpdated(false)}
         />
         <AnimatedAlert
           open={isUpdateError}
-          message="Failed to update quote. Please try again."
+          message={t('hallOfFame.quote.updateError')}
           severity={ESeverity.ERROR}
           onClose={() => setIsUpdateError(false)}
         />
@@ -165,7 +167,7 @@ export default function HallOfFame({ userId }: { userId: string }) {
               letterSpacing: '-0.01em',
             }}
           >
-            Hall of Fame
+            {t('hallOfFame.title')}
           </Typography>
           <WorkspacePremiumIcon
             sx={{ color: 'rgba(245,158,11,0.7)', fontSize: 22 }}
@@ -180,7 +182,10 @@ export default function HallOfFame({ userId }: { userId: string }) {
             textTransform: 'uppercase',
           }}
         >
-          {books.length} {books.length === 1 ? 'favourite' : 'favourites'}
+          {books.length}{' '}
+          {books.length === 1
+            ? t('hallOfFame.favourite.singular')
+            : t('hallOfFame.favourite.plural')}
         </Typography>
       </Box>
 

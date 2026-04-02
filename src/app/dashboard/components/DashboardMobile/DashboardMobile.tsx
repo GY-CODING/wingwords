@@ -2,6 +2,7 @@
 
 import HardcoverBook from '@/domain/HardcoverBook';
 import { FriendActivity } from '@/hooks/activities/useFriendsActivityFeed';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { lora } from '@/utils/fonts/fonts';
 import { Box, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
@@ -50,6 +51,7 @@ export const DashboardMobile = React.memo<DashboardMobileProps>(
     displayYear,
     currentUserId,
   }) => {
+    const { t } = useTranslation();
     return (
       <Box
         sx={{
@@ -72,7 +74,7 @@ export const DashboardMobile = React.memo<DashboardMobileProps>(
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <SectionHeader title="Currently Reading" />
+          <SectionHeader title={t('dashboard.section.currentlyReading')} />
           <CurrentlyReadingMobile
             books={currentlyReadingBooks}
             isLoading={booksLoading}
@@ -85,7 +87,7 @@ export const DashboardMobile = React.memo<DashboardMobileProps>(
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.08 }}
         >
-          <SectionHeader title="Stats" />
+          <SectionHeader title={t('dashboard.section.stats')} />
           <ReadingStatsMini
             totalBooks={totalBooks}
             booksRead={booksRead}
@@ -101,7 +103,7 @@ export const DashboardMobile = React.memo<DashboardMobileProps>(
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.16 }}
         >
-          <SectionHeader title="Friends Activity" />
+          <SectionHeader title={t('dashboard.section.friendsActivity')} />
           <FriendsActivityMobileFeed
             activities={activities}
             isLoading={activitiesLoading}

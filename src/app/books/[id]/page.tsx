@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import React from 'react';
 import BookDetailsSkeleton from '@/app/components/molecules/BookDetailsSkeleton';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { EditionSelector } from '@/app/components/molecules/EditionSelector/EditionSelector';
 import { Edition } from '@/domain/HardcoverBook';
 import useMergedBook from '@/hooks/books/useMergedBook';
@@ -116,6 +117,7 @@ export default function BookDetails() {
     return id === book?.id;
   });
   const isLoggedIn = !!user;
+  const { t } = useTranslation();
 
   const allEditions: Edition[] = React.useMemo(() => {
     if (!book?.editions) return [];
@@ -305,7 +307,9 @@ export default function BookDetails() {
                         fontWeight: 600,
                       }}
                     >
-                      {isOnHallOfFame ? 'In Hall of Fame' : 'Hall of Fame'}
+                      {isOnHallOfFame
+                        ? t('book.detail.hallOfFame.in')
+                        : t('book.detail.hallOfFame.add')}
                     </Typography>
                   </IconButton>
                 )}
@@ -428,7 +432,7 @@ export default function BookDetails() {
                       fontSize: '0.85rem',
                     }}
                   >
-                    {book.pageCount} pages
+                    {book.pageCount} {t('book.detail.pages')}
                   </Typography>
                 </Box>
               )}
@@ -446,7 +450,10 @@ export default function BookDetails() {
                       fontSize: '0.85rem',
                     }}
                   >
-                    {allEditions.length} editions
+                    {allEditions.length}{' '}
+                    {allEditions.length !== 1
+                      ? t('book.detail.edition.plural')
+                      : t('book.detail.edition.singular')}
                   </Typography>
                   <EditionSelector
                     editions={allEditions}
@@ -501,7 +508,7 @@ export default function BookDetails() {
                     mb: 1.5,
                   }}
                 >
-                  About the author
+                  {t('book.detail.about.author')}
                 </Typography>
 
                 <Box
@@ -609,7 +616,7 @@ export default function BookDetails() {
                           fontStyle: 'italic',
                         }}
                       >
-                        View full profile
+                        {t('book.detail.view.profile')}
                       </Typography>
                     )}
                   </Box>
@@ -638,25 +645,25 @@ export default function BookDetails() {
       <AnimatedAlert
         open={isUpdatedAddToHallOfFame}
         onClose={() => setIsUpdatedAddToHallOfFame(false)}
-        message="Book added to Hall of Fame successfully!"
+        message={t('book.detail.hallOfFame.add.success')}
         severity={ESeverity.SUCCESS}
       />
       <AnimatedAlert
         open={isErrorAddToHallOfFame}
         onClose={() => setIsErrorAddToHallOfFame(false)}
-        message="Error adding book to Hall of Fame."
+        message={t('book.detail.hallOfFame.add.error')}
         severity={ESeverity.ERROR}
       />
       <AnimatedAlert
         open={isUpdatedDeleteToHallOfFame}
         onClose={() => setIsUpdatedAddToHallOfFame(false)}
-        message="Book deleted from Hall of Fame!"
+        message={t('book.detail.hallOfFame.delete.success')}
         severity={ESeverity.SUCCESS}
       />
       <AnimatedAlert
         open={isErrorDeleteToHallOfFame}
         onClose={() => setIsErrorDeleteToHallOfFame(false)}
-        message="Error deleting book from Hall of Fame."
+        message={t('book.detail.hallOfFame.delete.error')}
         severity={ESeverity.ERROR}
       />
       <AnimatedAlert

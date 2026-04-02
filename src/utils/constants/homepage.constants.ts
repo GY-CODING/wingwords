@@ -6,6 +6,7 @@ import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import type { SvgIconComponent } from '@mui/icons-material';
 
+/** Feature con strings ya traducidos (para pasar a FeatureCard) */
 export interface Feature {
   icon: SvgIconComponent;
   title: string;
@@ -13,63 +14,76 @@ export interface Feature {
   color: string;
 }
 
+/** Feature con claves de traducción (fuente de datos en constants) */
+export interface FeatureKey {
+  icon: SvgIconComponent;
+  titleKey: string;
+  descriptionKey: string;
+  color: string;
+}
+
+/** Stat con string ya traducido (para renderizar) */
 export interface Stat {
   value: string;
   label: string;
 }
 
-export const HERO_STATS: Stat[] = [
-  { value: '10K+', label: 'Books' },
-  { value: 'Real-time', label: 'Updates' },
-  { value: '5+', label: 'Features' },
+/** Stat con clave de traducción (fuente de datos en constants) */
+export interface StatKey {
+  value?: string;
+  valueKey?: string; // si está presente, se usa t(valueKey) en lugar de value
+  labelKey: string;
+}
+
+export const HERO_STATS: StatKey[] = [
+  { value: '10K+', labelKey: 'landing.stats.books' },
+  {
+    valueKey: 'landing.stats.updates.value',
+    labelKey: 'landing.stats.updates',
+  },
+  { value: '5+', labelKey: 'landing.stats.features' },
 ];
 
-export const FEATURES: Feature[] = [
+export const FEATURES: FeatureKey[] = [
   {
     icon: LocalLibraryIcon,
-    title: 'Smart Library Management',
-    description:
-      'Organize your books with custom filters: Want to Read, Reading, Read. Filter by ratings and track your progress effortlessly.',
+    titleKey: 'landing.features.smart-library.title',
+    descriptionKey: 'landing.features.smart-library.description',
     color: '#9333ea',
   },
   {
     icon: SearchIcon,
-    title: 'Discover & Explore',
-    description:
-      'Search through thousands of books, find detailed information, and browse multiple editions to pick your perfect cover.',
+    titleKey: 'landing.features.discover.title',
+    descriptionKey: 'landing.features.discover.description',
     color: '#a855f7',
   },
   {
     icon: PeopleIcon,
-    title: 'Social Reading Network',
-    description:
-      'Search for readers, add friends, and follow their reading activities. See what your friends are reading in real-time.',
+    titleKey: 'landing.features.social.title',
+    descriptionKey: 'landing.features.social.description',
     color: '#c084fc',
   },
   {
     icon: WorkspacePremiumIcon,
-    title: 'Hall of Fame',
-    description:
-      'Curate your favorite books in a personal Hall of Fame and add your favorite quotes from each masterpiece.',
+    titleKey: 'landing.features.hall-of-fame.title',
+    descriptionKey: 'landing.features.hall-of-fame.description',
     color: '#FFD700',
   },
   {
     icon: AutoStoriesIcon,
-    title: 'Multiple Editions',
-    description:
-      'Choose from different book editions to customize your library with the cover art you love most.',
+    titleKey: 'landing.features.editions.title',
+    descriptionKey: 'landing.features.editions.description',
     color: '#8b5cf6',
   },
   {
     icon: TimelineIcon,
-    title: 'Activity Feed',
-    description:
-      "Stay connected with your reading community. View your activity and your friends' reading progress and updates.",
+    titleKey: 'landing.features.activity.title',
+    descriptionKey: 'landing.features.activity.description',
     color: '#7c3aed',
   },
 ];
 
-export const CTA_FEATURES: string[] = [
-  'Follow readers with similar tastes',
-  'Share your reading activity',
+export const CTA_FEATURE_KEYS: string[] = [
+  'landing.cta.features.follow',
+  'landing.cta.features.share',
 ];

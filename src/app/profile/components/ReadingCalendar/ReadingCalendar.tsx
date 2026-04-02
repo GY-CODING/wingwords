@@ -2,6 +2,7 @@
 'use client';
 import type { UserProfileBook } from '@/domain/user.model';
 import { getBookDisplayData } from '@/hooks/useBookDisplay';
+import { useTranslation } from '@/hooks/useTranslation';
 import { lora } from '@/utils/fonts/fonts';
 import { EBookStatus } from '@gycoding/nebula';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
@@ -63,6 +64,7 @@ const MotionBox = motion(Box);
 
 export const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books }) => {
   const router = useRouter();
+  const { t } = useTranslation();
   const [view, setView] = useState<View>('month');
   const [date, setDate] = useState(new Date());
 
@@ -333,7 +335,7 @@ export const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books }) => {
             textAlign: 'center',
           }}
         >
-          No reading history yet
+          {t('profile.calendar.empty.title')}
         </Typography>
         <Typography
           sx={{
@@ -344,7 +346,7 @@ export const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books }) => {
             maxWidth: 400,
           }}
         >
-          Start tracking your reading journey with start and end dates
+          {t('profile.calendar.empty.subtitle')}
         </Typography>
       </MotionBox>
     );
@@ -402,7 +404,7 @@ export const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books }) => {
                 mt: 0.5,
               }}
             >
-              Finished
+              {t('profile.calendar.stats.finished')}
             </Typography>
           </Box>
           <Box sx={{ textAlign: 'center' }}>
@@ -428,7 +430,7 @@ export const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books }) => {
                 mt: 0.5,
               }}
             >
-              Pages
+              {t('profile.calendar.stats.pages')}
             </Typography>
           </Box>
           {stats.reading > 0 && (
@@ -455,7 +457,7 @@ export const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books }) => {
                   mt: 0.5,
                 }}
               >
-                Reading
+                {t('profile.calendar.stats.reading')}
               </Typography>
             </Box>
           )}

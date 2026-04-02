@@ -1,6 +1,7 @@
 'use client';
 
 import { birthStone, cinzel, lora } from '@/utils/fonts/fonts';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LanguageIcon from '@mui/icons-material/Language';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
@@ -11,6 +12,7 @@ const MotionBox = motion(Box);
 const MotionIconButton = motion(IconButton);
 
 export const Footer = () => {
+  const { t } = useTranslation();
   return (
     <Box
       component="footer"
@@ -94,7 +96,7 @@ export const Footer = () => {
                 lineHeight: 1.6,
               }}
             >
-              Discover, share, and connect with other readers.
+              {t('landing.footer.description')}
             </Typography>
           </Box>
 
@@ -135,7 +137,7 @@ export const Footer = () => {
                 },
               }}
             >
-              About Us
+              {t('landing.footer.about')}
             </Link>
             <Link
               href="/privacy"
@@ -166,7 +168,7 @@ export const Footer = () => {
                 },
               }}
             >
-              Privacy
+              {t('landing.footer.privacy')}
             </Link>
             <Link
               href="/terms"
@@ -197,7 +199,7 @@ export const Footer = () => {
                 },
               }}
             >
-              Terms
+              {t('landing.footer.terms')}
             </Link>
           </Box>
 

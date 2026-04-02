@@ -5,7 +5,7 @@ import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 
 export interface BottomNavItem {
-  label: string;
+  labelKey: string;
   icon: typeof HomeRoundedIcon;
   route: string;
   /** Si true, solo se muestra cuando el usuario está logueado */
@@ -17,11 +17,15 @@ export interface BottomNavItem {
  * Separados en constantes para facilitar mantenimiento y testing.
  */
 export const BOTTOM_NAV_ITEMS_LOGGED_IN: BottomNavItem[] = [
-  { label: 'Home', icon: HomeRoundedIcon, route: '/' },
-  { label: 'Library', icon: MenuBookRoundedIcon, route: '/books' },
-  { label: 'Community', icon: PeopleRoundedIcon, route: '/users/community' },
+  { labelKey: 'nav.home', icon: HomeRoundedIcon, route: '/' },
+  { labelKey: 'nav.library', icon: MenuBookRoundedIcon, route: '/books' },
   {
-    label: 'Profile',
+    labelKey: 'nav.community',
+    icon: PeopleRoundedIcon,
+    route: '/users/community',
+  },
+  {
+    labelKey: 'nav.profile',
     icon: PersonRoundedIcon,
     route: '/profile',
     requiresAuth: true,
@@ -29,9 +33,9 @@ export const BOTTOM_NAV_ITEMS_LOGGED_IN: BottomNavItem[] = [
 ];
 
 export const BOTTOM_NAV_ITEMS_LOGGED_OUT: BottomNavItem[] = [
-  { label: 'Home', icon: HomeRoundedIcon, route: '/' },
-  { label: 'Library', icon: MenuBookRoundedIcon, route: '/books' },
-  { label: 'Login', icon: LoginRoundedIcon, route: '/auth/login' },
+  { labelKey: 'nav.home', icon: HomeRoundedIcon, route: '/' },
+  { labelKey: 'nav.library', icon: MenuBookRoundedIcon, route: '/books' },
+  { labelKey: 'nav.login', icon: LoginRoundedIcon, route: '/auth/login' },
 ];
 
 /** Altura del bottom nav incluyendo safe area */

@@ -1,6 +1,7 @@
 'use client';
 
 import { AuthorSearchResult } from '@/app/actions/book/queryAuthors';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { lora } from '@/utils/fonts/fonts';
 import { Avatar, Box, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
@@ -14,6 +15,7 @@ interface AuthorCardProps {
 }
 
 export function AuthorCard({ author }: AuthorCardProps) {
+  const { t } = useTranslation();
   return (
     <MotionBox
       component={Link}
@@ -78,8 +80,8 @@ export function AuthorCard({ author }: AuthorCardProps) {
           }}
         >
           {author.booksCount > 0
-            ? `${author.booksCount} book${author.booksCount !== 1 ? 's' : ''}`
-            : 'Author'}
+            ? `${author.booksCount} ${author.booksCount !== 1 ? t('library.author.books.plural') : t('library.author.books')}`
+            : t('library.author.label')}
         </Typography>
       </Box>
 

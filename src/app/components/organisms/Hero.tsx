@@ -1,6 +1,7 @@
 'use client';
 
 import { useAnimations } from '@/hooks/useAnimations';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { HERO_STATS } from '@/utils/constants/homepage.constants';
 import { birthStone, lora } from '@/utils/fonts/fonts';
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -19,6 +20,7 @@ const MotionTypography = motion(Typography);
  */
 export const Hero = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const { fadeInUp, fadeIn, backgroundGradient } = useAnimations();
 
   return (
@@ -119,8 +121,7 @@ export const Hero = () => {
             px: { xs: 2, sm: 0 },
           }}
         >
-          Track your reading journey, discover new books, curate your personal
-          Hall of Fame, and connect with fellow readers worldwide.
+          {t('landing.hero.subtitle')}
         </MotionTypography>
 
         {/* Stats */}
@@ -148,7 +149,7 @@ export const Hero = () => {
                   fontSize: { xs: '1.8rem', sm: '2.2rem' },
                 }}
               >
-                {stat.value}
+                {stat.valueKey ? t(stat.valueKey) : stat.value}
               </Typography>
               <Typography
                 variant="body2"
@@ -158,7 +159,7 @@ export const Hero = () => {
                   fontSize: { xs: '0.9rem', sm: '1rem' },
                 }}
               >
-                {stat.label}
+                {t(stat.labelKey)}
               </Typography>
             </Box>
           ))}
@@ -199,7 +200,7 @@ export const Hero = () => {
               },
             }}
           >
-            Explore Library
+            {t('landing.hero.button.explore')}
           </Button>
           <Button
             variant="outlined"
@@ -225,7 +226,7 @@ export const Hero = () => {
               },
             }}
           >
-            Join Community
+            {t('landing.hero.button.join')}
           </Button>
         </MotionBox>
 
@@ -291,7 +292,7 @@ export const Hero = () => {
                 letterSpacing: '0.02em',
               }}
             >
-              v1.0 • See Features
+              {t('landing.hero.badge')}
             </Typography>
             <Box
               component="span"

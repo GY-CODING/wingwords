@@ -1,6 +1,7 @@
 'use client';
 
 import { lora } from '@/utils/fonts/fonts';
+import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { Box, Skeleton, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { Suspense } from 'react';
@@ -32,6 +33,7 @@ function BooksHero({
   searchMode: SearchMode;
   onSearchModeChange: (mode: SearchMode) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <Box
       sx={{
@@ -68,7 +70,7 @@ function BooksHero({
             textTransform: 'uppercase',
           }}
         >
-          Book Discovery
+          {t('library.hero.eyebrow')}
         </Typography>
       </MotionBox>
 
@@ -95,7 +97,7 @@ function BooksHero({
             paddingBottom: 2,
           }}
         >
-          Library
+          {t('library.hero.title')}
         </Typography>
         <Typography
           sx={{
@@ -106,7 +108,7 @@ function BooksHero({
             letterSpacing: '0.02em',
           }}
         >
-          Search millions of books, authors &amp; series
+          {t('library.hero.subtitle')}
         </Typography>
       </MotionBox>
 
@@ -122,8 +124,8 @@ function BooksHero({
           onChange={onQueryChange}
           placeholder={
             searchMode === 'books'
-              ? 'Search by title, series…'
-              : 'Search for an author…'
+              ? t('library.search.placeholder.books')
+              : t('library.search.placeholder.authors')
           }
         />
       </MotionBox>
@@ -186,7 +188,9 @@ function BooksHero({
                   zIndex: 1,
                 }}
               >
-                {mode === 'books' ? 'Books' : 'Authors'}
+                {mode === 'books'
+                  ? t('library.search.mode.books')
+                  : t('library.search.mode.authors')}
               </Typography>
             </Box>
           ))}
