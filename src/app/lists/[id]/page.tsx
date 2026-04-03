@@ -230,8 +230,6 @@ const BookGridCard: React.FC<BookGridCardProps> = ({
         background: 'rgba(255,255,255,0.03)',
         boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
         cursor: canEdit ? 'grab' : 'default',
-        userSelect: 'none',
-        WebkitUserSelect: 'none',
         transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
         '&:hover': {
           borderColor: 'rgba(168,85,247,0.4)',
