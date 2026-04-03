@@ -103,6 +103,45 @@ function useStatusConfig(): Record<
   };
 }
 
+// ─── DonutChart ───────────────────────────────────────────────────────────────
+
+const DonutChart: React.FC<{ percent: number; size?: number }> = ({
+  percent,
+  size = 40,
+}) => {
+  const sw = 4;
+  const r = (size - sw * 2) / 2;
+  const circ = 2 * Math.PI * r;
+  const dash = (Math.min(percent, 100) / 100) * circ;
+  const cx = size / 2;
+  const cy = size / 2;
+
+  return (
+    <svg width={size} height={size} style={{ display: 'block', flexShrink: 0 }}>
+      <circle
+        cx={cx}
+        cy={cy}
+        r={r}
+        fill="none"
+        stroke="rgba(255,255,255,0.08)"
+        strokeWidth={sw}
+      />
+      <circle
+        cx={cx}
+        cy={cy}
+        r={r}
+        fill="none"
+        stroke="#a855f7"
+        strokeWidth={sw}
+        strokeDasharray={`${dash} ${circ}`}
+        strokeLinecap="round"
+        transform={`rotate(-90 ${cx} ${cy})`}
+        style={{ transition: 'stroke-dasharray 0.6s ease' }}
+      />
+    </svg>
+  );
+};
+
 // ─── BookGridCard ─────────────────────────────────────────────────────────────
 
 interface BookGridCardProps {
@@ -901,6 +940,22 @@ export default function ListDetailPage() {
     .filter((i): i is EnrichedItem => !!i);
   const existingIds = useMemo(() => new Set(orderedIds), [orderedIds]);
   const activeItem = activeId ? (itemMap.get(activeId) ?? null) : null;
+
+  const { readCount, readPercent } = useMemo(() => {
+    if (!userMergedBooks || !list || list.books.length === 0)
+      return { readCount: 0, readPercent: 0 };
+    const listIds = new Set(list.books.map((b) => b.id));
+    const inList = userMergedBooks.filter((b) => listIds.has(String(b.id)));
+    const read = inList.filter(
+      (b) =>
+        b.userData?.status === EBookStatus.READ ||
+        b.userData?.status === EBookStatus.RATE
+    ).length;
+    return {
+      readCount: read,
+      readPercent: Math.round((read / list.books.length) * 100),
+    };
+  }, [userMergedBooks, list]);
   const canEdit = !!user;
 
   // DnD sensors
@@ -1293,6 +1348,26 @@ export default function ListDetailPage() {
                       </Typography>
                     )}
                   </Typography>
+
+                  {list.books.length > 0 && (
+                    <Box
+                      sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}
+                    >
+                      <DonutChart percent={readPercent} size={28} />
+                      <Typography
+                        sx={{
+                          fontFamily: lora.style.fontFamily,
+                          fontSize: 12,
+                          color: 'rgba(255,255,255,0.22)',
+                        }}
+                      >
+                        {t('lists.card.read', {
+                          done: readCount,
+                          total: list.books.length,
+                        })}
+                      </Typography>
+                    </Box>
+                  )}
 
                   {canEdit && (
                     <Box
