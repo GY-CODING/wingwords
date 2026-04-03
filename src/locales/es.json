@@ -382,5 +382,6 @@
   "changelog.v1-0.feature.3": "Destaca tus 5 libros favoritos en el Salón de la Fama, junto con tu cita favorita del libro.",
   "changelog.v1-0.feature.4": "Comprueba tus estadísticas.",
   "changelog.v1-0.feature.5": "Integración completa con GY Accounts.",
-  "translation.banner.title": "Traducciones en progreso"
+  "translation.banner.title": "Traducciones en progreso",
+  "translation.banner.message": "Estamos trabajando activamente en la traducción de la aplicación. Si algo no se ve bien, el inglés es el idioma predeterminado de respaldo."
 }
