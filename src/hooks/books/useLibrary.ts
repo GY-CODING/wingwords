@@ -5,6 +5,7 @@ import {
   setLibraryLoading,
   setLibraryBooks,
   setLibraryError,
+  selectIsLibraryCacheValid,
 } from '@/store/librarySlice';
 import type HardcoverBook from '@/domain/HardcoverBook';
 
@@ -31,13 +32,10 @@ export default function useLibrary(
   pageSize = 50
 ): UseLibraryResult {
   const dispatch = useAppDispatch();
-  const {
-    books,
-    status,
-    userId: cachedUserId,
-  } = useAppSelector((s) => s.library);
-
-  const isCacheValid = !!userId && cachedUserId === userId && status === 'done';
+  const { books, status } = useAppSelector((s) => s.library);
+  const isCacheValid = useAppSelector((s) =>
+    selectIsLibraryCacheValid(s, userId ?? null)
+  );
 
   // Only call the incremental hook when we don't have a valid cache
   const {

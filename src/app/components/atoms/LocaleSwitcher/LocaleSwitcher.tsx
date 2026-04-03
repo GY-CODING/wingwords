@@ -2,7 +2,6 @@
 
 import { useTranslation } from '@/lib/i18n/I18nProvider';
 import {
-  LOCALE_FLAGS,
   LOCALE_LABELS,
   SUPPORTED_LOCALES,
   type Locale,
@@ -63,9 +62,7 @@ export const LocaleSwitcher = () => {
           },
         }}
       >
-        <Box component="span" sx={{ fontSize: '1rem', lineHeight: 1 }}>
-          {LOCALE_FLAGS[locale as Locale]}
-        </Box>
+        {/* Sin texto, solo icono */}
         <Box
           component="span"
           sx={{
@@ -142,9 +139,7 @@ export const LocaleSwitcher = () => {
               },
             }}
           >
-            <Box component="span" sx={{ fontSize: '1.1rem', lineHeight: 1 }}>
-              {LOCALE_FLAGS[loc]}
-            </Box>
+            {/* Sin texto, solo icono */}
             <Box component="span">{LOCALE_LABELS[loc]}</Box>
           </MenuItem>
         ))}

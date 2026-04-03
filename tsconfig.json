@@ -29,8 +29,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/app/api/docs/route.ts",
-    "src/app/api/docs.ts",
-    "lib/swagger.ts"
+    "src/app/api/docs.ts"
   ],
   "exclude": ["node_modules"]
 }

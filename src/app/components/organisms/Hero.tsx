@@ -9,6 +9,7 @@ import MenuBookIcon from '@mui/icons-material/MenuBook';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import { Box, Button, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 const MotionBox = motion(Box);
@@ -239,14 +240,8 @@ export const Hero = () => {
           sx={{ mt: 3 }}
         >
           <Box
-            onClick={() => {
-              const featuresSection =
-                document.getElementById('features-section');
-              featuresSection?.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start',
-              });
-            }}
+            component={Link}
+            href="/changelog"
             sx={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -260,12 +255,20 @@ export const Hero = () => {
               borderRadius: '50px',
               cursor: 'pointer',
               transition: 'all 0.3s ease',
+              textDecoration: 'none !important',
               '&:hover': {
                 background:
                   'linear-gradient(135deg, rgba(147, 51, 234, 0.25) 0%, rgba(168, 85, 247, 0.15) 100%)',
                 border: '1px solid rgba(147, 51, 234, 0.5)',
                 transform: 'translateY(-2px)',
                 boxShadow: '0 4px 12px rgba(147, 51, 234, 0.15)',
+                textDecoration: 'none !important',
+              },
+              '&:visited': {
+                textDecoration: 'none !important',
+              },
+              '& *': {
+                textDecoration: 'none !important',
               },
             }}
           >

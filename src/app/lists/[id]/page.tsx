@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import useSWR from 'swr';
 import {
   Box,
   Button,
@@ -474,59 +475,41 @@ const AddBookSearch: React.FC<AddBookSearchProps> = ({
 }) => {
   const { t } = useTranslation();
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<HardcoverBook[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
   const [addingId, setAddingId] = useState<string | null>(null);
   const debouncedQuery = useDebounce(query, 350);
 
-  useEffect(() => {
-    if (!debouncedQuery.trim()) {
-      setResults([]);
-      return;
-    }
-    let cancelled = false;
-    setIsSearching(true);
-    console.debug('[AddBookSearch] Searching Hardcover:', {
-      query: debouncedQuery,
-    });
-    fetch('/api/hardcover', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: debouncedQuery }),
-    })
-      .then(async (r) => {
-        const data = await r.json();
-        if (!r.ok) {
-          console.error('[AddBookSearch] Hardcover API error:', r.status, data);
-          return [];
-        }
-        console.debug('[AddBookSearch] Hardcover results:', {
-          count: data?.length,
-          sample: data?.slice(0, 2),
-        });
-        return data as HardcoverBook[];
-      })
-      .then((data) => {
-        if (!cancelled) {
-          // Sort: library books first, then the rest
-          const sorted = [...data].sort((a, b) => {
-            const aInLib = libraryBookIds.has(String(a.id)) ? 0 : 1;
-            const bInLib = libraryBookIds.has(String(b.id)) ? 0 : 1;
-            return aInLib - bInLib;
-          });
-          setResults(sorted.slice(0, 8));
-        }
-      })
-      .catch((err) => {
-        console.error('[AddBookSearch] Fetch failed:', err);
-      })
-      .finally(() => {
-        if (!cancelled) setIsSearching(false);
+  const swrKey = debouncedQuery.trim()
+    ? `hardcover-search|${debouncedQuery.trim().toLowerCase()}`
+    : null;
+
+  const { data: rawResults, isLoading: isSearching } = useSWR<HardcoverBook[]>(
+    swrKey,
+    async () => {
+      const r = await fetch('/api/hardcover', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: debouncedQuery }),
       });
-    return () => {
-      cancelled = true;
-    };
-  }, [debouncedQuery, libraryBookIds]);
+      if (!r.ok) return [];
+      return r.json();
+    },
+    {
+      dedupingInterval: 60_000,
+      revalidateOnFocus: false,
+      shouldRetryOnError: false,
+      keepPreviousData: false,
+    }
+  );
+
+  const results = useMemo(() => {
+    if (!rawResults) return [];
+    const sorted = [...rawResults].sort((a, b) => {
+      const aInLib = libraryBookIds.has(String(a.id)) ? 0 : 1;
+      const bInLib = libraryBookIds.has(String(b.id)) ? 0 : 1;
+      return aInLib - bInLib;
+    });
+    return sorted.slice(0, 8);
+  }, [rawResults, libraryBookIds]);
 
   const handleAdd = async (book: HardcoverBook) => {
     const id = String(book.id);
@@ -830,15 +813,6 @@ export default function ListDetailPage() {
     }
   }, [list]);
 
-  // Hardcover enrichment
-  const bookIds = useMemo(
-    () => list?.books.map((b) => b.id) ?? [],
-    [list?.books]
-  );
-  const { data: hardcoverBooks } = useHardcoverBatch(
-    bookIds.length > 0 ? bookIds : null
-  );
-
   // Build a lookup map from the user's library (has userData: status, editionId, etc.)
   const userBooksMap = useMemo(() => {
     const map = new Map<string, HardcoverBook>();
@@ -849,6 +823,19 @@ export default function ListDetailPage() {
   const libraryBookIds = useMemo(
     () => new Set(userMergedBooks?.map((b) => String(b.id)) ?? []),
     [userMergedBooks]
+  );
+
+  // Hardcover enrichment — only fetch books NOT already in the user's library
+  const bookIds = useMemo(
+    () => list?.books.map((b) => b.id) ?? [],
+    [list?.books]
+  );
+  const missingFromLibrary = useMemo(
+    () => bookIds.filter((id) => !libraryBookIds.has(String(id))),
+    [bookIds, libraryBookIds]
+  );
+  const { data: hardcoverBooks } = useHardcoverBatch(
+    missingFromLibrary.length > 0 ? missingFromLibrary : null
   );
 
   const enrichMap = useMemo(() => {
@@ -863,26 +850,27 @@ export default function ListDetailPage() {
       }
     >();
 
-    // First pass: raw Hardcover data (no userData)
-    hardcoverBooks?.forEach((book: HardcoverBook) => {
-      map.set(String(book.id), {
-        title: BookHelpers.getDisplayTitle(book),
-        coverUrl: BookHelpers.getDisplayCoverUrl(book),
-        authorName: book.author?.name ?? '',
-        seriesName: book.series?.[0]?.name ?? null,
-        status: book.userData?.status ?? null,
-      });
-    });
-
-    // Second pass: override with user's book data when available (correct edition + status)
+    // First pass: library books (available instantly from Redux cache)
     userBooksMap.forEach((book, id) => {
-      if (!map.has(id)) return; // only enrich books already in Hardcover map
       map.set(id, {
         title: BookHelpers.getDisplayTitle(book),
         coverUrl: BookHelpers.getDisplayCoverUrl(book),
         authorName: book.author?.name ?? '',
         seriesName: book.series?.[0]?.name ?? null,
         status: (book.userData?.status as EBookStatus) ?? null,
+      });
+    });
+
+    // Second pass: Hardcover data for books NOT in library
+    hardcoverBooks?.forEach((book: HardcoverBook) => {
+      const id = String(book.id);
+      if (map.has(id)) return; // library data takes priority
+      map.set(id, {
+        title: BookHelpers.getDisplayTitle(book),
+        coverUrl: BookHelpers.getDisplayCoverUrl(book),
+        authorName: book.author?.name ?? '',
+        seriesName: book.series?.[0]?.name ?? null,
+        status: book.userData?.status ?? null,
       });
     });
 

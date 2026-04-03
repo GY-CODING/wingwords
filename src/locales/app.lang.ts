@@ -29,7 +29,7 @@ const appMessages = defineMessages({
   },
   heroBadge: {
     id: 'landing.hero.badge',
-    defaultMessage: 'v1.0 • See Features',
+    defaultMessage: "v1.1 • What's new",
   },
 
   // ── Stats ─────────────────────────────────────────────────────────────────
@@ -156,6 +156,10 @@ const appMessages = defineMessages({
   footerTerms: {
     id: 'landing.footer.terms',
     defaultMessage: 'Terms',
+  },
+  footerChangelog: {
+    id: 'landing.footer.changelog',
+    defaultMessage: 'Changelog',
   },
 
   // ── Navigation ────────────────────────────────────────────────────────────
@@ -1491,6 +1495,85 @@ const appMessages = defineMessages({
   listsDetailDeleting: {
     id: 'lists.detail.deleting',
     defaultMessage: 'Deleting...',
+  },
+
+  // ── Changelog page ────────────────────────────────────────────────────────
+  changelogTitle: {
+    id: 'changelog.title',
+    defaultMessage: 'Changelog',
+  },
+  changelogSubtitle: {
+    id: 'changelog.subtitle',
+    defaultMessage: "Everything that's new in WingWords",
+  },
+  changelogBadgeLatest: {
+    id: 'changelog.badge.latest',
+    defaultMessage: 'Latest',
+  },
+
+  // v1.1
+  changelogV11Date: {
+    id: 'changelog.v1-1.date',
+    defaultMessage: 'April 2026',
+  },
+  changelogV11Title: {
+    id: 'changelog.v1-1.title',
+    defaultMessage: 'Lists & New Languages',
+  },
+  changelogV11Intro: {
+    id: 'changelog.v1-1.intro',
+    defaultMessage:
+      'This release brings several highly-requested improvements and brand-new features to WingWords:',
+  },
+  changelogV11Feature1: {
+    id: 'changelog.v1-1.feature.1',
+    defaultMessage: 'New languages: Spanish, Galician, and German.',
+  },
+  changelogV11Feature2: {
+    id: 'changelog.v1-1.feature.2',
+    defaultMessage:
+      'Create and curate personal book lists with drag & drop reordering.',
+  },
+  changelogV11Feature3: {
+    id: 'changelog.v1-1.feature.3',
+    defaultMessage: 'Import your library directly from Hardcover or Goodreads.',
+  },
+
+  // v1.0
+  changelogV10Date: {
+    id: 'changelog.v1-0.date',
+    defaultMessage: 'March 2026',
+  },
+  changelogV10Title: {
+    id: 'changelog.v1-0.title',
+    defaultMessage: 'Initial Release',
+  },
+  changelogV10Intro: {
+    id: 'changelog.v1-0.intro',
+    defaultMessage:
+      'In this 1.0, we are proud to release the following features:',
+  },
+  changelogV10Feature1: {
+    id: 'changelog.v1-0.feature.1',
+    defaultMessage: 'Rate and update your progress on any book.',
+  },
+  changelogV10Feature2: {
+    id: 'changelog.v1-0.feature.2',
+    defaultMessage:
+      'Watch your friends activity through a feed on the main screen.',
+  },
+  changelogV10Feature3: {
+    id: 'changelog.v1-0.feature.3',
+    defaultMessage:
+      'Highlight your favourite 5 books on the Hall of Fame, along with your favourite book quote.',
+  },
+  changelogV10Feature4: {
+    id: 'changelog.v1-0.feature.4',
+    defaultMessage: 'Check your stats.',
+  },
+  changelogV10Feature5: {
+    id: 'changelog.v1-0.feature.5',
+    defaultMessage: 'Complete integration with GY Accounts.',
   },
 
   // ── Translation banner ────────────────────────────────────────────────────

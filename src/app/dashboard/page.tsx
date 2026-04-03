@@ -3,9 +3,9 @@
 import { useGyCodingUser } from '@/contexts/GyCodingUserContext';
 import HardcoverBook from '@/domain/HardcoverBook';
 import { useFriendsActivityFeed } from '@/hooks/activities/useFriendsActivityFeed';
-import useMergedBooks from '@/hooks/books/useMergedBooks';
+import useLibrary from '@/hooks/books/useLibrary';
 import { getBookDisplayData } from '@/hooks/useBookDisplay';
-import { useHallOfFame } from '@/hooks/useHallOfFame';
+import { useUserQuote } from '@/hooks/useUserQuote';
 import { lora } from '@/utils/fonts/fonts';
 import { EBookStatus } from '@gycoding/nebula';
 import {
@@ -169,10 +169,8 @@ export default function DashboardPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // 🚀 PETICIÓN 1: Libros del usuario
-  const { data: books = [], isLoading: booksLoading } = useMergedBooks(
-    user?.id
-  );
+  // 🚀 PETICIÓN 1: Libros del usuario (usa Redux cache con TTL de 5 min)
+  const { data: books = [], isLoading: booksLoading } = useLibrary(user?.id);
 
   // 🚀 PETICIÓN 2: Feed de actividades de amigos (optimizado con JOIN)
   const {
@@ -183,8 +181,8 @@ export default function DashboardPage() {
     isLoadingMore: activitiesLoadingMore,
   } = useFriendsActivityFeed();
 
-  // 🚀 PETICIÓN 3: Hall of Fame para obtener la quote
-  const { quote } = useHallOfFame(user?.id || '');
+  // 🚀 PETICIÓN 3: Solo la quote (sin cargar datos de HardcoverBatch)
+  const { quote } = useUserQuote(user?.id || '');
 
   // 📊 Calcular libros actualmente en lectura
   const currentlyReadingBooks = useMemo<HardcoverBook[]>(() => {

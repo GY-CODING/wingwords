@@ -1,6 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type HardcoverBook from '@/domain/HardcoverBook';
 
+/** Tiempo de vida del cache de librería en ms (5 minutos) */
+const LIBRARY_CACHE_TTL_MS = 5 * 60 * 1000;
+
 type LibraryStatus = 'idle' | 'loading' | 'done' | 'error';
 
 interface LibraryState {
@@ -8,6 +11,7 @@ interface LibraryState {
   status: LibraryStatus;
   userId: string | null;
   error: string | null;
+  cachedAt: number | null;
 }
 
 const initialState: LibraryState = {
@@ -15,6 +19,7 @@ const initialState: LibraryState = {
   status: 'idle',
   userId: null,
   error: null,
+  cachedAt: null,
 };
 
 const librarySlice = createSlice({
@@ -34,6 +39,7 @@ const librarySlice = createSlice({
       state.userId = action.payload.userId;
       state.status = 'done';
       state.error = null;
+      state.cachedAt = Date.now();
     },
     setLibraryError(state, action: PayloadAction<string>) {
       state.status = 'error';
@@ -44,6 +50,7 @@ const librarySlice = createSlice({
       state.status = 'idle';
       state.userId = null;
       state.error = null;
+      state.cachedAt = null;
     },
   },
 });
@@ -54,5 +61,17 @@ export const {
   setLibraryError,
   clearLibrary,
 } = librarySlice.actions;
+
+/** Selector que comprueba si el cache sigue siendo válido */
+export const selectIsLibraryCacheValid = (
+  state: { library: LibraryState },
+  userId: string | null
+): boolean => {
+  const { library } = state;
+  if (!userId || library.userId !== userId || library.status !== 'done')
+    return false;
+  if (!library.cachedAt) return false;
+  return Date.now() - library.cachedAt < LIBRARY_CACHE_TTL_MS;
+};
 
 export default librarySlice.reducer;

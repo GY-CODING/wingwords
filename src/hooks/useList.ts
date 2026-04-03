@@ -31,6 +31,8 @@ export function useList(id: string | null): UseListReturn {
     {
       revalidateOnFocus: false,
       shouldRetryOnError: false,
+      dedupingInterval: 30_000,
+      keepPreviousData: true,
     }
   );
 

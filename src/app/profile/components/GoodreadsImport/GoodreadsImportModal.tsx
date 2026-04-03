@@ -26,7 +26,7 @@ import type { TransitionProps } from '@mui/material/transitions';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import BlockIcon from '@mui/icons-material/Block';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import Image from 'next/image';
 import { lora } from '@/utils/fonts/fonts';
 import { DEFAULT_COVER_IMAGE } from '@/utils/constants/constants';
@@ -224,7 +224,7 @@ export const GoodreadsImportModal: React.FC<GoodreadsImportModalProps> = ({
             flexWrap: 'wrap',
           }}
         >
-          <FileUploadIcon sx={{ color: '#a855f7', fontSize: 24 }} />
+          <FileDownloadIcon sx={{ color: '#a855f7', fontSize: 24 }} />
           <Typography
             sx={{
               fontFamily: lora.style.fontFamily,
@@ -944,7 +944,7 @@ const UploadStep: React.FC<UploadStepProps> = ({
           justifyContent: 'center',
         }}
       >
-        <FileUploadIcon sx={{ color: '#a855f7', fontSize: 32 }} />
+        <FileDownloadIcon sx={{ color: '#a855f7', fontSize: 32 }} />
       </Box>
       <Box sx={{ textAlign: 'center' }}>
         <Typography

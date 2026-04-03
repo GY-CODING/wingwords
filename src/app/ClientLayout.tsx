@@ -29,6 +29,7 @@ import AnimatedAlert from './components/atoms/Alert/Alert';
 import { DesktopHeader } from './ClientLayout/components/DesktopHeader/DesktopHeader';
 import { FriendRequestsPanel } from './ClientLayout/components/FriendRequestsPanel/FriendRequestsPanel';
 import { I18nProvider } from '@/lib/i18n/I18nProvider';
+import { SWRConfig } from 'swr';
 import {
   BOTTOM_NAV_HEIGHT,
   MobileBottomNav,
@@ -190,11 +191,21 @@ export default function ClientLayout({
   return (
     <Provider store={store}>
       <I18nProvider>
-        <Auth0Provider>
-          <GyCodingUserProvider>
-            <ClientLayoutContent>{children}</ClientLayoutContent>
-          </GyCodingUserProvider>
-        </Auth0Provider>
+        <SWRConfig
+          value={{
+            revalidateOnFocus: false,
+            revalidateOnReconnect: false,
+            shouldRetryOnError: false,
+            dedupingInterval: 10000,
+            keepPreviousData: true,
+          }}
+        >
+          <Auth0Provider>
+            <GyCodingUserProvider>
+              <ClientLayoutContent>{children}</ClientLayoutContent>
+            </GyCodingUserProvider>
+          </Auth0Provider>
+        </SWRConfig>
       </I18nProvider>
     </Provider>
   );

@@ -65,9 +65,6 @@
     "react-dom": "18.3.1",
     "react-markdown": "^10.1.0",
     "react-redux": "^9.2.0",
-    "redoc": "^2.5.0",
-    "remark-gfm": "^4.0.1",
-    "swagger-jsdoc": "^6.2.8",
     "swr": "^2.3.3"
   },
   "devDependencies": {

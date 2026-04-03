@@ -179,7 +179,7 @@ export const ListsTab: React.FC<ListsTabProps> = ({ isOwnProfile }) => {
   }
 
   return (
-    <Box sx={{ pt: 3 }}>
+    <Box>
       {/* Header */}
       {isOwnProfile && (
         <Box

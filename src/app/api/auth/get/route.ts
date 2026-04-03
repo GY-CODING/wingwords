@@ -1,7 +1,7 @@
 import { User } from '@/domain/user.model';
 import { auth0 } from '@/lib/auth0';
+import clientPromise from '@/lib/mongodb';
 import { sendLog, LogLevel, LogMessage } from '@/utils/logs';
-import { MongoClient } from 'mongodb';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
@@ -19,17 +19,8 @@ export async function GET() {
     return NextResponse.json({ error: 'No user session' }, { status: 401 });
   }
 
-  const uri = process.env.MONGO_URI;
-  if (!uri) {
-    await sendLog(LogLevel.ERROR, LogMessage.CONFIG_MONGO_URI_MISSING);
-    return NextResponse.json({ error: 'Missing Mongo URI' }, { status: 500 });
-  }
-
-  const client = new MongoClient(uri);
-
   try {
-    await client.connect();
-
+    const client = await clientPromise;
     const db = client.db('GYAccounts');
     const dbBooks = client.db('GYBooks');
     const userDoc = await db.collection('Metadata').findOne({ userId });
@@ -64,7 +55,5 @@ export async function GET() {
       { error: 'Internal server error' },
       { status: 500 }
     );
-  } finally {
-    await client.close();
   }
 }

@@ -1,7 +1,7 @@
 import { auth0 } from '@/lib/auth0';
+import clientPromise from '@/lib/mongodb';
 import { sendLog, LogLevel, LogMessage } from '@/utils/logs';
 import { FriendRequest } from '@gycoding/nebula';
-import { MongoClient } from 'mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 
 async function handler(req: NextRequest) {
@@ -80,19 +80,8 @@ async function handler(req: NextRequest) {
       );
       const profileId = url.searchParams.get('profileId');
 
-      const mongoUri = process.env.MONGO_URI;
-      if (!mongoUri) {
-        await sendLog(LogLevel.ERROR, LogMessage.CONFIG_MONGO_URI_MISSING);
-        return NextResponse.json(
-          { error: 'Server configuration error' },
-          { status: 500 }
-        );
-      }
-
-      const client = new MongoClient(mongoUri);
-
       try {
-        await client.connect();
+        const client = await clientPromise;
         const db = client.db('GYBooks');
         const collection = db.collection('FriendRequest');
         const data = await collection.find({ to: profileId }).toArray();
@@ -113,8 +102,6 @@ async function handler(req: NextRequest) {
           { error: error instanceof Error ? error.message : 'Unknown error' },
           { status: 500 }
         );
-      } finally {
-        await client.close();
       }
     }
 

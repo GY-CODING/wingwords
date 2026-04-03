@@ -23,13 +23,5 @@ export const LOCALE_LABELS: Record<Locale, string> = {
   [Locale.DE]: 'Deutsch',
 };
 
-/** Flags emoji para el switcher */
-export const LOCALE_FLAGS: Record<Locale, string> = {
-  [Locale.EN]: '🇬🇧',
-  [Locale.ES]: '🇪🇸',
-  [Locale.GL]: '🏴',
-  [Locale.DE]: '🇩🇪',
-};
-
 /** Clave de localStorage donde se persiste la preferencia */
 export const LOCALE_STORAGE_KEY = 'wingwords-locale';

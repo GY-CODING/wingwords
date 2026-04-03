@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import { User } from '@/domain/user.model';
 import useSWR from 'swr';
 import fetchUser from '@/app/actions/accounts/fetchUser';
@@ -35,10 +35,13 @@ export const GyCodingUserProvider = ({
     errorRetryCount: 3,
   });
 
+  const contextValue = useMemo(
+    () => ({ user: user || null, isLoading, error }),
+    [user, isLoading, error]
+  );
+
   return (
-    <GyCodingUserContext.Provider
-      value={{ user: user || null, isLoading, error }}
-    >
+    <GyCodingUserContext.Provider value={contextValue}>
       {children}
     </GyCodingUserContext.Provider>
   );

@@ -201,6 +201,37 @@ export const Footer = () => {
             >
               {t('landing.footer.terms')}
             </Link>
+            <Link
+              href="/changelog"
+              sx={{
+                color: 'rgba(255, 255, 255, 0.6)',
+                textDecoration: 'none',
+                fontSize: { xs: '0.9rem', sm: '1rem' },
+                fontFamily: lora.style.fontFamily,
+                fontWeight: '500',
+                position: 'relative',
+                transition: 'color 0.3s ease',
+                '&:hover': {
+                  color: '#a855f7',
+                },
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '-4px',
+                  left: 0,
+                  width: '0%',
+                  height: '2px',
+                  background:
+                    'linear-gradient(90deg, #9333ea 0%, #a855f7 100%)',
+                  transition: 'width 0.3s ease',
+                },
+                '&:hover::after': {
+                  width: '100%',
+                },
+              }}
+            >
+              {t('landing.footer.changelog')}
+            </Link>
           </Box>
 
           <Box
