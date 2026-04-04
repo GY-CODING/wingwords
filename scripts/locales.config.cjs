@@ -11,7 +11,7 @@
  */
 
 const DEFAULT_LOCALE = 'en';
-const SUPPORTED_LOCALES = ['en', 'es', 'gl', 'de'];
+const SUPPORTED_LOCALES = ['en', 'es', 'gl', 'de', 'fr', 'pt'];
 
 module.exports = {
   defaultLocale: DEFAULT_LOCALE,
@@ -27,6 +27,8 @@ module.exports = {
     es: 'Spanish',
     gl: 'Galician',
     de: 'German',
+    fr: 'French',
+    pt: 'Portuguese',
   },
 
   /** Etiquetas de UI (para logs) */
@@ -35,5 +37,7 @@ module.exports = {
     es: 'Español',
     gl: 'Galego',
     de: 'Deutsch',
+    fr: 'Français',
+    pt: 'Português',
   },
 };

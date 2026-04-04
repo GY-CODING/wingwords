@@ -1527,7 +1527,8 @@ const appMessages = defineMessages({
   },
   changelogV11Feature1: {
     id: 'changelog.v1-1.feature.1',
-    defaultMessage: 'New languages: Spanish, Galician, and German.',
+    defaultMessage:
+      'New languages: Spanish, Spanish Galician, German, French, and Portuguese.',
   },
   changelogV11Feature2: {
     id: 'changelog.v1-1.feature.2',

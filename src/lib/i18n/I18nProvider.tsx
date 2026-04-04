@@ -5,6 +5,8 @@ import enMessages from '@/locales/en.json';
 import esMessages from '@/locales/es.json';
 import glMessages from '@/locales/gl.json';
 import deMessages from '@/locales/de.json';
+import frMessages from '@/locales/fr.json';
+import ptMessages from '@/locales/pt.json';
 import {
   createContext,
   useCallback,
@@ -27,6 +29,8 @@ const ALL_MESSAGES: Record<Locale, Messages> = {
   es: esMessages,
   gl: glMessages,
   de: deMessages,
+  fr: frMessages,
+  pt: ptMessages,
 };
 
 function resolveLocale(raw: string): Locale {

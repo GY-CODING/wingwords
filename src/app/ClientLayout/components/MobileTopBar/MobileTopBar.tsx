@@ -2,11 +2,22 @@
 
 import { UserAvatar } from '@/app/components/atoms/UserAvatar';
 import { LocaleSwitcher } from '@/app/components/atoms/LocaleSwitcher/LocaleSwitcher';
+import { CHANGELOG_VERSIONS } from '@/app/changelog/constants/changelog.constants';
 import { User } from '@/domain/user.model';
 import { lora } from '@/utils/fonts/fonts';
 import InboxRoundedIcon from '@mui/icons-material/InboxRounded';
-import { Badge, Box, IconButton, Skeleton, Typography } from '@mui/material';
+import {
+  Badge,
+  Box,
+  Chip,
+  IconButton,
+  Skeleton,
+  Typography,
+} from '@mui/material';
+import Link from 'next/link';
 import React from 'react';
+
+const LATEST_VERSION = CHANGELOG_VERSIONS[0].version;
 
 interface MobileTopBarProps {
   user: User | null;
@@ -58,6 +69,26 @@ export const MobileTopBar = React.memo<MobileTopBarProps>(
           >
             WingWords
           </Typography>
+          {user && (
+            <Chip
+              component={Link}
+              href="/changelog"
+              label={`v${LATEST_VERSION}`}
+              size="small"
+              clickable
+              sx={{
+                fontFamily: lora.style.fontFamily,
+                fontSize: '0.6rem',
+                fontWeight: 600,
+                height: 18,
+                background: 'rgba(168,85,247,0.12)',
+                color: 'rgba(192,132,252,0.75)',
+                border: '1px solid rgba(168,85,247,0.22)',
+                letterSpacing: '0.04em',
+                '& .MuiChip-label': { px: 1 },
+              }}
+            />
+          )}
         </Box>
 
         {/* Right side: Friend Requests + Avatar */}

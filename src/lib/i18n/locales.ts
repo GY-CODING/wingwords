@@ -5,8 +5,10 @@
 export enum Locale {
   EN = 'en',
   ES = 'es',
-  GL = 'gl',
   DE = 'de',
+  FR = 'fr',
+  PT = 'pt',
+  GL = 'gl',
 }
 
 /** Array de todos los locales soportados (derivado del enum) */
@@ -19,8 +21,10 @@ export const DEFAULT_LOCALE = Locale.EN;
 export const LOCALE_LABELS: Record<Locale, string> = {
   [Locale.EN]: 'English',
   [Locale.ES]: 'Español',
-  [Locale.GL]: 'Galego',
   [Locale.DE]: 'Deutsch',
+  [Locale.FR]: 'Français',
+  [Locale.PT]: 'Português',
+  [Locale.GL]: 'Galego',
 };
 
 /** Clave de localStorage donde se persiste la preferencia */

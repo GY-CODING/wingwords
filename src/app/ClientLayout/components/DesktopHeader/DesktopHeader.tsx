@@ -1,15 +1,19 @@
 import { CustomButton } from '@/app/components/atoms/CustomButton/customButton';
 import { LocaleSwitcher } from '@/app/components/atoms/LocaleSwitcher/LocaleSwitcher';
+import { CHANGELOG_VERSIONS } from '@/app/changelog/constants/changelog.constants';
 import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { User } from '@/domain/user.model';
 import { lora } from '@/utils/fonts/fonts';
 import InboxIcon from '@mui/icons-material/Inbox';
 import LocalLibraryIcon from '@mui/icons-material/LocalLibrary';
 import PersonIcon from '@mui/icons-material/Person';
-import { Box, IconButton } from '@mui/material';
+import { Box, Chip, IconButton } from '@mui/material';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ProfileButton } from '../ProfileButton/ProfileButton';
+
+const LATEST_VERSION = CHANGELOG_VERSIONS[0].version;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const MotionBox = motion(Box) as any;
@@ -51,8 +55,8 @@ export const DesktopHeader = ({
         px: 3,
       }}
     >
-      {/* Logo */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+      {/* Logo + version chip */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
         <MotionBox
           component="img"
           whileHover={{ scale: 1.1, rotate: 5 }}
@@ -68,6 +72,32 @@ export const DesktopHeader = ({
           src="/gy-logo.png"
           alt="logo"
         />
+        {user && (
+          <Chip
+            component={Link}
+            href="/changelog"
+            label={`v${LATEST_VERSION}`}
+            size="small"
+            clickable
+            sx={{
+              fontFamily: lora.style.fontFamily,
+              fontSize: '0.7rem',
+              fontWeight: 600,
+              height: 24,
+              background: 'rgba(168,85,247,0.1)',
+              color: 'rgba(192,132,252,0.8)',
+              border: '1px solid rgba(168,85,247,0.25)',
+              letterSpacing: '0.04em',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                background: 'rgba(168,85,247,0.2)',
+                color: '#c084fc',
+                borderColor: 'rgba(168,85,247,0.5)',
+              },
+              '& .MuiChip-label': { px: 1.25 },
+            }}
+          />
+        )}
       </Box>
 
       {/* Navigation Buttons */}
