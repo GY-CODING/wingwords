@@ -2,14 +2,18 @@ import rateBook from '@/app/actions/book/rateBook';
 import { formatPercent, formatProgress } from '@/domain/userData.model';
 import { useRemoveBook } from '@/hooks/useRemoveBook';
 import { useUser } from '@/hooks/useUser';
+import { invalidateLibrary } from '@/store/librarySlice';
+import { useAppDispatch } from '@/store/hooks';
 import { EBookStatus } from '@gycoding/nebula';
 import { useEffect, useState } from 'react';
+import { mutate as globalMutate } from 'swr';
 import { BookRatingProps } from '../types';
 
 export function useBookRatingState(props: BookRatingProps) {
   const { bookId, apiBook, mutate } = props;
   const { data: user, isLoading: isUserLoading } = useUser();
   const { handleDeleteBook, isLoading: isDeleteLoading } = useRemoveBook();
+  const dispatch = useAppDispatch();
   const [tempRating, setTempRating] = useState<number>(0);
   const [tempStatus, setTempStatus] = useState<EBookStatus>(
     EBookStatus.WANT_TO_READ
@@ -94,6 +98,17 @@ export function useBookRatingState(props: BookRatingProps) {
           { revalidate: false }
         );
       }
+
+      // Invalidar caches relacionados con el estado del libro
+      dispatch(invalidateLibrary());
+      await globalMutate(
+        (key) =>
+          typeof key === 'string' &&
+          (key.includes('/api/public/books/activities') ||
+            key.includes('/books/stats')),
+        undefined,
+        { revalidate: true }
+      );
 
       if (updatedApiBook && updatedApiBook.userData) {
         setTempRating(updatedApiBook.userData.rating || 0);

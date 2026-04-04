@@ -7,6 +7,7 @@ import {
   deleteList as deleteListAction,
   updateList as updateListAction,
 } from '@/app/actions/accounts/user/lists/lists';
+import { SWR_KEYS } from '@/lib/swrKeys';
 
 interface UseListReturn {
   list: BookList | null;
@@ -42,6 +43,7 @@ export function useList(id: string | null): UseListReturn {
     if (!id) return;
     await addBookToList(id, bookId);
     await mutate(cacheKey);
+    await mutate(SWR_KEYS.lists);
   };
 
   const reorderBooks = async (orderedBookIds: string[]) => {
@@ -77,6 +79,7 @@ export function useList(id: string | null): UseListReturn {
       })) ?? [];
     const updated = await updateListAction({ id, ...payload, books });
     await mutate(cacheKey, updated, { revalidate: false });
+    await mutate(SWR_KEYS.lists);
   };
 
   const removeBook = async (bookId: string) => {
@@ -93,6 +96,7 @@ export function useList(id: string | null): UseListReturn {
     try {
       await removeBookFromList(id, bookId);
       await mutate(cacheKey);
+      await mutate(SWR_KEYS.lists);
     } catch {
       await mutate(cacheKey);
     }
@@ -110,6 +114,7 @@ export function useList(id: string | null): UseListReturn {
       if (!id) return;
       await deleteListAction(id);
       await mutate(cacheKey, undefined, { revalidate: false });
+      await mutate(SWR_KEYS.lists);
     },
   };
 }

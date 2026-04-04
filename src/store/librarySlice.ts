@@ -52,6 +52,9 @@ const librarySlice = createSlice({
       state.error = null;
       state.cachedAt = null;
     },
+    invalidateLibrary(state) {
+      state.cachedAt = null;
+    },
   },
 });
 
@@ -60,6 +63,7 @@ export const {
   setLibraryBooks,
   setLibraryError,
   clearLibrary,
+  invalidateLibrary,
 } = librarySlice.actions;
 
 /** Selector que comprueba si el cache sigue siendo válido */

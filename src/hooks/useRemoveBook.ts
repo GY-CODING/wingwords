@@ -2,6 +2,9 @@
 import removeBook from '@/app/actions/book/removeBook';
 import { useState } from 'react';
 import { ApiBook } from '@/domain/apiBook.model';
+import { mutate as globalMutate } from 'swr';
+import { useAppDispatch } from '@/store/hooks';
+import { invalidateLibrary } from '@/store/librarySlice';
 
 interface useRemoveBookProps {
   isLoading: boolean;
@@ -23,6 +26,7 @@ export function useRemoveBook(): useRemoveBookProps {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
+  const dispatch = useAppDispatch();
 
   const handleDeleteBook = async (
     id: string,
@@ -39,6 +43,17 @@ export function useRemoveBook(): useRemoveBookProps {
       if (mutate) {
         await mutate(null, { revalidate: false });
       }
+
+      // Invalidar caches relacionados
+      dispatch(invalidateLibrary());
+      await globalMutate(
+        (key) =>
+          typeof key === 'string' &&
+          (key.includes('/api/public/books/activities') ||
+            key.includes('/books/stats')),
+        undefined,
+        { revalidate: true }
+      );
 
       setIsSuccess(true);
       setError(null); // Reset error state on success

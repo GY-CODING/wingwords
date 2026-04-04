@@ -1,12 +1,30 @@
+/* eslint-disable react/no-children-prop */
 import { renderHook, act } from '@testing-library/react';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import { useRemoveBook } from './useRemoveBook';
+import libraryReducer from '@/store/librarySlice';
 
 // Mock the removeBook function
 jest.mock('@/app/actions/book/removeBook');
+// Mock swr global mutate
+jest.mock('swr', () => ({
+  ...jest.requireActual('swr'),
+  mutate: jest.fn(),
+}));
 
 import removeBook from '@/app/actions/book/removeBook';
 
 const mockRemoveBook = removeBook as jest.MockedFunction<typeof removeBook>;
+
+function createWrapper() {
+  const store = configureStore({ reducer: { library: libraryReducer } });
+  function Wrapper({ children }: { children: React.ReactNode }) {
+    return React.createElement(Provider, { store, children });
+  }
+  return Wrapper;
+}
 
 describe('useRemoveBook', () => {
   beforeEach(() => {
@@ -14,7 +32,9 @@ describe('useRemoveBook', () => {
   });
 
   it('should return initial state', () => {
-    const { result } = renderHook(() => useRemoveBook());
+    const { result } = renderHook(() => useRemoveBook(), {
+      wrapper: createWrapper(),
+    });
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.error).toBe(null);
@@ -31,7 +51,9 @@ describe('useRemoveBook', () => {
 
     mockRemoveBook.mockResolvedValue(undefined);
 
-    const { result } = renderHook(() => useRemoveBook());
+    const { result } = renderHook(() => useRemoveBook(), {
+      wrapper: createWrapper(),
+    });
 
     await act(async () => {
       await result.current.handleDeleteBook(mockBookId, mockMutate);
@@ -51,7 +73,9 @@ describe('useRemoveBook', () => {
 
     mockRemoveBook.mockRejectedValue(mockError);
 
-    const { result } = renderHook(() => useRemoveBook());
+    const { result } = renderHook(() => useRemoveBook(), {
+      wrapper: createWrapper(),
+    });
 
     await act(async () => {
       await result.current.handleDeleteBook(mockBookId, mockMutate);
@@ -69,7 +93,9 @@ describe('useRemoveBook', () => {
 
     mockRemoveBook.mockResolvedValue(undefined);
 
-    const { result } = renderHook(() => useRemoveBook());
+    const { result } = renderHook(() => useRemoveBook(), {
+      wrapper: createWrapper(),
+    });
 
     await act(async () => {
       await result.current.handleDeleteBook(mockBookId);
@@ -89,7 +115,9 @@ describe('useRemoveBook', () => {
       () => new Promise((resolve) => setTimeout(() => resolve(undefined), 100))
     );
 
-    const { result } = renderHook(() => useRemoveBook());
+    const { result } = renderHook(() => useRemoveBook(), {
+      wrapper: createWrapper(),
+    });
 
     // Start the async operation without awaiting immediately
     let deletePromise: Promise<void>;
@@ -111,7 +139,9 @@ describe('useRemoveBook', () => {
   });
 
   it('should allow manual state updates', () => {
-    const { result } = renderHook(() => useRemoveBook());
+    const { result } = renderHook(() => useRemoveBook(), {
+      wrapper: createWrapper(),
+    });
 
     act(() => {
       result.current.setIsSuccess(true);
@@ -133,7 +163,9 @@ describe('useRemoveBook', () => {
   });
 
   it('should reset states between operations', async () => {
-    const { result } = renderHook(() => useRemoveBook());
+    const { result } = renderHook(() => useRemoveBook(), {
+      wrapper: createWrapper(),
+    });
 
     // First operation - error
     const mockError = new Error('First error');
@@ -158,7 +190,9 @@ describe('useRemoveBook', () => {
   });
 
   it('should handle multiple concurrent deletions', async () => {
-    const { result } = renderHook(() => useRemoveBook());
+    const { result } = renderHook(() => useRemoveBook(), {
+      wrapper: createWrapper(),
+    });
 
     mockRemoveBook.mockResolvedValue(undefined);
 
@@ -177,7 +211,9 @@ describe('useRemoveBook', () => {
   it('should handle empty book id', async () => {
     mockRemoveBook.mockResolvedValue(undefined);
 
-    const { result } = renderHook(() => useRemoveBook());
+    const { result } = renderHook(() => useRemoveBook(), {
+      wrapper: createWrapper(),
+    });
 
     await act(async () => {
       await result.current.handleDeleteBook('');

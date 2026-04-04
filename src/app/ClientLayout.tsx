@@ -35,6 +35,7 @@ import {
   MobileBottomNav,
 } from './ClientLayout/components/MobileBottomNav';
 import { MobileTopBar } from './ClientLayout/components/MobileTopBar/MobileTopBar';
+import { FriendRequestWithUser } from '@/domain/friend.model';
 
 const ClientLayoutContent = ({ children }: { children: React.ReactNode }) => {
   useUser(); // Fetch and store profile in Redux
@@ -133,7 +134,9 @@ const ClientLayoutContent = ({ children }: { children: React.ReactNode }) => {
           isLoading={friendRequestsPanel.isLoadingRequests}
           isLoadingUsers={friendRequestsPanel.isLoadingUsers}
           isLoadingManageRequest={friendRequestsPanel.isLoadingManageRequest}
-          friendRequestsWithUsers={friendRequestsPanel.friendRequestsWithUsers}
+          friendRequestsWithUsers={
+            friendRequestsPanel.friendRequestsWithUsers as FriendRequestWithUser[]
+          }
           onClose={friendRequestsPanel.close}
           onManageRequest={friendRequestsPanel.handleManageRequest}
         />
