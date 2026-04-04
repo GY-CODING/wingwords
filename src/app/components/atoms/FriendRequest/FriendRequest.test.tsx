@@ -243,7 +243,7 @@ describe('FriendRequest', () => {
         />
       );
       const image = screen.getByTestId('user-image');
-      expect(image).toHaveAttribute('src', '');
+      expect(image).not.toHaveAttribute('src');
       expect(image).toHaveAttribute('alt', '');
     });
   });

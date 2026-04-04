@@ -1,14 +1,13 @@
-import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { auth0 } from './lib/auth0';
 
 // Rutas que requieren autenticación
 const protectedRoutes = ['/profile', '/users/community'];
 
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+export async function proxy(request: Request) {
+  const { pathname } = new URL(request.url);
 
-  console.log(`🔗 Middleware: ${pathname}`);
+  console.log(`🔗 Proxy: ${pathname}`);
 
   // Log de rutas Auth0 para debugging
   if (pathname.startsWith('/auth/')) {
