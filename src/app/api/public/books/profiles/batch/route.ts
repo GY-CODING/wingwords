@@ -27,7 +27,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const results = await Promise.allSettled(
       uniqueIds.map(async (id: string) => {
-        const response = await fetch(`${baseUrl}/books/profiles/${id}`, {
+        const response = await fetch(`${baseUrl}/books/profiles/${id}/public`, {
           headers: { 'Content-Type': 'application/json' },
           method: 'GET',
         });
