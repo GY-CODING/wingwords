@@ -101,7 +101,7 @@ function printBanner() {
       '    👉 Open your browser at: ' +
       colors.white +
       colors.bright +
-      'http://localhost:3000' +
+      'http://localhost:3001' +
       colors.reset
   );
   console.log('');

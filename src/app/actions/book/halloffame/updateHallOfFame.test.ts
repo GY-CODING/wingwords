@@ -12,7 +12,7 @@ describe('updateHallOfFame', () => {
     );
   });
   it('returns text if private fetch is OK', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     const formData = new FormData();
     formData.set('quote', 'test quote');
@@ -24,7 +24,7 @@ describe('updateHallOfFame', () => {
     await expect(updateHallOfFame(formData)).resolves.toBe('quote updated');
   });
   it('returns text if private fetch is 401', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     const formData = new FormData();
     formData.set('quote', 'test quote');
@@ -36,7 +36,7 @@ describe('updateHallOfFame', () => {
     await expect(updateHallOfFame(formData)).resolves.toBe('unauthorized');
   });
   it('throws error if private fetch is not OK and not 401', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     const formData = new FormData();
     formData.set('quote', 'test quote');
@@ -50,7 +50,7 @@ describe('updateHallOfFame', () => {
     );
   });
   it('throws error if fetch fails', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     const formData = new FormData();
     formData.set('quote', 'test quote');

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 'use server';
 
 import { cookies, headers } from 'next/headers';
@@ -9,7 +9,7 @@ export default async function updateBiography(
   if (!biography) throw new Error('No biography provided in formData');
 
   const headersList = await headers();
-  const host = headersList.get('host') || 'localhost:3000';
+  const host = headersList.get('host') || 'localhost:3001';
   const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
   const cookieStore = await cookies();
   const cookieHeader = cookieStore.toString();

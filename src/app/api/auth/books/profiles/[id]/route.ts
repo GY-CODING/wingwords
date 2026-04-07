@@ -1,3 +1,4 @@
+import { auth0 } from '@/lib/auth0';
 import { sendLog, LogLevel, LogMessage } from '@/utils/logs';
 import { Profile } from '@gycoding/nebula';
 import { NextRequest, NextResponse } from 'next/server';
@@ -7,6 +8,13 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await auth0.getSession();
+
+    if (!session) {
+      await sendLog(LogLevel.WARN, LogMessage.SESSION_NOT_FOUND);
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id: profileId } = await context.params;
 
     if (!profileId) {
@@ -25,13 +33,13 @@ export async function GET(
       );
     }
 
-    const apiResponse = await fetch(
-      `${baseUrl}/books/profiles/${profileId}/public`,
-      {
-        headers: { 'Content-Type': 'application/json' },
-        method: 'GET',
-      }
-    );
+    const apiResponse = await fetch(`${baseUrl}/books/profiles/${profileId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.tokenSet?.idToken}`,
+      },
+      method: 'GET',
+    });
 
     if (!apiResponse.ok) {
       const errorText = await apiResponse.text();

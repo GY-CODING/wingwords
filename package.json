@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/dev-with-banner.js",
-    "dev-simple": "next dev",
+    "dev-simple": "next dev --port 3001",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

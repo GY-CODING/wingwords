@@ -19,7 +19,7 @@ describe('getStats', () => {
   });
 
   it('should return stats data if found', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     const statsData = { booksRead: 10, pagesRead: 500 };
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
@@ -30,7 +30,7 @@ describe('getStats', () => {
   });
 
   it('should throw error if response is not ok', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
       status: 500,
@@ -42,7 +42,7 @@ describe('getStats', () => {
   });
 
   it('should throw error if fetch fails', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
     await expect(getStats(profileId)).rejects.toThrow(
       'Failed to get books: Network error'

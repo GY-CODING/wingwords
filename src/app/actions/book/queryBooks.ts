@@ -8,7 +8,7 @@ export default async function queryBooks(formData: FormData): Promise<Book[]> {
   const query = formData.get('title');
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001';
     const url = `${baseUrl}/api/hardcover`;
 
     const response = await fetch(url, {

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 'use server';
 
 import { headers, cookies } from 'next/headers';
@@ -11,7 +11,7 @@ export default async function queryUsers(
   if (!query) throw new Error('No username provided in formData');
 
   const headersList = await headers();
-  const host = headersList.get('host') || 'localhost:3000';
+  const host = headersList.get('host') || 'localhost:3001';
   const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
   const cookieStore = await cookies();
   const cookieHeader = cookieStore.toString();

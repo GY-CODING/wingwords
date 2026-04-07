@@ -5,7 +5,7 @@ import HardcoverAuthor from '@/domain/HardcoverAuthor';
 export default async function fetchAuthorById(
   id: number
 ): Promise<HardcoverAuthor | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001';
 
   const response = await fetch(`${baseUrl}/api/hardcover/authors/${id}`, {
     cache: 'no-store',

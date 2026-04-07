@@ -8,7 +8,7 @@ import { cookies } from 'next/headers';
 export default async function getFriends(): Promise<Profile[]> {
   try {
     const headersList = await headers();
-    const host = headersList.get('host') || 'localhost:3000';
+    const host = headersList.get('host') || 'localhost:3001';
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.toString();
@@ -26,9 +26,14 @@ export default async function getFriends(): Promise<Profile[]> {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(
-        `Failed to fetch friends: ${response.status} - ${errorText}`
-      );
+      if (response.status === 401) {
+        // No hay sesión: devolver array vacío
+        return [];
+      } else {
+        throw new Error(
+          `Failed to fetch friends: ${response.status} - ${errorText}`
+        );
+      }
     }
 
     const data = await response.json();

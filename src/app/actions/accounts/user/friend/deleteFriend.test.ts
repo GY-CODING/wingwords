@@ -9,13 +9,13 @@ describe('deleteFriend', () => {
     await expect(deleteFriend('')).rejects.toThrow('User ID is required');
   });
   it('returns true if fetch is ok', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest.fn().mockResolvedValue({ ok: true });
     await expect(deleteFriend('user-id')).resolves.toBe(true);
   });
   it('throws error if response is not ok', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest
       .fn()
@@ -25,7 +25,7 @@ describe('deleteFriend', () => {
     );
   });
   it('throws error if fetch throws', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
     await expect(deleteFriend('user-id')).rejects.toThrow(

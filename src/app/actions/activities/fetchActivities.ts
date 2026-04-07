@@ -6,7 +6,7 @@ import { cookies, headers } from 'next/headers';
 export async function fetchActivities(): Promise<Activity[]> {
   try {
     const headersList = await headers();
-    const host = headersList.get('host') || 'localhost:3000';
+    const host = headersList.get('host') || 'localhost:3001';
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
     const url = `${protocol}://${host}/api/auth/books/activity`;

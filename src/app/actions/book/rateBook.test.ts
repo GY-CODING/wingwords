@@ -46,7 +46,7 @@ describe('rateBook', () => {
   });
 
   it('should call PATCH and return bookRatingData', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
@@ -76,7 +76,7 @@ describe('rateBook', () => {
   });
 
   it('should throw error if response is not ok', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
@@ -92,7 +92,7 @@ describe('rateBook', () => {
   });
 
   it('should throw error if no bookRatingData returned', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
@@ -107,7 +107,7 @@ describe('rateBook', () => {
   });
 
   it('should call setActivity for status, progress, and rating changes', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
@@ -141,7 +141,7 @@ describe('rateBook', () => {
       endDate: '2023-01-02',
     });
     // Debug: print all calls to setActivity
-    // eslint-disable-next-line no-console
+     
     console.log('setActivity calls:', (setActivity as jest.Mock).mock.calls);
     expect(setActivity).toHaveBeenCalledWith(
       EActivity.BOOK_READ,
@@ -158,7 +158,7 @@ describe('rateBook', () => {
   });
 
   it('should throw error if fetch fails', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
     const formData = new FormData();

@@ -7,7 +7,7 @@ export default async function fetchBookById(
   id: string
 ): Promise<HardcoverBook> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001';
     const url = `${baseUrl}/api/hardcover/${id}`;
 
     const response = await fetch(url, {

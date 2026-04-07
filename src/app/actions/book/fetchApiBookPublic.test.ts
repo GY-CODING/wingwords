@@ -19,7 +19,7 @@ describe('getApiBookPublic', () => {
   });
 
   it('should return book data if found', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     global.fetch = jest.fn().mockResolvedValue({
       json: async () => ({ id: bookId }),
     });
@@ -28,7 +28,7 @@ describe('getApiBookPublic', () => {
   });
 
   it('should return null if status is 404', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     global.fetch = jest.fn().mockResolvedValue({
       json: async () => ({ status: 404 }),
     });
@@ -37,7 +37,7 @@ describe('getApiBookPublic', () => {
   });
 
   it('should throw error if fetch fails', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3000' });
+    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
     global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
     await expect(getApiBookPublic(bookId)).rejects.toThrow(
       'Failed to get book status: Network error'

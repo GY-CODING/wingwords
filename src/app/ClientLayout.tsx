@@ -1,5 +1,5 @@
-/* eslint-disable @next/next/no-html-link-for-pages */
-/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable react-hooks/set-state-in-effect */
+
 'use client';
 
 import {

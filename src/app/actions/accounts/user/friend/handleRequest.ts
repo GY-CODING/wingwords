@@ -17,7 +17,7 @@ export default async function manageRequest(
     }
 
     const headersList = await headers();
-    const host = headersList.get('host') || 'localhost:3000';
+    const host = headersList.get('host') || 'localhost:3001';
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.toString();
