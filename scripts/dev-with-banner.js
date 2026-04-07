@@ -7,7 +7,7 @@ import { printBanner } from './banner.js';
 let bannerShown = false;
 
 function startNextDev() {
-  const nextProcess = spawn('npx', ['next', 'dev', '--turbo'], {
+  const nextProcess = spawn('npx', ['next', 'dev', '--turbo -p 3001'], {
     stdio: ['inherit', 'pipe', 'pipe'],
     shell: true,
   });
