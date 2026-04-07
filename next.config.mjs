@@ -3,6 +3,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  output: 'standalone',
   // Configuración de source maps deshabilitada para producción
   productionBrowserSourceMaps: false,
   // External packages para evitar problemas con MongoDB en servidor
