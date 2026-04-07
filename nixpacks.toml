@@ -1,2 +1,18 @@
 [phases.setup]
-node_version = "20.9.0"
+nixPkgs = ["nodejs_20"]
+
+[phases.install]
+cmds = ["HUSKY=0 npm ci"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "node .next/standalone/server.js"
+
+[variables]
+NODE_ENV = "production"
+NEXT_TELEMETRY_DISABLED = "1"
+PORT = "3001"
+HOSTNAME = "0.0.0.0"
+HUSKY = "0"
