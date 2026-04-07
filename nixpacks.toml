@@ -1,0 +1,2 @@
+[phases.setup]
+node_version = "20.9.0"
