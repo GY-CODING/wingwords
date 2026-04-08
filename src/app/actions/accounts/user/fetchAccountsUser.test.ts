@@ -14,7 +14,9 @@ describe('getAccountsUser', () => {
   });
   it('returns user if private fetch is ok', async () => {
     (auth0.getSession as jest.Mock).mockResolvedValue({ user: true });
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
@@ -29,7 +31,9 @@ describe('getAccountsUser', () => {
   });
   it('returns user if public fetch is ok', async () => {
     (auth0.getSession as jest.Mock).mockResolvedValue({});
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
       clone: () => ({
@@ -43,7 +47,9 @@ describe('getAccountsUser', () => {
   });
   it('returns null if public fetch fails', async () => {
     (auth0.getSession as jest.Mock).mockResolvedValue({});
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
       clone: () => ({ text: async () => 'error' }),

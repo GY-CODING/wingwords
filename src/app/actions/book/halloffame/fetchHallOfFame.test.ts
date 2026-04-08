@@ -11,18 +11,24 @@ describe('fetchHallOfFame', () => {
     global.fetch = originalFetch;
   });
   it('returns null if userId is missing', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     await expect(fetchHallOfFame('')).resolves.toBeNull();
   });
   it('returns null if response is 401', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest.fn().mockResolvedValue({ status: 401, ok: false });
     await expect(fetchHallOfFame('user-id')).resolves.toBeNull();
   });
   it('throws error if response is not ok', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest
       .fn()
@@ -32,7 +38,9 @@ describe('fetchHallOfFame', () => {
     );
   });
   it('throws error if no data returned', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest
       .fn()
@@ -42,7 +50,9 @@ describe('fetchHallOfFame', () => {
     );
   });
   it('returns data if fetch is ok', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     const mockData = { books: [] };
     global.fetch = jest

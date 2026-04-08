@@ -12,7 +12,9 @@ describe('queryUsers', () => {
     );
   });
   it('returns users if private fetch is ok', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     const mockData = [{ id: 'user-id', name: 'Test User' }];
     global.fetch = jest.fn().mockResolvedValue({
@@ -25,7 +27,9 @@ describe('queryUsers', () => {
     await expect(queryUsers(formData)).resolves.toEqual(mockData);
   });
   it('returns users if public fetch is ok', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
       clone: () => ({
@@ -41,7 +45,9 @@ describe('queryUsers', () => {
     ]);
   });
   it('throws error if public fetch fails', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
       clone: () => ({ text: async () => 'error' }),

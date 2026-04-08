@@ -1,4 +1,3 @@
- 
 'use server';
 
 import { headers, cookies } from 'next/headers';
@@ -11,7 +10,8 @@ export default async function queryUsers(
   if (!query) throw new Error('No username provided in formData');
 
   const headersList = await headers();
-  const host = headersList.get('host') || 'localhost:3001';
+  const host =
+    headersList.get('host') || `localhost:${process.env.PORT || 3001}`;
   const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
   const cookieStore = await cookies();
   const cookieHeader = cookieStore.toString();
@@ -46,7 +46,7 @@ export default async function queryUsers(
     console.warn('[DEBUG] Error in private fetch:', error);
   }
 
-  // --- DEBUG: Log info before public fetch --
+  // --- DEBUG: Log info before public fetch ---
 
   const publicRes = await fetch(urlPublic, {
     method: 'GET',

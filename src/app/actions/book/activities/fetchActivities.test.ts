@@ -6,7 +6,9 @@ describe('fetchActivities', () => {
     jest.clearAllMocks();
   });
   it('returns activities if fetch is ok', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     const mockData = [{ id: '1', type: 'READ' }];
     global.fetch = jest
       .fn()
@@ -16,7 +18,9 @@ describe('fetchActivities', () => {
     ).resolves.toEqual(mockData);
   });
   it('throws error if response is not ok', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     global.fetch = jest
       .fn()
       .mockResolvedValue({ ok: false, status: 500, text: async () => 'error' });
@@ -25,7 +29,9 @@ describe('fetchActivities', () => {
     ).rejects.toThrow('HTTP error! status: 500');
   });
   it('throws error if fetch throws', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
     await expect(
       fetchActivities('11111111-2222-3333-4444-555555555555')

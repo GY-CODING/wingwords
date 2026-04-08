@@ -26,7 +26,9 @@ describe('getApiBook', () => {
 
   it('should use http protocol in development and https in production', async () => {
     (auth0.getSession as jest.Mock).mockResolvedValue(null);
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => '' });
     global.fetch = jest
       .fn()
@@ -42,7 +44,9 @@ describe('getApiBook', () => {
 
   it('should use default page and size values', async () => {
     (auth0.getSession as jest.Mock).mockResolvedValue(null);
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => '' });
     global.fetch = jest
       .fn()
@@ -56,7 +60,9 @@ describe('getApiBook', () => {
     (auth0.getSession as jest.Mock).mockResolvedValue({
       user: { id: 'user-id' },
     });
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     // First fetch (private) fails, second fetch (public) succeeds
     global.fetch = jest
@@ -75,7 +81,9 @@ describe('getApiBook', () => {
     (auth0.getSession as jest.Mock).mockResolvedValue({
       user: { id: 'user-id' },
     });
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest
       .fn()
@@ -94,7 +102,9 @@ describe('getApiBook', () => {
 
   it('should return null if response json status is 404', async () => {
     (auth0.getSession as jest.Mock).mockResolvedValue(null);
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => '' });
     global.fetch = jest
       .fn()
@@ -111,14 +121,18 @@ describe('getApiBook', () => {
 
   it('should throw error if cookies throws', async () => {
     (auth0.getSession as jest.Mock).mockResolvedValue(null);
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockRejectedValue(new Error('cookies error'));
     await expect(getApiBook(bookId)).rejects.toThrow('cookies error');
   });
 
   it('should throw error if auth0.getSession throws', async () => {
     (auth0.getSession as jest.Mock).mockRejectedValue(new Error('auth0 error'));
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => '' });
     await expect(getApiBook(bookId)).rejects.toThrow('auth0 error');
   });
@@ -131,7 +145,9 @@ describe('getApiBook', () => {
     (auth0.getSession as jest.Mock).mockResolvedValue({
       user: { id: 'user-id' },
     });
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
     await expect(getApiBook(bookId)).rejects.toThrow('Network error');
@@ -141,7 +157,9 @@ describe('getApiBook', () => {
     (auth0.getSession as jest.Mock).mockResolvedValue({
       user: { id: 'user-id' },
     });
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest
       .fn()
@@ -153,7 +171,9 @@ describe('getApiBook', () => {
     (auth0.getSession as jest.Mock).mockResolvedValue({
       user: { id: 'user-id' },
     });
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest
       .fn()
@@ -163,7 +183,9 @@ describe('getApiBook', () => {
 
   it('should throw error if public fetch returns not ok', async () => {
     (auth0.getSession as jest.Mock).mockResolvedValue(null);
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => '' });
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
@@ -188,7 +210,9 @@ describe('getApiBook', () => {
     (auth0.getSession as jest.Mock).mockResolvedValue({
       user: { id: 'user-id' },
     });
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest
       .fn()
@@ -200,7 +224,9 @@ describe('getApiBook', () => {
 
   it('should fetch public book data when not authenticated', async () => {
     (auth0.getSession as jest.Mock).mockResolvedValue(null);
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => '' });
     global.fetch = jest
       .fn()
@@ -212,7 +238,9 @@ describe('getApiBook', () => {
 
   it('should return null if fetch fails', async () => {
     (auth0.getSession as jest.Mock).mockResolvedValue(null);
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => '' });
     global.fetch = jest
       .fn()
