@@ -4,7 +4,7 @@ import { auth0 } from './lib/auth0';
 // Rutas que requieren autenticación
 const protectedRoutes = ['/profile', '/users/community'];
 
-export async function proxy(request: Request) {
+export async function middleware(request: Request) {
   const { pathname } = new URL(request.url);
 
   console.log(`🔗 Proxy: ${pathname}`);

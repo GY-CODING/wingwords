@@ -7,9 +7,14 @@ import { printBanner } from './banner.js';
 let bannerShown = false;
 
 function startNextDev() {
-  const nextProcess = spawn('npx', ['next', 'dev', '--turbo -p 3001'], {
+  // Usa dotenv para cargar variables y permite puerto dinámico
+  const port = process.env.PORT || '3001';
+  // Comando completo como string para evitar el warning de DeprecationWarning
+  const command = `dotenv -e .env -- sh -c 'npx next dev --turbo -p $PORT'`;
+  const nextProcess = spawn(command, {
     stdio: ['inherit', 'pipe', 'pipe'],
     shell: true,
+    env: { ...process.env, PORT: port },
   });
 
   // Manejar stdout (salida normal)

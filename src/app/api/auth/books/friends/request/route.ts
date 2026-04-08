@@ -76,7 +76,8 @@ async function handler(req: NextRequest) {
     if (req.method === 'GET') {
       const url = new URL(
         req.url,
-        process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3001'
+        process.env.NEXT_PUBLIC_BASE_URL ||
+          `http://localhost:${process.env.PORT || 3001}`
       );
       const profileId = url.searchParams.get('profileId');
 

@@ -24,7 +24,9 @@ describe('removeBook', () => {
   });
 
   it('should call DELETE and succeed', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest.fn().mockResolvedValue({ ok: true });
 
@@ -36,7 +38,9 @@ describe('removeBook', () => {
   });
 
   it('should throw error if response is not ok', async () => {
-    (headers as jest.Mock).mockResolvedValue({ get: () => 'localhost:3001' });
+    (headers as jest.Mock).mockResolvedValue({
+      get: () => `localhost:${process.env.PORT || 3001}`,
+    });
     (cookies as jest.Mock).mockResolvedValue({ toString: () => 'cookie-data' });
     global.fetch = jest
       .fn()

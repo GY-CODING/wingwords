@@ -1,11 +1,11 @@
- 
 'use server';
 import { headers, cookies } from 'next/headers';
 
 export default async function deleteBookFromHallOfFame(formData: FormData) {
   if (!formData) throw new Error('No quote provided in formData');
   const headersList = await headers();
-  const host = headersList.get('host') || 'localhost:3001';
+  const host =
+    headersList.get('host') || `localhost:${process.env.PORT || 3001}`;
   const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
   const cookieStore = await cookies();
   const cookieHeader = cookieStore.toString();

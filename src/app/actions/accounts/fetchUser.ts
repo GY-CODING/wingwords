@@ -8,7 +8,8 @@ import { cookies } from 'next/headers';
 export default async function fetchUser(): Promise<User | null> {
   try {
     const headersList = await headers();
-    const host = headersList.get('host') || 'localhost:3001';
+    const host =
+      headersList.get('host') || `localhost:${process.env.PORT || 3001}`;
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.toString();

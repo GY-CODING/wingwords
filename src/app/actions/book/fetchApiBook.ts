@@ -1,4 +1,3 @@
- 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use server';
 
@@ -11,7 +10,8 @@ import { Book } from '@gycoding/nebula';
 export default async function getApiBook(bookId: string): Promise<Book | null> {
   try {
     const headersList = await headers();
-    const host = headersList.get('host') || 'localhost:3001';
+    const host =
+      headersList.get('host') || `localhost:${process.env.PORT || 3001}`;
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.toString();
@@ -83,7 +83,8 @@ export async function getBooksWithPagination(
 ): Promise<{ books: Book[] } | null> {
   try {
     const headersList = await headers();
-    const host = headersList.get('host') || 'localhost:3001';
+    const host =
+      headersList.get('host') || `localhost:${process.env.PORT || 3001}`;
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
 
     const url = `${protocol}://${host}/api/public/books?profileId=${profileId}&page=${page}&size=${size}`;
