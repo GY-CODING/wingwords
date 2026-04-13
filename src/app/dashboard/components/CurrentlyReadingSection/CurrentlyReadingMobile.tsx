@@ -2,6 +2,7 @@
 
 import HardcoverBook from '@/domain/HardcoverBook';
 import { getBookDisplayData } from '@/hooks/useBookDisplay';
+import { getReadingProgress } from './utils/getReadingProgress';
 import { lora } from '@/utils/fonts/fonts';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -25,11 +26,6 @@ interface CurrentlyReadingMobileProps {
   books: HardcoverBook[];
   isLoading: boolean;
 }
-
-const calculatePagesRead = (progress: number, totalPages: number): number => {
-  if (progress <= 1) return Math.round(progress * totalPages);
-  return progress;
-};
 
 const CurrentlyReadingMobileSkeleton: React.FC = () => (
   <Box
@@ -123,12 +119,10 @@ export const CurrentlyReadingMobile = React.memo<CurrentlyReadingMobileProps>(
     const displayData = getBookDisplayData(book);
     if (!displayData) return null;
 
-    const pagesRead = calculatePagesRead(
+    const { pagesRead, progressPercentage, hasPageCount } = getReadingProgress(
       displayData.progress,
       displayData.pageCount
     );
-    const progressPercentage =
-      displayData.pageCount > 0 ? (pagesRead / displayData.pageCount) * 100 : 0;
     const total = books.length;
     const hasMultiple = total > 1;
 
@@ -240,7 +234,9 @@ export const CurrentlyReadingMobile = React.memo<CurrentlyReadingMobileProps>(
                       fontWeight: 500,
                     }}
                   >
-                    {pagesRead}/{displayData.pageCount}
+                    {hasPageCount
+                      ? `${pagesRead}/${displayData.pageCount}`
+                      : '-'}
                   </Typography>
                 </Box>
                 <LinearProgress
