@@ -1,0 +1,23 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Load Pipeline') {
+      steps {
+        script {
+          git(
+            url: 'https://github.com/GY-CODING/devops.git',
+            branch: 'main',
+            credentialsId: 'GYCODING_GITHUB'
+          )
+
+          def pipelineScript = load 'cicd/pipelines/front/wingwords/deploy.pro.jenkinsfile'
+
+          pipelineScript.run([
+            appName: env.JOB_NAME
+          ])
+        }
+      }
+    }
+  }
+}
