@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { auth0 } from '@/lib/auth0';
-import { sendLog, LogLevel, LogMessage } from '@/utils/logs';
+import { logger } from '@/utils/logger';
 import {
   streamBookRecommendations,
   streamDiscoverRecommendations,
@@ -174,7 +175,10 @@ export async function POST(req: NextRequest) {
 
     const baseUrl = process.env.GY_API?.replace(/['"]/g, '');
     if (!baseUrl) {
-      await sendLog(LogLevel.ERROR, LogMessage.CONFIG_GY_API_MISSING);
+      logger.error('GY_API missing', {
+        route: req.nextUrl.pathname,
+        userId: session.user.sub,
+      });
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
@@ -295,11 +299,6 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    await sendLog(LogLevel.ERROR, LogMessage.CONFIG_GY_API_MISSING, {
-      additionalData: {
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
     return NextResponse.json(
       { error: 'Failed to generate recommendations' },
       { status: 500 }

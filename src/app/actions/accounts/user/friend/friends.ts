@@ -31,9 +31,9 @@ export default async function getFriends(): Promise<Profile[]> {
         // No hay sesión: devolver array vacío
         return [];
       } else {
-        throw new Error(
-          `Failed to fetch friends: ${response.status} - ${errorText}`
-        );
+        const errorMsg = `API error ${response.status}: ${errorText || response.statusText}`;
+        console.error(`[getFriends] ${errorMsg}`);
+        throw new Error(errorMsg);
       }
     }
 
@@ -45,6 +45,8 @@ export default async function getFriends(): Promise<Profile[]> {
 
     return data as Profile[];
   } catch (error: any) {
-    throw new Error(`Failed to fetch friends: ${error.message}`);
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error(`[getFriends] Error: ${errorMsg}`);
+    throw new Error(`Failed to fetch friends: ${errorMsg}`);
   }
 }

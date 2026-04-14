@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { sendLog, LogLevel, LogMessage } from '@/utils/logs';
+import { logger } from '@/utils/logger';
 import { SEARCH_AUTHORS_QUERY } from '@/utils/constants/Query';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -18,10 +18,9 @@ export async function POST(req: NextRequest) {
     const apiKey = process.env.HARDCOVER_API_TOKEN;
 
     if (!apiUrl || !apiKey) {
-      await sendLog(
-        LogLevel.ERROR,
-        LogMessage.CONFIG_HARDCOVER_CREDENTIALS_MISSING
-      );
+      logger.error('Hardcover credentials missing', {
+        route: '/api/hardcover/authors',
+      });
       return NextResponse.json(
         { error: 'Missing Hardcover API credentials' },
         { status: 500 }
@@ -42,13 +41,11 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok) {
       const text = await response.text();
-      await sendLog(
-        LogLevel.ERROR,
-        LogMessage.HARDCOVER_AUTHORS_SEARCH_FAILED,
-        {
-          additionalData: { query, status: response.status, error: text },
-        }
-      );
+      logger.error('Hardcover authors search failed', {
+        query,
+        status: response.status,
+        error: text,
+      });
       throw new Error(`Hardcover API failed: ${response.statusText}`);
     }
 
@@ -73,16 +70,19 @@ export async function POST(req: NextRequest) {
       booksCount: a.books_count ?? 0,
     }));
 
-    await sendLog(LogLevel.INFO, LogMessage.HARDCOVER_AUTHORS_SEARCHED, {
-      additionalData: { query, resultCount: authors.length },
+    logger.info('Hardcover authors searched', {
+      query,
+      resultCount: authors.length,
     });
     return NextResponse.json(authors);
   } catch (error) {
-    await sendLog(LogLevel.ERROR, LogMessage.HARDCOVER_AUTHORS_SEARCH_FAILED, {
-      additionalData: {
+    logger.error(
+      'Hardcover authors search failed',
+      {
         error: error instanceof Error ? error.message : String(error),
       },
-    });
+      error
+    );
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }

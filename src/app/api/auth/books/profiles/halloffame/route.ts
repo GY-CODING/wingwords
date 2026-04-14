@@ -1,26 +1,23 @@
 import { auth0 } from '@/lib/auth0';
-import { sendLog, LogLevel, LogMessage } from '@/utils/logs';
+import { logger } from '@/utils/logger';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function PATCH(req: NextRequest) {
   try {
+    const route = req.nextUrl.pathname;
     const session = await auth0.getSession();
 
     if (!session) {
-      await sendLog(LogLevel.WARN, LogMessage.SESSION_NOT_FOUND);
+      logger.warn('Session not found', { route });
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await sendLog(
-      LogLevel.DEBUG,
-      LogMessage.SESSION_RETRIEVED,
-      {},
-      session.user.sub
-    );
-
     const baseUrl = process.env.GY_API?.replace(/['"]/g, '');
     if (!baseUrl) {
-      await sendLog(LogLevel.ERROR, LogMessage.CONFIG_GY_API_MISSING);
+      logger.error('GY_API missing', {
+        route: req.nextUrl.pathname,
+        userId: session.user.sub,
+      });
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
@@ -43,19 +40,17 @@ export async function PATCH(req: NextRequest) {
 
     if (!apiResponse.ok) {
       const errorText = await apiResponse.text();
-      await sendLog(LogLevel.ERROR, LogMessage.HALLOFFAME_QUOTE_UPDATE_FAILED, {
+      logger.error('Hall of Fame quote update failed', {
         additionalData: { status: apiResponse.status, error: errorText },
+        userId: session.user.sub,
       });
       return NextResponse.json(
         { error: `API error: ${apiResponse.status}` },
         { status: apiResponse.status }
       );
     }
-
-    await sendLog(LogLevel.INFO, LogMessage.HALLOFFAME_QUOTE_UPDATED);
-    return new NextResponse(null, { status: 204 });
   } catch (error) {
-    await sendLog(LogLevel.ERROR, LogMessage.HALLOFFAME_QUOTE_UPDATE_FAILED, {
+    logger.error('Hall of Fame quote update failed', {
       additionalData: {
         error: error instanceof Error ? error.message : String(error),
       },

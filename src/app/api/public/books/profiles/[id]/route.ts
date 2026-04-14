@@ -1,4 +1,4 @@
-import { sendLog, LogLevel, LogMessage } from '@/utils/logs';
+import { logger } from '@/utils/logger';
 import { Profile } from '@gycoding/nebula';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -6,10 +6,12 @@ export async function GET(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
+  const route = req.nextUrl.pathname;
   try {
     const { id: profileId } = await context.params;
 
     if (!profileId) {
+      logger.warn('Missing profile id', { route });
       return NextResponse.json(
         { error: 'Missing profile id' },
         { status: 400 }
@@ -18,7 +20,10 @@ export async function GET(
 
     const baseUrl = process.env.GY_API?.replace(/['"]/g, '');
     if (!baseUrl) {
-      await sendLog(LogLevel.ERROR, LogMessage.CONFIG_GY_API_MISSING);
+      logger.error('GY_API missing', {
+        route,
+        profileId: profileId ?? 'unknown',
+      });
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
@@ -37,9 +42,10 @@ export async function GET(
       const errorText = await apiResponse.text();
 
       if (apiResponse.status === 404) {
-        await sendLog(LogLevel.WARN, LogMessage.PROFILE_NOT_FOUND, {
+        logger.warn('Profile not found', {
+          route,
           profileId,
-          additionalData: { error: errorText },
+          error: errorText,
         });
         return NextResponse.json(
           { error: 'Profile not found' },
@@ -47,9 +53,10 @@ export async function GET(
         );
       }
 
-      await sendLog(LogLevel.ERROR, LogMessage.PROFILE_RETRIEVE_FAILED, {
+      logger.error('Profile retrieve failed', {
         profileId,
-        additionalData: { status: apiResponse.status, error: errorText },
+        status: apiResponse.status,
+        error: errorText,
       });
       return NextResponse.json(
         { error: `API error: ${apiResponse.status}` },
@@ -58,14 +65,16 @@ export async function GET(
     }
 
     const data = await apiResponse.json();
-    await sendLog(LogLevel.INFO, LogMessage.PROFILE_RETRIEVED, { profileId });
+    logger.info('Profile retrieved', { profileId });
     return NextResponse.json(data as Profile);
   } catch (error) {
-    await sendLog(LogLevel.ERROR, LogMessage.PROFILE_RETRIEVE_FAILED, {
-      additionalData: {
+    logger.error(
+      'Profile retrieve failed',
+      {
         error: error instanceof Error ? error.message : String(error),
       },
-    });
+      error
+    );
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }

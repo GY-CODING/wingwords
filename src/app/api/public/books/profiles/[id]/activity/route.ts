@@ -1,4 +1,4 @@
-import { sendLog, LogLevel, LogMessage } from '@/utils/logs';
+import { logger } from '@/utils/logger';
 import { Activity } from '@/domain/activity.model';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -8,7 +8,10 @@ export const GET = async (req: NextRequest) => {
 
     const baseUrl = process.env.GY_API?.replace(/['"]/g, '');
     if (!baseUrl) {
-      await sendLog(LogLevel.ERROR, LogMessage.CONFIG_GY_API_MISSING);
+      logger.error('GY_API missing', {
+        route: req.nextUrl.pathname,
+        profileId: profileId ?? 'unknown',
+      });
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
@@ -21,9 +24,11 @@ export const GET = async (req: NextRequest) => {
 
     if (!apiResponse.ok) {
       const errorText = await apiResponse.text();
-      await sendLog(LogLevel.ERROR, LogMessage.ACTIVITY_LIST_RETRIEVE_FAILED, {
+      logger.error('Activity retrieve failed', {
+        route: req.nextUrl.pathname,
         profileId,
-        additionalData: { status: apiResponse.status, error: errorText },
+        status: apiResponse.status,
+        error: errorText,
       });
       return NextResponse.json(
         { error: `API error: ${apiResponse.status}` },
@@ -32,16 +37,8 @@ export const GET = async (req: NextRequest) => {
     }
 
     const activity = await apiResponse.json();
-    await sendLog(LogLevel.INFO, LogMessage.ACTIVITY_LIST_RETRIEVED, {
-      profileId,
-    });
     return NextResponse.json(activity as Activity[]);
   } catch (error) {
-    await sendLog(LogLevel.ERROR, LogMessage.ACTIVITY_LIST_RETRIEVE_FAILED, {
-      additionalData: {
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }

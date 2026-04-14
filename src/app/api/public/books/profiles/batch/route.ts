@@ -1,4 +1,5 @@
-import { sendLog, LogLevel, LogMessage } from '@/utils/logs';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { logger } from '@/utils/logger';
 import { NextRequest, NextResponse } from 'next/server';
 
 const MAX_BATCH_SIZE = 50;
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const baseUrl = process.env.GY_API?.replace(/['"]/g, '');
     if (!baseUrl) {
-      await sendLog(LogLevel.ERROR, LogMessage.CONFIG_GY_API_MISSING);
+      logger.error('GY_API missing', { route: req.nextUrl.pathname });
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
@@ -49,19 +50,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       }
     }
 
-    await sendLog(LogLevel.INFO, LogMessage.PROFILE_BATCH_RETRIEVED, {
-      additionalData: {
-        requestedCount: uniqueIds.length,
-        resolvedCount: Object.keys(profilesMap).length,
-      },
-    });
     return NextResponse.json(profilesMap);
   } catch (error) {
-    await sendLog(LogLevel.ERROR, LogMessage.PROFILE_BATCH_FAILED, {
-      additionalData: {
-        error: error instanceof Error ? error.message : String(error),
-      },
-    });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

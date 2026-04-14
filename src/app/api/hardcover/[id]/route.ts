@@ -1,4 +1,4 @@
-import { sendLog, LogLevel, LogMessage } from '@/utils/logs';
+import { logger } from '@/utils/logger';
 import { mapHardcoverBookToBook } from '@/mapper/mapHardcoverToBookToBook';
 import { GET_BOOK_BY_ID_QUERY } from '@/utils/constants/Query';
 import { NextRequest, NextResponse } from 'next/server';
@@ -14,10 +14,7 @@ export async function GET(
     const apiKey = process.env.HARDCOVER_API_TOKEN;
 
     if (!apiUrl || !apiKey) {
-      await sendLog(
-        LogLevel.ERROR,
-        LogMessage.CONFIG_HARDCOVER_CREDENTIALS_MISSING
-      );
+      logger.error('Hardcover API credentials are missing');
       return NextResponse.json(
         { error: 'Missing Hardcover API credentials' },
         { status: 500 }
@@ -40,14 +37,11 @@ export async function GET(
 
     if (!response.ok) {
       const text = await response.text();
-      await sendLog(
-        LogLevel.ERROR,
-        LogMessage.HARDCOVER_BOOK_RETRIEVE_FAILED,
-        {
-          additionalData: { status: response.status, error: text },
-        },
-        id
-      );
+      logger.error('Hardcover book could not be retrieved', {
+        id,
+        status: response.status,
+        error: text,
+      });
       throw new Error(`Hardcover API failed: ${response.statusText}`);
     }
 
@@ -58,18 +52,16 @@ export async function GET(
 
     const rawBook = data.data?.books_by_pk;
     if (!rawBook) {
-      await sendLog(LogLevel.WARN, LogMessage.HARDCOVER_BOOK_NOT_FOUND, {}, id);
+      logger.warn('Hardcover book not found', { id });
       return NextResponse.json({ error: 'Book not found' }, { status: 404 });
     }
 
     const mappedBook = mapHardcoverBookToBook(rawBook);
-    await sendLog(LogLevel.INFO, LogMessage.HARDCOVER_BOOK_RETRIEVED, {}, id);
+    logger.info('Hardcover book retrieved', { id });
     return NextResponse.json(mappedBook);
   } catch (error) {
-    await sendLog(LogLevel.ERROR, LogMessage.HARDCOVER_BOOK_RETRIEVE_FAILED, {
-      additionalData: {
-        error: error instanceof Error ? error.message : String(error),
-      },
+    logger.error('Hardcover book could not be retrieved', {
+      error: error instanceof Error ? error.message : String(error),
     });
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unknown error' },
