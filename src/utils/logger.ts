@@ -45,7 +45,7 @@ function clean(value: unknown): unknown {
  * Build final context
  */
 function buildContext(context?: LogContext) {
-  const env = context?.env || process.env.LOG_ENV || 'LOCAL';
+  const env = context?.env || process.env.ENV || 'LOCAL';
 
   const profileId = clean(context?.profileId || getProfileId());
   const userId = clean(context?.userId);
