@@ -1,4 +1,4 @@
-import { sendLog, LogLevel, LogMessage } from '@/utils/logs';
+import { logger } from '@/utils/logger';
 import { Book } from '@gycoding/nebula';
 import { NextResponse } from 'next/server';
 
@@ -8,13 +8,20 @@ async function handler(request: Request) {
   const id = pathParts[pathParts.length - 1];
 
   if (!id) {
+    logger.warn('Book ID is required', {
+      route: '/api/public/books/[id]',
+      additionalData: { bookId: id },
+    });
     return NextResponse.json({ error: 'Book ID is required' }, { status: 400 });
   }
 
   try {
     const baseUrl = process.env.GY_API?.replace(/['"]/g, '');
     if (!baseUrl) {
-      await sendLog(LogLevel.ERROR, LogMessage.CONFIG_GY_API_MISSING);
+      logger.error('GY_API missing', {
+        route: '/api/public/books/[id]',
+        additionalData: { bookId: id },
+      });
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
@@ -27,25 +34,21 @@ async function handler(request: Request) {
 
     if (!apiResponse.ok) {
       const errorText = await apiResponse.text();
-
       if (apiResponse.status === 404) {
-        await sendLog(
-          LogLevel.WARN,
-          LogMessage.BOOK_NOT_FOUND,
-          { additionalData: { error: errorText } },
-          id
-        );
+        logger.warn('Book not found', {
+          route: '/api/public/books/[id]',
+          additionalData: { bookId: id, error: errorText },
+        });
         return NextResponse.json({ error: 'Book not found' }, { status: 404 });
       }
-
-      await sendLog(
-        LogLevel.ERROR,
-        LogMessage.BOOK_RETRIEVE_FAILED,
-        {
-          additionalData: { status: apiResponse.status, error: errorText },
+      logger.error('Book retrieve failed', {
+        route: '/api/public/books/[id]',
+        additionalData: {
+          bookId: id,
+          status: apiResponse.status,
+          error: errorText,
         },
-        id
-      );
+      });
       return NextResponse.json(
         { error: `API error: ${apiResponse.status}` },
         { status: apiResponse.status }
@@ -53,18 +56,22 @@ async function handler(request: Request) {
     }
 
     const apiBook = await apiResponse.json();
-    await sendLog(LogLevel.INFO, LogMessage.BOOK_RETRIEVED, {}, id);
+    logger.info('Book retrieved', {
+      route: '/api/public/books/[id]',
+      additionalData: { bookId: id },
+    });
     return NextResponse.json(apiBook as Book);
   } catch (error) {
-    await sendLog(
-      LogLevel.ERROR,
-      LogMessage.BOOK_RETRIEVE_FAILED,
+    logger.error(
+      'Book retrieve failed',
       {
+        route: '/api/public/books/[id]',
         additionalData: {
+          bookId: id,
           error: error instanceof Error ? error.message : String(error),
         },
       },
-      id
+      error
     );
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unknown error' },

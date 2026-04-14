@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { sendLog, LogLevel, LogMessage } from '@/utils/logs';
+import { logger } from '@/utils/logger';
 import { mapHardcoverBooksToList } from '@/mapper/mapHardcoverToBookToBook';
 import {
   GET_BOOKS_BY_IDS_QUERY,
@@ -15,10 +15,7 @@ export async function POST(req: NextRequest) {
     const apiKey = process.env.HARDCOVER_API_TOKEN;
 
     if (!apiUrl || !apiKey) {
-      await sendLog(
-        LogLevel.ERROR,
-        LogMessage.CONFIG_HARDCOVER_CREDENTIALS_MISSING
-      );
+      logger.error('Hardcover API credentials are missing');
       return NextResponse.json(
         { error: 'Missing Hardcover API credentials' },
         { status: 500 }
@@ -67,13 +64,10 @@ export async function POST(req: NextRequest) {
 
         if (!resp.ok) {
           const text = await resp.text();
-          await sendLog(
-            LogLevel.ERROR,
-            LogMessage.HARDCOVER_BOOKS_SEARCH_FAILED,
-            {
-              additionalData: { status: resp.status, error: text },
-            }
-          );
+          logger.error('Hardcover book search failed', {
+            status: resp.status,
+            error: text,
+          });
           throw new Error(`Hardcover API failed: ${resp.statusText}`);
         }
 
@@ -95,11 +89,9 @@ export async function POST(req: NextRequest) {
       const allRawBooks = chunkResults.flat();
 
       const mappedBooks = mapHardcoverBooksToList(allRawBooks);
-      await sendLog(LogLevel.INFO, LogMessage.HARDCOVER_BOOKS_SEARCHED, {
-        additionalData: {
-          idCount: ids.length,
-          resultCount: mappedBooks.length,
-        },
+      logger.info('Hardcover book search completed', {
+        idCount: ids.length,
+        resultCount: mappedBooks.length,
       });
       return NextResponse.json(mappedBooks);
     }
@@ -115,21 +107,18 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok) {
       const text = await response.text();
-      await sendLog(LogLevel.ERROR, LogMessage.HARDCOVER_BOOKS_SEARCH_FAILED, {
-        additionalData: { status: response.status, error: text },
+      logger.error('Hardcover book search failed', {
+        status: response.status,
+        error: text,
       });
       throw new Error(`Hardcover API failed: ${response.statusText}`);
     }
 
     const data = await response.json();
     if (data.errors) {
-      await sendLog(LogLevel.ERROR, LogMessage.HARDCOVER_BOOKS_SEARCH_FAILED, {
-        additionalData: {
-          query,
-          variables,
-          errors: data.errors,
-          errorMessage: data.errors[0]?.message,
-        },
+      logger.error('Hardcover book search failed', {
+        errors: data.errors,
+        errorMessage: data.errors[0]?.message,
       });
       throw new Error(data.errors[0]?.message || 'GraphQL error');
     }
@@ -149,25 +138,21 @@ export async function POST(req: NextRequest) {
       rawBooks = [data.data.books_by_pk];
     }
 
-    await sendLog(LogLevel.DEBUG, LogMessage.HARDCOVER_BOOKS_SEARCHED, {
-      additionalData: {
-        query,
-        rawCount: rawBooks.length,
-        rawSample: rawBooks.slice(0, 2),
-        dataKeys: Object.keys(data.data ?? {}),
-      },
+    logger.debug('Hardcover book search completed', {
+      query,
+      rawCount: rawBooks.length,
+      dataKeys: Object.keys(data.data ?? {}),
     });
 
     const mappedBooks = mapHardcoverBooksToList(rawBooks);
-    await sendLog(LogLevel.INFO, LogMessage.HARDCOVER_BOOKS_SEARCHED, {
-      additionalData: { query, resultCount: mappedBooks.length },
+    logger.info('Hardcover book search completed', {
+      query,
+      resultCount: mappedBooks.length,
     });
     return NextResponse.json(mappedBooks);
   } catch (error) {
-    await sendLog(LogLevel.ERROR, LogMessage.HARDCOVER_BOOKS_SEARCH_FAILED, {
-      additionalData: {
-        error: error instanceof Error ? error.message : String(error),
-      },
+    logger.error('Hardcover book search failed', {
+      error: error instanceof Error ? error.message : String(error),
     });
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unknown error' },

@@ -1,5 +1,5 @@
 import { auth0 } from '@/lib/auth0';
-import { sendLog, LogLevel, LogMessage } from '@/utils/logs';
+import { logger } from '@/utils/logger';
 import { Book, UserData } from '@gycoding/nebula';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -18,8 +18,9 @@ async function handler(
     const idToken = session?.tokenSet?.idToken;
 
     if (!session || !idToken) {
-      await sendLog(LogLevel.WARN, LogMessage.SESSION_NOT_FOUND, {
-        additionalData: { bookId },
+      logger.warn('No active session found', {
+        bookId,
+        userId: session?.user.sub,
       });
       return NextResponse.json(
         { error: 'No active session found' },
@@ -27,16 +28,13 @@ async function handler(
       );
     }
 
-    await sendLog(
-      LogLevel.DEBUG,
-      LogMessage.SESSION_RETRIEVED,
-      {},
-      session.user.sub
-    );
+    logger.debug('Session retrieved', { userId: session.user.sub });
 
     const baseUrl = process.env.GY_API?.replace(/['"]/g, '');
     if (!baseUrl) {
-      await sendLog(LogLevel.ERROR, LogMessage.CONFIG_GY_API_MISSING);
+      logger.error('GY_API environment variable is not defined', {
+        userId: session.user.sub,
+      });
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
@@ -54,19 +52,20 @@ async function handler(
 
       if (!response.ok) {
         const errorText = await response.text();
-        await sendLog(
-          LogLevel.ERROR,
-          LogMessage.BOOK_RETRIEVE_FAILED,
-          {
-            additionalData: { status: response.status, error: errorText },
-          },
-          bookId
-        );
+        logger.error('The book could not be retrieved', {
+          bookId,
+          userId: session.user.sub,
+          status: response.status,
+          error: errorText,
+        });
         throw new Error(`GyCoding API Error: ${errorText}`);
       }
 
       const book = await response.json();
-      await sendLog(LogLevel.INFO, LogMessage.BOOK_RETRIEVED, {}, bookId);
+      logger.info('The book has been retrieved', {
+        bookId,
+        userId: session.user.sub,
+      });
       return NextResponse.json(book as Book);
     }
 
@@ -85,14 +84,11 @@ async function handler(
       });
 
       if (!response.ok) {
-        await sendLog(
-          LogLevel.ERROR,
-          LogMessage.BOOK_UPDATE_FAILED,
-          {
-            additionalData: { status: response.status },
-          },
-          bookId
-        );
+        logger.error('The book could not be updated', {
+          bookId,
+          userId: session.user.sub,
+          status: response.status,
+        });
         return NextResponse.json(
           { error: 'Error updating book data' },
           { status: 500 }
@@ -100,7 +96,10 @@ async function handler(
       }
 
       const bookRatingData = await response.json();
-      await sendLog(LogLevel.INFO, LogMessage.BOOK_UPDATED, {}, bookId);
+      logger.info('The book has been updated', {
+        bookId,
+        userId: session.user.sub,
+      });
       return NextResponse.json({ bookRatingData: bookRatingData as Book });
     }
 
@@ -108,36 +107,30 @@ async function handler(
       const response = await fetch(apiUrl, { headers, method: 'DELETE' });
 
       if (!response.ok) {
-        await sendLog(
-          LogLevel.ERROR,
-          LogMessage.BOOK_DELETE_FAILED,
-          {
-            additionalData: { status: response.status },
-          },
-          bookId
-        );
+        logger.error('The book could not be deleted', {
+          bookId,
+          status: response.status,
+          userId: session.user.sub,
+        });
         return NextResponse.json(
           { error: 'Error deleting book' },
           { status: 500 }
         );
       }
 
-      await sendLog(LogLevel.INFO, LogMessage.BOOK_DELETED, {}, bookId);
+      logger.info('The book has been deleted', {
+        bookId,
+        userId: session.user.sub,
+      });
       return NextResponse.json(204);
     }
 
     return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
   } catch (error) {
-    await sendLog(
-      LogLevel.ERROR,
-      LogMessage.BOOK_RETRIEVE_FAILED,
-      {
-        additionalData: {
-          error: error instanceof Error ? error.message : String(error),
-        },
-      },
-      bookId
-    );
+    logger.error('The book could not be retrieved', {
+      bookId,
+      error: error instanceof Error ? error.message : String(error),
+    });
 
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Unknown error' },

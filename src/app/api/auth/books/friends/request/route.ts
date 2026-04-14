@@ -1,28 +1,25 @@
 import { auth0 } from '@/lib/auth0';
 import clientPromise from '@/lib/mongodb';
-import { sendLog, LogLevel, LogMessage } from '@/utils/logs';
+import { logger } from '@/utils/logger';
 import { FriendRequest } from '@gycoding/nebula';
 import { NextRequest, NextResponse } from 'next/server';
 
 async function handler(req: NextRequest) {
   try {
+    const route = req.nextUrl.pathname;
     const session = await auth0.getSession();
 
     if (!session) {
-      await sendLog(LogLevel.WARN, LogMessage.SESSION_NOT_FOUND);
+      logger.warn('Session not found', { route });
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await sendLog(
-      LogLevel.DEBUG,
-      LogMessage.SESSION_RETRIEVED,
-      {},
-      session.user.sub
-    );
-
     const baseUrl = process.env.GY_API?.replace(/['"]/g, '');
     if (!baseUrl) {
-      await sendLog(LogLevel.ERROR, LogMessage.CONFIG_GY_API_MISSING);
+      logger.error('GY_API missing', {
+        route: req.nextUrl.pathname,
+        userId: session.user.sub,
+      });
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
@@ -53,12 +50,9 @@ async function handler(req: NextRequest) {
 
       if (!apiResponse.ok) {
         const errorText = await apiResponse.text();
-        await sendLog(LogLevel.ERROR, LogMessage.FRIEND_REQUEST_SEND_FAILED, {
-          additionalData: {
-            toUserId,
-            status: apiResponse.status,
-            error: errorText,
-          },
+        logger.error('Friend request failed', {
+          additionalData: { status: apiResponse.status, error: errorText },
+          userId: session.user.sub,
         });
         return NextResponse.json(
           { error: errorText },
@@ -67,9 +61,6 @@ async function handler(req: NextRequest) {
       }
 
       const data = await apiResponse.json();
-      await sendLog(LogLevel.INFO, LogMessage.FRIEND_REQUEST_SENT, {
-        additionalData: { toUserId },
-      });
       return NextResponse.json(data);
     }
 
@@ -87,17 +78,13 @@ async function handler(req: NextRequest) {
         const collection = db.collection('FriendRequest');
         const data = await collection.find({ to: profileId }).toArray();
 
-        await sendLog(LogLevel.INFO, LogMessage.FRIEND_REQUEST_LIST_RETRIEVED, {
-          profileId: profileId ?? undefined,
-          additionalData: { count: data.length },
-        });
         return NextResponse.json(data as unknown as FriendRequest[]);
       } catch (error) {
-        await sendLog(LogLevel.ERROR, LogMessage.FRIEND_REQUEST_LIST_FAILED, {
-          profileId: profileId ?? undefined,
+        logger.error('Friend request retrieval failed', {
           additionalData: {
             error: error instanceof Error ? error.message : String(error),
           },
+          userId: session.user.sub,
         });
         return NextResponse.json(
           { error: error instanceof Error ? error.message : 'Unknown error' },
@@ -108,7 +95,7 @@ async function handler(req: NextRequest) {
 
     return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
   } catch (error) {
-    await sendLog(LogLevel.ERROR, LogMessage.FRIEND_REQUEST_SEND_FAILED, {
+    logger.error('Friend request handler failed', {
       additionalData: {
         error: error instanceof Error ? error.message : String(error),
       },

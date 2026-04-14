@@ -1,5 +1,5 @@
 import { auth0 } from '@/lib/auth0';
-import { sendLog, LogLevel, LogMessage } from '@/utils/logs';
+import { logger } from '@/utils/logger';
 import { NextResponse } from 'next/server';
 
 export interface ApiAuthContext {
@@ -18,13 +18,15 @@ export async function getApiAuthHeaders(): Promise<
   const idToken = session?.tokenSet?.idToken;
 
   if (!session || !idToken) {
-    await sendLog(LogLevel.WARN, LogMessage.SESSION_NOT_FOUND);
+    logger.warn('No active session found', {
+      userId: session?.user.sub ?? 'unknown',
+    });
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const baseUrl = process.env.GY_API?.replace(/['"]/g, '');
   if (!baseUrl) {
-    await sendLog(LogLevel.ERROR, LogMessage.CONFIG_GY_API_MISSING);
+    logger.error('GY_API environment variable is not defined');
     return NextResponse.json(
       { error: 'Server configuration error' },
       { status: 500 }

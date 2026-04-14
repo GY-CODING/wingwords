@@ -1,3 +1,5 @@
+import { logger } from '@/utils/logger';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export default async function getStats(profileId: string): Promise<any> {
   try {
@@ -7,13 +9,13 @@ export default async function getStats(profileId: string): Promise<any> {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Error fetching stats:', errorText);
+      logger.error('Error fetching stats', { profileId }, errorText);
       throw new Error(errorText);
     }
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error in getStats:', error);
+    logger.error('Error in getStats', { profileId }, error);
     throw new Error(
       `Failed to fetch stats: ${error instanceof Error ? error.message : 'Unknown error'}`
     );
