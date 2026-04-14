@@ -36,7 +36,15 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({ biography }),
     });
 
-    if (!apiResponse.ok) {
+    if (apiResponse.ok) {
+      logger.info('Biography updated successfully', {
+        userId: session.user.sub,
+        route: req.nextUrl.pathname,
+        status: apiResponse.status,
+      });
+
+      return new NextResponse(null, { status: 204 });
+    } else {
       const errorText = await apiResponse.text();
       logger.error('Biography update failed', {
         additionalData: { status: apiResponse.status, error: errorText },
