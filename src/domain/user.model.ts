@@ -4,7 +4,6 @@ import type HardcoverBook from './HardcoverBook';
 export interface User {
   id: UUID;
   username: string;
-  email?: string;
   picture: string;
   apiKey: string;
   phoneNumber: string | null;

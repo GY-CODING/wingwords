@@ -11,7 +11,6 @@ function profileToUser(profile: Profile, friendIdSet: Set<string>): User {
     username: profile.username,
     phoneNumber: profile.phoneNumber,
     picture: profile.picture,
-    email: profile.email,
     biography: profile.biography,
     isFriend: friendIdSet.has(profile.id as string),
   };

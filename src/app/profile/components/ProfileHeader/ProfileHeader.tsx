@@ -258,6 +258,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                   px: { xs: 1, md: 0 },
                   boxSizing: 'border-box',
                   position: 'relative',
+                  minHeight: { xs: 260, md: 180 }, // Aumenta el alto mínimo para simular el espacio del email
                 }}
               >
                 {/* Avatar más pequeño */}
@@ -268,6 +269,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     flexShrink: 0,
                     position: 'relative',
                     zIndex: 1,
+                    mb: { xs: 2, md: 0 },
                   }}
                 >
                   <UserImage user={user} />
@@ -344,19 +346,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     )}
                   </Box>
 
-                  {/* Email más sutil */}
-                  {user?.email && (
-                    <Typography
-                      sx={{
-                        color: 'rgba(255,255,255,0.5)',
-                        fontSize: { xs: 13, md: 15 },
-                        fontStyle: 'italic',
-                        fontFamily: lora.style.fontFamily,
-                      }}
-                    >
-                      {user.email}
-                    </Typography>
-                  )}
+                  {/* email eliminado */}
 
                   {/* Biography compacta */}
                   <BiographySection

@@ -27,6 +27,7 @@ export function getBookDisplayData(
   if (!book) return null;
 
   const selectedEdition = BookHelpers.getSelectedEdition(book);
+  const editionWithPages = BookHelpers.getEditionWithPages(book);
 
   const title = selectedEdition?.title || book.title || 'Unknown Title';
   const author = book.author?.name || 'Unknown Author';
@@ -34,7 +35,8 @@ export function getBookDisplayData(
     selectedEdition?.cached_image?.url ||
     book.cover?.url ||
     DEFAULT_COVER_IMAGE;
-  const pageCount = selectedEdition?.pages || book.pageCount || 0;
+  const pageCount =
+    selectedEdition?.pages ?? editionWithPages?.pages ?? book.pageCount ?? 0;
 
   const hasUserData = !!book.userData;
   const rating = book.userData?.rating || 0;
