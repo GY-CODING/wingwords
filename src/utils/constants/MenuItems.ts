@@ -5,7 +5,6 @@ import { MenuIcons } from './MenuIcons';
 import { MenuItem } from '@/domain/menu.model';
 
 interface User {
-  email?: string;
   name?: string;
   picture?: string;
 }

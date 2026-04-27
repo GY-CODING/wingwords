@@ -7,7 +7,7 @@ import { Stats } from '@/domain/stats.model';
  * uses the selected edition's pages when available, falls back to book.pageCount.
  */
 function resolvePageCount(book: HardcoverBook): number {
-  const edition = BookHelpers.getSelectedEdition(book);
+  const edition = BookHelpers.getEditionWithPages(book);
   return edition?.pages ?? book.pageCount ?? 0;
 }
 

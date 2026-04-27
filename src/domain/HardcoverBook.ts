@@ -96,4 +96,25 @@ export class BookHelpers {
   static hasSelectedEdition(book: HardcoverBook): boolean {
     return this.getSelectedEdition(book) !== null;
   }
+
+  /**
+   * Obtiene una edición válida con páginas.
+   * Prioriza la edición seleccionada y luego busca la primera edición del libro que tenga páginas.
+   */
+  static getEditionWithPages(book: HardcoverBook): Edition | null {
+    const selectedEdition = this.getSelectedEdition(book);
+    if (selectedEdition?.pages && selectedEdition.pages > 0) {
+      return selectedEdition;
+    }
+
+    if (!book.editions) {
+      return null;
+    }
+
+    return (
+      book.editions.find(
+        (edition) => typeof edition.pages === 'number' && edition.pages > 0
+      ) || null
+    );
+  }
 }

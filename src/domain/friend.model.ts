@@ -3,7 +3,6 @@ import { UUID } from 'crypto';
 export interface Friend {
   id: UUID;
   username: string;
-  email?: string;
   biography?: string;
   phoneNumber: string;
   picture: string;
@@ -12,7 +11,6 @@ export interface Friend {
 export interface User extends Friend {
   id: UUID;
   username: string;
-  email?: string;
   biography?: string;
   phoneNumber: string;
   picture: string;

@@ -420,22 +420,33 @@ export default function BookDetails() {
               </Box>
 
               {/* Page count */}
-              {book?.pageCount && book.pageCount > 0 && (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
-                  <MenuBookIcon
-                    sx={{ color: 'rgba(147,51,234,0.6)', fontSize: 16 }}
-                  />
-                  <Typography
-                    sx={{
-                      fontFamily: lora.style.fontFamily,
-                      color: 'rgba(255,255,255,0.4)',
-                      fontSize: '0.85rem',
-                    }}
-                  >
-                    {book.pageCount} {t('book.detail.pages')}
-                  </Typography>
-                </Box>
-              )}
+              {/* Mostrar páginas de la edición seleccionada si existe, si no las del libro base */}
+              {(() => {
+                const editionPages = selectedEdition?.pages;
+                const showPages =
+                  editionPages && editionPages > 0
+                    ? editionPages
+                    : book?.pageCount && book.pageCount > 0
+                      ? book.pageCount
+                      : null;
+                if (!showPages) return null;
+                return (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
+                    <MenuBookIcon
+                      sx={{ color: 'rgba(147,51,234,0.6)', fontSize: 16 }}
+                    />
+                    <Typography
+                      sx={{
+                        fontFamily: lora.style.fontFamily,
+                        color: 'rgba(255,255,255,0.4)',
+                        fontSize: '0.85rem',
+                      }}
+                    >
+                      {showPages} {t('book.detail.pages')}
+                    </Typography>
+                  </Box>
+                );
+              })()}
 
               {/* Editions count + selector */}
               {allEditions.length > 0 && (

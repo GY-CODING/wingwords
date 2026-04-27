@@ -11,18 +11,13 @@ export const UserImage = ({
   compact?: boolean;
 }) => {
   const theme = useTheme();
-
   const isSm = useMediaQuery(theme.breakpoints.between('sm', 'md'));
   const isMd = useMediaQuery(theme.breakpoints.up('md'));
 
   let size = 100;
   if (isSm) size = 120;
   if (isMd) size = 160;
-
-  // En modo compact, el tamaño es 100% del contenedor
-  if (compact) {
-    size = 100;
-  }
+  if (compact) size = 100;
 
   return (
     <Image

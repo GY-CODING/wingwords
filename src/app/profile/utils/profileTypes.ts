@@ -6,7 +6,6 @@ export type ViewType = 'grid' | 'list' | 'timeline' | 'calendar';
 export interface ProfileUser {
   id: UUID | string;
   username: string;
-  email?: string | null;
   picture: string;
   biography?: string | null;
 }

@@ -151,7 +151,7 @@ export default function Profile({ user }: ProfileProps): JSX.Element {
                           fontFamily: lora.style.fontFamily,
                         }}
                       >
-                        {user?.email}
+                        {/* email eliminado */}
                       </Box>
                     </Box>
                   </Box>
