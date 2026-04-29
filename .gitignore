@@ -2,6 +2,7 @@ node_modules/
 .next/
 .env.local
 CLAUDE.md
+.claude/
 .vercel
 coverage/
 tsconfig.tsbuildinfo

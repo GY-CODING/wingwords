@@ -99,6 +99,7 @@
   "book.rating.status.wantToRead": "Sie möchten lesen",
   "book.rating.status.reading": "Lesen",
   "book.rating.status.read": "Lesen Sie",
+  "book.rating.status.dnf": "DNF",
   "book.rating.signIn": "Melden Sie sich an, um dieses Buch zu bewerten",
   "book.rating.title": "Details zum Buch",
   "book.rating.section.rating": "Bewertung",

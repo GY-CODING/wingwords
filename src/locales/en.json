@@ -99,6 +99,7 @@
   "book.rating.status.wantToRead": "Want to read",
   "book.rating.status.reading": "Reading",
   "book.rating.status.read": "Read",
+  "book.rating.status.dnf": "DNF",
   "book.rating.signIn": "Sign in to rate this book",
   "book.rating.title": "Book Details",
   "book.rating.section.rating": "Rating",

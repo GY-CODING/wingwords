@@ -1,6 +1,7 @@
 import { EBookStatus } from '@gycoding/nebula';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 
 export interface StatusOption {
@@ -24,5 +25,10 @@ export const statusOptions: StatusOption[] = [
     labelKey: 'book.rating.status.read',
     value: EBookStatus.READ,
     icon: <CheckCircleIcon />,
+  },
+  {
+    labelKey: 'book.rating.status.dnf',
+    value: EBookStatus.DNF,
+    icon: <DoNotDisturbOnIcon />,
   },
 ];

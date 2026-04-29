@@ -167,6 +167,11 @@ export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
       color: '#6ee7b7',
       bg: 'rgba(110, 231, 183, 0.75)',
     },
+    [EBookStatus.DNF]: {
+      label: t('book.rating.status.dnf'),
+      color: '#ef4444',
+      bg: 'rgba(239, 68, 68, 0.75)',
+    },
   };
 
   const currentStatus = book.userData?.status || EBookStatus.WANT_TO_READ;

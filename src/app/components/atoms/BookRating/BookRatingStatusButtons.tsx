@@ -1,7 +1,7 @@
 'use client';
 import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { EBookStatus } from '@gycoding/nebula';
-import { Button, Stack } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import React from 'react';
 import { StatusOption, statusOptions } from './BookRatingOptions';
 
@@ -10,6 +10,7 @@ const STATUS_COLORS: Record<EBookStatus, string> = {
   [EBookStatus.WANT_TO_READ]: '#fbbf24',
   [EBookStatus.READING]: '#818cf8',
   [EBookStatus.READ]: '#6ee7b7',
+  [EBookStatus.DNF]: '#ef4444',
 } as Record<EBookStatus, string>;
 
 /** Returns the accent color for a given status, falling back to white */
@@ -30,7 +31,7 @@ const BookRatingStatusButtons: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <Stack direction="row" spacing={1.5} justifyContent="flex-start">
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
       {statusOptions.map((opt: StatusOption) => {
         const isActive = tempStatus === opt.value;
         const color = getStatusColor(opt.value);
@@ -47,18 +48,18 @@ const BookRatingStatusButtons: React.FC<Props> = ({
             })}
             onClick={() => setTempStatus(opt.value)}
             sx={{
-              flex: 1,
+              flex: '1 1 calc(50% - 6px)',
               borderRadius: '10px',
               fontWeight: 600,
-              fontSize: [12, 14],
+              fontSize: 13,
               minWidth: 'auto',
               color: isActive ? '#fff' : 'rgba(255, 255, 255, 0.7)',
               background: isActive ? `${color}30` : 'rgba(255, 255, 255, 0.03)',
               borderColor: isActive
                 ? `${color}60`
                 : 'rgba(255, 255, 255, 0.08)',
-              px: 2,
-              py: 1.2,
+              px: 1.5,
+              py: 1,
               textTransform: 'none',
               fontFamily,
               whiteSpace: 'nowrap',
@@ -78,7 +79,7 @@ const BookRatingStatusButtons: React.FC<Props> = ({
           </Button>
         );
       })}
-    </Stack>
+    </Box>
   );
 };
 

@@ -99,6 +99,7 @@
   "book.rating.status.wantToRead": "Quiero leerlo",
   "book.rating.status.reading": "Leyendo",
   "book.rating.status.read": "Leído",
+  "book.rating.status.dnf": "DNF",
   "book.rating.signIn": "Inicia sesión para valorar este libro",
   "book.rating.title": "Detalles del Libro",
   "book.rating.section.rating": "Valoración",

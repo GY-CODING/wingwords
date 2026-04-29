@@ -445,6 +445,10 @@ const appMessages = defineMessages({
     id: 'book.rating.status.read',
     defaultMessage: 'Read',
   },
+  bookRatingStatusDnf: {
+    id: 'book.rating.status.dnf',
+    defaultMessage: 'DNF',
+  },
   bookRatingSignIn: {
     id: 'book.rating.signIn',
     defaultMessage: 'Sign in to rate this book',
