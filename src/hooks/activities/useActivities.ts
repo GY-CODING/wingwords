@@ -1,6 +1,7 @@
 import useSWR from 'swr';
 import { Activity } from '@/domain/activity.model';
 import { fetchActivities } from '@/app/actions/activities/fetchActivities';
+import { SWR_KEYS } from '@/lib/swrKeys';
 import {
   sortActivitiesByDate,
   extractBookId,
@@ -18,7 +19,7 @@ interface UseActivitiesResult {
 
 export function useActivities(): UseActivitiesResult {
   const { data, isLoading, error, mutate } = useSWR(
-    '/api/auth/books/activity',
+    SWR_KEYS.myActivities,
     fetchActivities,
     {
       revalidateOnFocus: false,

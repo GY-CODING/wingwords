@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { User } from '@/domain/user.model';
 import fetchUser from '@/app/actions/accounts/fetchUser';
 import { setProfile } from '@/store/userSlice';
+import { SWR_KEYS } from '@/lib/swrKeys';
 interface useUserProps {
   data: User | null;
   isLoading: boolean;
@@ -12,7 +13,7 @@ interface useUserProps {
 }
 export function useUser(): useUserProps {
   const dispatch = useDispatch();
-  const { data, isLoading, error } = useSWR('/api/auth/get', fetchUser, {
+  const { data, isLoading, error } = useSWR(SWR_KEYS.user, fetchUser, {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
     dedupingInterval: 30000,

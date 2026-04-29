@@ -2,6 +2,7 @@
 import useSWR from 'swr';
 import { User } from '@/domain/friend.model';
 import getAccountsUser from '@/app/actions/accounts/user/fetchAccountsUser';
+import { SWR_KEYS } from '@/lib/swrKeys';
 
 interface useBookProps {
   data: User | null;
@@ -11,7 +12,7 @@ interface useBookProps {
 
 export function useAccountsUser(id: string): useBookProps {
   const { data, isLoading, error } = useSWR(
-    id ? `/api/accounts/users/${id}` : null,
+    id ? SWR_KEYS.accountsUser(id) : null,
     () => getAccountsUser(id),
     {
       revalidateOnFocus: false,
