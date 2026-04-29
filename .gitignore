@@ -3,6 +3,8 @@ node_modules/
 .env.local
 CLAUDE.md
 .claude/
+.github/instructions/
+docs/
 .vercel
 coverage/
 tsconfig.tsbuildinfo

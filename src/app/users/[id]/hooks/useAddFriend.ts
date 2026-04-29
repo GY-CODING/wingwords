@@ -5,6 +5,7 @@ import { Friend } from '@/domain/friend.model';
 import { useFriends } from '@/hooks/useFriends';
 import { useState } from 'react';
 import { useSWRConfig } from 'swr';
+import { SWR_KEYS } from '@/lib/swrKeys';
 
 interface UseAddFriendReturn {
   isFriend: boolean;
@@ -45,7 +46,7 @@ export function useAddFriend(targetUserId: string): UseAddFriendReturn {
       formData.set('userId', targetUserId);
       await addFriend(formData);
       setIsSuccess(true);
-      mutate('/api/auth/users/accounts/friends');
+      mutate(SWR_KEYS.friends);
     } catch {
       setIsError(true);
     } finally {
@@ -60,7 +61,7 @@ export function useAddFriend(targetUserId: string): UseAddFriendReturn {
     try {
       await deleteFriend(targetUserId);
       setIsRemoveSuccess(true);
-      mutate('/api/auth/users/accounts/friends');
+      mutate(SWR_KEYS.friends);
     } catch {
       setIsRemoveError(true);
     } finally {

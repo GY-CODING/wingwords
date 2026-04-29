@@ -2,6 +2,7 @@
 
 import { fetchActivities } from '@/app/actions/book/activities/fetchActivities';
 import { Activity } from '@/domain/activity.model';
+import { SWR_KEYS } from '@/lib/swrKeys';
 import { UUID } from 'crypto';
 import { useMemo } from 'react';
 import useSWR from 'swr';
@@ -16,7 +17,7 @@ interface useActivitiesProps {
 
 export function useActivities(id?: UUID): useActivitiesProps {
   const { data, isLoading, error } = useSWR(
-    id ? `/api/public/books/activities?userId=${id}` : null,
+    id ? SWR_KEYS.activities(id) : null,
     () => fetchActivities(id!),
     {
       revalidateOnFocus: false,

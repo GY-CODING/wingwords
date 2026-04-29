@@ -2,6 +2,7 @@
 import useSWR from 'swr';
 import { UUID } from 'crypto';
 import getStats from '@/service/stats.service';
+import { SWR_KEYS } from '@/lib/swrKeys';
 
 interface UseStatsResult<T> {
   data?: T;
@@ -11,7 +12,7 @@ interface UseStatsResult<T> {
 
 export function useStats(id: UUID | null): UseStatsResult<any> {
   const { data, error, isLoading } = useSWR(
-    id ? `/api/public/accounts/${id}/books/stats` : null,
+    id ? SWR_KEYS.stats(id) : null,
     () => (id ? getStats(id) : Promise.resolve(undefined)),
     {
       revalidateOnFocus: false,
