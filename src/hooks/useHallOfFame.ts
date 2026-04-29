@@ -8,6 +8,7 @@ import { hallOfFame } from '@/domain/hallOfFame.model';
 import useHardcoverBatch from '@/hooks/books/useHardcoverBatch';
 import { useMemo, useState } from 'react';
 import useSWR, { mutate } from 'swr';
+import { SWR_KEYS } from '@/lib/swrKeys';
 
 interface useHallOfFameProps {
   data: hallOfFame | null;
@@ -45,13 +46,11 @@ export function useHallOfFame(userId: string): useHallOfFameProps {
   const [isErrorDeleteToHallOfFame, setIsErrorDeleteToHallOfFame] =
     useState(false);
 
-  const { data, isLoading, error } = useSWR(
-    `/api/public/accounts/halloffame/${userId}`,
-    () => fetchHallOfFame(userId)
+  const { data, isLoading, error } = useSWR(SWR_KEYS.hallOfFame(userId), () =>
+    fetchHallOfFame(userId)
   );
 
   const quote = data?.quote || '';
-  // Extraer ids de los libros (pueden venir como string o como objeto con id)
   const rawBooks = data?.books || [];
   const ids = useMemo(
     () =>
@@ -62,12 +61,11 @@ export function useHallOfFame(userId: string): useHallOfFameProps {
   );
   const { data: hardcoverData, isLoading: isLoadingHardcover } =
     useHardcoverBatch(ids);
-  // Si hay hardcoverData úsalo, si no, cae a rawBooks
   const books = (
     hardcoverData && hardcoverData.length > 0 ? hardcoverData : rawBooks
   ) as HardcoverBook[];
 
-  const cacheKey = `/api/public/accounts/halloffame/${userId}`;
+  const cacheKey = SWR_KEYS.hallOfFame(userId);
 
   const handleAddBookToHallOfFame = async (bookId: string): Promise<void> => {
     setIsLoadingToAddHallOfFame(true);

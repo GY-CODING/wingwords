@@ -3,6 +3,7 @@ import getFriends from '@/app/actions/accounts/user/friend/friends';
 import useSWR, { useSWRConfig } from 'swr';
 import deleteFriend from '@/app/actions/accounts/user/friend/deleteFriend';
 import { useState } from 'react';
+import { SWR_KEYS } from '@/lib/swrKeys';
 
 interface useFriendsProps {
   data: Friend[] | undefined;
@@ -25,20 +26,16 @@ interface useFriendsProps {
 }
 
 export function useFriends(): useFriendsProps {
-  const { data, isLoading, error } = useSWR(
-    '/api/auth/users/accounts/friends',
-    getFriends,
-    {
-      shouldRetryOnError: false,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      dedupingInterval: 60000,
-      keepPreviousData: true,
-      onError: (err) => {
-        console.error('Error loading friends:', err);
-      },
-    }
-  );
+  const { data, isLoading, error } = useSWR(SWR_KEYS.friends, getFriends, {
+    shouldRetryOnError: false,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    dedupingInterval: 60000,
+    keepPreviousData: true,
+    onError: (err) => {
+      console.error('Error loading friends:', err);
+    },
+  });
   const { mutate } = useSWRConfig();
 
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
@@ -59,7 +56,7 @@ export function useFriends(): useFriendsProps {
       await mutateFn(null, { revalidate: false });
     } else {
       await mutate(
-        '/api/auth/users/accounts/friends',
+        SWR_KEYS.friends,
         (current: Friend[] | undefined) =>
           current?.filter((f) => f.id !== userId),
         { revalidate: false }
@@ -71,12 +68,12 @@ export function useFriends(): useFriendsProps {
       setIsSuccessDelete(true);
       // Sincronizar con el servidor
       if (!mutateFn) {
-        await mutate('/api/auth/users/accounts/friends');
+        await mutate(SWR_KEYS.friends);
       }
     } catch (error) {
       setErrorDelete(error as Error);
       // Rollback: revalidar desde el servidor
-      await mutate('/api/auth/users/accounts/friends');
+      await mutate(SWR_KEYS.friends);
     } finally {
       setIsLoadingDelete(false);
     }

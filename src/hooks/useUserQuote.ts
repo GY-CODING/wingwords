@@ -1,17 +1,13 @@
 import fetchHallOfFame from '@/app/actions/book/halloffame/fetchHallOfFame';
+import { SWR_KEYS } from '@/lib/swrKeys';
 import useSWR from 'swr';
 
-/**
- * Hook ligero que solo extrae la quote del usuario desde el endpoint de Hall of Fame.
- * A diferencia de useHallOfFame, NO dispara useHardcoverBatch, por lo que
- * es ideal para usarlo en el dashboard donde solo se necesita la frase.
- */
 export function useUserQuote(userId: string): {
   quote: string;
   isLoading: boolean;
 } {
   const { data, isLoading } = useSWR(
-    userId ? `/api/public/accounts/halloffame/${userId}` : null,
+    userId ? SWR_KEYS.hallOfFame(userId) : null,
     () => fetchHallOfFame(userId),
     {
       revalidateOnFocus: false,

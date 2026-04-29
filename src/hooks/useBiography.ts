@@ -2,6 +2,7 @@ import updateBiography from '@/app/actions/book/updateBiography';
 import { User } from '@/domain/user.model';
 import { useState } from 'react';
 import { mutate } from 'swr';
+import { SWR_KEYS } from '@/lib/swrKeys';
 
 /**
  * Hook para manejar la actualización de biografía con optimistic updates.
@@ -24,8 +25,6 @@ interface UseBiographyProps {
   setIsUpdated: (isUpdated: boolean) => void;
   setIsError: (isError: boolean) => void;
 }
-
-const USER_CACHE_KEY = '/api/auth/get';
 
 export function useBiography(): UseBiographyProps {
   const [isLoading, setIsLoading] = useState(false);
@@ -53,7 +52,7 @@ export function useBiography(): UseBiographyProps {
 
       // Después del éxito, actualizar el cache
       await mutate(
-        USER_CACHE_KEY,
+        SWR_KEYS.user,
         (currentUser: User | undefined) => {
           if (!currentUser) return currentUser;
           return {
