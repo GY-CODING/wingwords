@@ -27,7 +27,7 @@ export const statusOptions: StatusOption[] = [
     icon: <CheckCircleIcon />,
   },
   {
-    labelKey: 'book.rating.status.dnf',
+    labelKey: 'book.rating.status.notFinished',
     value: EBookStatus.DNF,
     icon: <DoNotDisturbOnIcon />,
   },

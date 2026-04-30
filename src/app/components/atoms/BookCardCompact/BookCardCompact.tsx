@@ -168,7 +168,13 @@ export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
       bg: 'rgba(110, 231, 183, 0.75)',
     },
     [EBookStatus.DNF]: {
-      label: t('book.rating.status.dnf'),
+      label: t('book.rating.status.notFinished'),
+      color: '#ef4444',
+      bg: 'rgba(239, 68, 68, 0.75)',
+    },
+    // Backend may send NOT_FINISHED as the status string — accept it for display
+    NOT_FINISHED: {
+      label: t('book.rating.status.notFinished'),
       color: '#ef4444',
       bg: 'rgba(239, 68, 68, 0.75)',
     },

@@ -99,7 +99,7 @@
   "book.rating.status.wantToRead": "Envie de lire",
   "book.rating.status.reading": "En lisant",
   "book.rating.status.read": "Lire",
-  "book.rating.status.dnf": "DNF",
+  "book.rating.status.notFinished": "DNF",
   "book.rating.signIn": "S'inscrire pour noter ce livre",
   "book.rating.title": "Détails du livre",
   "book.rating.section.rating": "Evaluation",

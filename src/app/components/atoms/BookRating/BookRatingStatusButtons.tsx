@@ -5,17 +5,18 @@ import { Box, Button } from '@mui/material';
 import React from 'react';
 import { StatusOption, statusOptions } from './BookRatingOptions';
 
-/** Semantic status color map for each book status */
-const STATUS_COLORS: Record<EBookStatus, string> = {
+/** Semantic status color map for each book status. Accepts backend string keys too. */
+const STATUS_COLORS: Record<string, string> = {
   [EBookStatus.WANT_TO_READ]: '#fbbf24',
   [EBookStatus.READING]: '#818cf8',
   [EBookStatus.READ]: '#6ee7b7',
   [EBookStatus.DNF]: '#ef4444',
-} as Record<EBookStatus, string>;
+  NOT_FINISHED: '#ef4444',
+} as Record<string, string>;
 
 /** Returns the accent color for a given status, falling back to white */
-function getStatusColor(status: EBookStatus): string {
-  return STATUS_COLORS[status] ?? '#ffffff';
+function getStatusColor(status: EBookStatus | string): string {
+  return STATUS_COLORS[String(status)] ?? '#ffffff';
 }
 
 interface Props {
