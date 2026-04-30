@@ -37,8 +37,14 @@ export default async function rateBook(
     // Si llega un editionId, lo enviamos.
 
     // Construir userData completo con todos los campos (actuales o nuevos)
+    // Normalizar estados: mapear DNF (cliente) -> NOT_FINISHED (backend)
+    let statusToUse = status || oldUserData?.status || EBookStatus.WANT_TO_READ;
+    if (statusToUse === EBookStatus.DNF || statusToUse === 'DNF') {
+      statusToUse = 'NOT_FINISHED';
+    }
+
     const newUserData: Record<string, any> = {
-      status: status || oldUserData?.status || EBookStatus.WANT_TO_READ,
+      status: statusToUse,
       rating:
         ratingNumber !== undefined ? ratingNumber : oldUserData?.rating || 0,
       startDate: startDate || oldUserData?.startDate || '',
@@ -74,6 +80,8 @@ export default async function rateBook(
     const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
     const cookieStore = await cookies();
     const cookieHeader = cookieStore.toString();
+
+    console.log(JSON.stringify({ newUserData }));
 
     const response = await fetch(
       `${protocol}://${host}/api/auth/books/${bookId}`,

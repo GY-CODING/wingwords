@@ -54,8 +54,8 @@ const BookRatingMenu: React.FC<Props> = ({
       PaperProps={{
         sx: {
           borderRadius: '16px',
-          minWidth: { xs: 'calc(100vw - 32px)', sm: 500, md: 600 },
-          maxWidth: { xs: 'calc(100vw - 32px)', sm: 600, md: 720 },
+          minWidth: { xs: 'calc(100vw - 32px)', sm: 560, md: 660 },
+          maxWidth: { xs: 'calc(100vw - 32px)', sm: 660, md: 760 },
           background: 'rgba(17, 24, 39, 0.92)',
           backdropFilter: 'blur(24px)',
           border: '1px solid rgba(255, 255, 255, 0.06)',

@@ -14,6 +14,7 @@ const STATUS_COLORS: Record<string, string> = {
   READING: '#60a5fa', // blue
   WANT_TO_READ: '#f59e0b', // amber
   DNF: '#f87171', // red
+  NOT_FINISHED: '#f87171', // backend string for DNF
 };
 const FALLBACK_COLORS = ['#a855f7', '#c084fc', '#818cf8', '#e879f9'];
 
@@ -54,6 +55,8 @@ export default function DonutChart({ bookStatus }: DonutChartProps) {
         return t('stats.status.reading');
       case 'WANT_TO_READ':
         return t('stats.status.wantToRead');
+      case 'NOT_FINISHED':
+        return t('book.rating.status.notFinished');
       default:
         return status;
     }
