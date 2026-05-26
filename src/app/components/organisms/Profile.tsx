@@ -204,7 +204,7 @@ export default function Profile({ user }: ProfileProps): JSX.Element {
                     />
 
                     <a
-                      href="/auth/logout?federated=true"
+                      href="/auth/logout"
                       style={{ textDecoration: 'none' }}
                       onClick={() => handleClose(new Event('click'))}
                     >

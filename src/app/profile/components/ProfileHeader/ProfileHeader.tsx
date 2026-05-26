@@ -516,7 +516,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     >
                       <IconButton
                         component="a"
-                        href={'/auth/logout?federated=true'}
+                        href={'/auth/logout'}
                         target="_blank"
                         sx={{
                           background: 'rgba(234, 51, 51, 0.12)',
