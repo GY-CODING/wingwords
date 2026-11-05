@@ -167,7 +167,7 @@ export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
       color: '#6ee7b7',
       bg: 'rgba(110, 231, 183, 0.75)',
     },
-    [EBookStatus.DNF]: {
+    DNF: {
       label: t('book.rating.status.notFinished'),
       color: '#ef4444',
       bg: 'rgba(239, 68, 68, 0.75)',

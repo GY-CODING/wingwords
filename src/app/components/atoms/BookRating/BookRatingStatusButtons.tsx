@@ -10,7 +10,7 @@ const STATUS_COLORS: Record<string, string> = {
   [EBookStatus.WANT_TO_READ]: '#fbbf24',
   [EBookStatus.READING]: '#818cf8',
   [EBookStatus.READ]: '#6ee7b7',
-  [EBookStatus.DNF]: '#ef4444',
+  DNF: '#ef4444',
   NOT_FINISHED: '#ef4444',
 } as Record<string, string>;
 

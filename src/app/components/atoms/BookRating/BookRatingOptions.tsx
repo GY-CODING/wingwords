@@ -28,7 +28,9 @@ export const statusOptions: StatusOption[] = [
   },
   {
     labelKey: 'book.rating.status.notFinished',
-    value: EBookStatus.DNF,
+    // nebula no define EBookStatus.DNF (era undefined y no se guardaba nada):
+    // se usa el valor que guarda el backend.
+    value: 'NOT_FINISHED' as EBookStatus,
     icon: <DoNotDisturbOnIcon />,
   },
 ];
