@@ -7,11 +7,16 @@ import { BookCard } from '@/app/components/atoms/BookCard/BookCard';
 
 const MotionBox = motion(Box);
 
+// Grid real: con flex-wrap y anchos calc(50% - 6px) el hueco de 14px hacía
+// que entre 900 y 1200px solo cupiera una tarjeta por fila.
 const GRID_SX = {
   width: '100%',
-  display: 'flex',
-  flexDirection: 'row' as const,
-  flexWrap: 'wrap' as const,
+  display: 'grid',
+  gridTemplateColumns: {
+    xs: '1fr',
+    sm: 'repeat(2, minmax(0, 1fr))',
+    lg: 'repeat(3, minmax(0, 1fr))',
+  },
   gap: { xs: '8px', sm: '12px', md: '14px' },
   alignItems: 'stretch',
 };
@@ -33,7 +38,6 @@ function BookCardSkeleton() {
         borderRadius: { xs: '16px', md: '20px' },
         border: '1px solid rgba(255,255,255,0.06)',
         height: '100%',
-        minHeight: { xs: '86px', md: '106px' },
       }}
     >
       <Skeleton
@@ -41,11 +45,15 @@ function BookCardSkeleton() {
         sx={{
           width: { xs: '64px', sm: '80px', md: '104px' },
           flexShrink: 0,
-          alignSelf: 'stretch',
+          // La portada real marca el alto de la tarjeta (proporción 2:3)
+          height: 'auto',
+          aspectRatio: '2 / 3',
+          alignSelf: 'flex-start',
           borderRadius: { xs: '10px', md: '12px' },
           bgcolor: 'rgba(255,255,255,0.06)',
         }}
       />
+      {/* Mismas filas que BookCard: título, autor, chip de saga y valoración */}
       <Box
         sx={{
           flex: 1,
@@ -53,26 +61,38 @@ function BookCardSkeleton() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          gap: 1,
+          gap: { xs: '5px', md: '7px' },
         }}
       >
+        <Box>
+          <Skeleton
+            variant="text"
+            width="70%"
+            height={26}
+            sx={{ bgcolor: 'rgba(255,255,255,0.07)' }}
+          />
+          <Skeleton
+            variant="text"
+            width="45%"
+            height={22}
+            sx={{ bgcolor: 'rgba(255,255,255,0.05)', mt: 0.5 }}
+          />
+          <Skeleton
+            variant="rounded"
+            width="50%"
+            height={25}
+            sx={{
+              bgcolor: 'rgba(255,255,255,0.05)',
+              borderRadius: '8px',
+              mt: 0.75,
+            }}
+          />
+        </Box>
         <Skeleton
           variant="text"
-          width="70%"
+          width={44}
           height={20}
-          sx={{ bgcolor: 'rgba(255,255,255,0.07)' }}
-        />
-        <Skeleton
-          variant="text"
-          width="45%"
-          height={16}
           sx={{ bgcolor: 'rgba(255,255,255,0.04)' }}
-        />
-        <Skeleton
-          variant="text"
-          width="30%"
-          height={14}
-          sx={{ bgcolor: 'rgba(255,255,255,0.03)', mt: 0.5 }}
         />
       </Box>
     </Box>
@@ -84,17 +104,7 @@ export const BooksGrid: React.FC<BooksGridProps> = ({ books, isLoading }) => {
     return (
       <Box sx={GRID_SX}>
         {Array.from({ length: 6 }).map((_, i) => (
-          <Box
-            key={i}
-            sx={{
-              width: {
-                xs: '100%',
-                sm: 'calc(50% - 6px)',
-                lg: 'calc(33.333% - 10px)',
-              },
-              flexShrink: 0,
-            }}
-          >
+          <Box key={i} sx={{ minWidth: 0 }}>
             <BookCardSkeleton />
           </Box>
         ))}
@@ -113,17 +123,10 @@ export const BooksGrid: React.FC<BooksGridProps> = ({ books, isLoading }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97 }}
             transition={{
-              duration: 0.22,
-              delay: Math.min(index * 0.035, 0.28),
+              duration: 0.2,
+              delay: Math.min(index * 0.02, 0.1),
             }}
-            sx={{
-              width: {
-                xs: '100%',
-                sm: 'calc(50% - 6px)',
-                lg: 'calc(33.333% - 10px)',
-              },
-              flexShrink: 0,
-            }}
+            sx={{ minWidth: 0 }}
           >
             <BookCard book={book} />
           </MotionBox>

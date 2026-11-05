@@ -40,10 +40,12 @@ export const BooksList: React.FC<BooksListProps> = ({
       sm: 'repeat(auto-fill, minmax(180px, 1fr))',
       md: 'repeat(auto-fill, minmax(200px, 1fr))',
     },
+    // minmax(0, 1fr): sin esto la columna no encoge por debajo del título
+    // (que va en una línea con "…") y la tercera se salía del contenedor.
     list: {
-      xs: '1fr',
-      sm: 'repeat(2, 1fr)',
-      md: 'repeat(3, 1fr)',
+      xs: 'minmax(0, 1fr)',
+      sm: 'repeat(2, minmax(0, 1fr))',
+      md: 'repeat(3, minmax(0, 1fr))',
     },
   };
 
@@ -64,12 +66,12 @@ export const BooksList: React.FC<BooksListProps> = ({
           px: { xs: 0.5, md: 1 },
         }}
       >
-        {books.map((book, index) => (
+        {books.map((book) => (
           <motion.div
             key={book.id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4, delay: index * 0.02 }}
+            // Visible desde el principio (antes, 34 libros = 0,7 s de cascada)
+            initial={false}
+            style={{ minWidth: 0 }}
           >
             <BookCardList book={book} />
           </motion.div>

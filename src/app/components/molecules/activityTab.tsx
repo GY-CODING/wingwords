@@ -62,32 +62,43 @@ const getActivityIconComponent = (type: ActivityType) => {
   }
 };
 
-// Progress Badge Component
+// Progreso como en la app: "40%" en morado y una barra fina a lo ancho
 const ProgressBadge: React.FC<{ progress: number }> = React.memo(
   ({ progress }) => (
-    <Box
-      sx={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 0.5,
-        px: 1,
-        py: 0.5,
-        borderRadius: '8px',
-        background: 'rgba(147, 51, 234, 0.15)',
-        border: '1px solid rgba(147, 51, 234, 0.2)',
-        color: '#c084fc',
-      }}
-    >
-      <BarChartIcon sx={{ fontSize: 14 }} />
+    <Box sx={{ width: '100%' }}>
       <Typography
         sx={{
           fontSize: 12,
-          fontWeight: 600,
+          fontWeight: 700,
+          color: '#c084fc',
           fontFamily: lora.style.fontFamily,
+          fontVariantNumeric: 'tabular-nums',
+          mb: 0.5,
         }}
       >
         {progress}%
       </Typography>
+      <Box
+        role="progressbar"
+        aria-valuenow={progress}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        sx={{
+          height: 5,
+          borderRadius: 999,
+          background: 'rgba(147, 51, 234, 0.18)',
+          overflow: 'hidden',
+        }}
+      >
+        <Box
+          sx={{
+            width: `${Math.max(0, Math.min(100, progress))}%`,
+            height: '100%',
+            borderRadius: 999,
+            background: 'linear-gradient(90deg, #9333ea 0%, #c084fc 100%)',
+          }}
+        />
+      </Box>
     </Box>
   )
 );
@@ -101,9 +112,10 @@ const RatingBadge: React.FC<{ rating: number }> = React.memo(({ rating }) => (
       gap: 0.5,
       px: 1,
       py: 0.5,
-      borderRadius: '6px',
-      background: 'rgba(147, 51, 234, 0.15)',
-      color: '#c084fc',
+      borderRadius: '8px',
+      background: 'rgba(251, 191, 36, 0.12)',
+      border: '1px solid rgba(251, 191, 36, 0.25)',
+      color: '#fbbf24',
     }}
   >
     <StarIcon sx={{ fontSize: 14 }} />
@@ -136,10 +148,11 @@ const BookCover: React.FC<{
     <Box
       sx={{
         position: 'relative',
-        width: 70,
-        height: 100,
+        width: 72,
+        height: 108,
         flexShrink: 0,
-        borderRadius: 1,
+        borderRadius: '8px',
+        boxShadow: '0 4px 14px rgba(0, 0, 0, 0.4)',
         overflow: 'hidden',
         backgroundColor: 'rgba(147, 51, 234, 0.1)',
       }}
@@ -170,6 +183,8 @@ const ActivityItem: React.FC<{
   bookImage: string | null;
   onImageLoad: () => void;
   currentUserId?: string;
+  /** La actividad es del usuario que mira (su propio perfil). */
+  isOwnActivity?: boolean;
   profileId: string;
   onLikeToggle: (
     activityId: string,
@@ -182,6 +197,7 @@ const ActivityItem: React.FC<{
     bookImage,
     onImageLoad,
     currentUserId,
+    isOwnActivity = false,
     profileId,
     onLikeToggle,
   }) => {
@@ -196,6 +212,10 @@ const ActivityItem: React.FC<{
     const router = useRouter();
     const [likes, setLikes] = useState<string[]>(activity.likes ?? []);
     const [isLiking, setIsLiking] = useState(false);
+    // En tus propias actividades no puedes darte "me gusta": el corazón sale
+    // relleno si alguien se lo ha dado (≥1) y vacío solo con 0.
+    const showFilled = (isLiked: boolean) =>
+      isLiked || (isOwnActivity && likes.length > 0);
     const isLiked = useMemo(
       () => (currentUserId ? likes.includes(currentUserId) : false),
       [likes, currentUserId]
@@ -242,33 +262,24 @@ const ActivityItem: React.FC<{
 
     return (
       <MotionBox
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          duration: 0.4,
-          delay: index * 0.05,
-          ease: [0.4, 0, 0.2, 1],
-        }}
+        // Visible desde el principio: la cascada por índice no tenía tope
+        initial={false}
         role="article"
         onClick={handleCardClick}
         sx={{
-          p: 1.5,
-          mb: 2,
+          p: 2,
+          mb: 1.5,
           background: 'rgba(255, 255, 255, 0.03)',
-          backdropFilter: 'blur(16px)',
-          borderRadius: '16px',
+          borderRadius: '18px',
           border: '1px solid rgba(255, 255, 255, 0.06)',
           display: 'flex',
           alignItems: 'flex-start',
-          gap: 1.5,
+          gap: 2,
           cursor: activity.bookId ? 'pointer' : 'default',
-          transition: 'all 0.2s',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+          transition: 'background-color 0.2s, border-color 0.2s',
           '&:hover': {
             background: 'rgba(255, 255, 255, 0.05)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            transform: 'translateY(-2px)',
-            boxShadow: '0 4px 12px rgba(147, 51, 234, 0.15)',
+            borderColor: 'rgba(147, 51, 234, 0.25)',
           },
         }}
       >
@@ -307,9 +318,10 @@ const ActivityItem: React.FC<{
               <Typography
                 variant="body2"
                 sx={{
-                  color: '#AAAAAA',
+                  color: 'rgba(255, 255, 255, 0.5)',
                   fontFamily: lora.style.fontFamily,
-                  fontSize: 12,
+                  fontSize: 12.5,
+                  fontVariantNumeric: 'tabular-nums',
                 }}
               >
                 {activity.formattedDate}
@@ -320,9 +332,9 @@ const ActivityItem: React.FC<{
           <Typography
             variant="body1"
             sx={{
-              color: '#fff',
+              color: 'rgba(255, 255, 255, 0.92)',
               fontFamily: lora.style.fontFamily,
-              fontSize: 14,
+              fontSize: 15,
               lineHeight: 1.5,
             }}
           >
@@ -337,59 +349,72 @@ const ActivityItem: React.FC<{
             <Box
               sx={{
                 display: 'flex',
-                alignItems: 'center',
-                gap: 1.5,
-                mt: 1,
+                flexDirection: 'column',
+                gap: 1,
+                mt: 0.5,
+                width: '100%',
               }}
             >
               {progress !== null && <ProgressBadge progress={progress} />}
-              {rating !== null && <RatingBadge rating={rating} />}
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 0.25,
-                  ml: 'auto',
-                }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <IconButton
-                  size="small"
-                  onClick={handleLike}
-                  disabled={!currentUserId || !activity.activityId || isLiking}
-                  aria-label={isLiked ? 'Unlike activity' : 'Like activity'}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                {rating !== null && <RatingBadge rating={rating} />}
+                <Box
                   sx={{
-                    p: 0.5,
-                    color: isLiked ? '#e74c6f' : 'rgba(255,255,255,0.35)',
-                    transition: 'color 0.15s ease, transform 0.15s ease',
-                    '&:hover': {
-                      color: '#e74c6f',
-                      transform: 'scale(1.15)',
-                      background: 'transparent',
-                    },
-                    '&.Mui-disabled': { color: 'rgba(255,255,255,0.2)' },
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.25,
+                    ml: 'auto',
                   }}
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  {isLiked ? (
-                    <FavoriteRoundedIcon sx={{ fontSize: 16 }} />
-                  ) : (
-                    <FavoriteBorderRoundedIcon sx={{ fontSize: 16 }} />
-                  )}
-                </IconButton>
-                {likes.length > 0 && (
-                  <Typography
+                  <IconButton
+                    size="small"
+                    onClick={handleLike}
+                    disabled={
+                      !currentUserId || !activity.activityId || isLiking
+                    }
+                    aria-label={isLiked ? 'Unlike activity' : 'Like activity'}
                     sx={{
-                      fontSize: 12,
-                      color: isLiked ? '#e74c6f' : 'rgba(255,255,255,0.5)',
-                      fontWeight: 600,
-                      fontFamily: lora.style.fontFamily,
-                      transition: 'color 0.15s ease',
-                      minWidth: '1ch',
+                      p: 0.5,
+                      color: showFilled(isLiked)
+                        ? '#e74c6f'
+                        : 'rgba(255,255,255,0.35)',
+                      transition: 'color 0.15s ease, transform 0.15s ease',
+                      '&:hover': {
+                        color: '#e74c6f',
+                        transform: 'scale(1.15)',
+                        background: 'transparent',
+                      },
+                      '&.Mui-disabled': {
+                        color: showFilled(isLiked)
+                          ? '#e74c6f'
+                          : 'rgba(255,255,255,0.2)',
+                      },
                     }}
                   >
-                    {likes.length}
-                  </Typography>
-                )}
+                    {showFilled(isLiked) ? (
+                      <FavoriteRoundedIcon sx={{ fontSize: 16 }} />
+                    ) : (
+                      <FavoriteBorderRoundedIcon sx={{ fontSize: 16 }} />
+                    )}
+                  </IconButton>
+                  {likes.length > 0 && (
+                    <Typography
+                      sx={{
+                        fontSize: 12,
+                        color: showFilled(isLiked)
+                          ? '#e74c6f'
+                          : 'rgba(255,255,255,0.5)',
+                        fontWeight: 600,
+                        fontFamily: lora.style.fontFamily,
+                        transition: 'color 0.15s ease',
+                        minWidth: '1ch',
+                      }}
+                    >
+                      {likes.length}
+                    </Typography>
+                  )}
+                </Box>
               </Box>
             </Box>
           )}
@@ -399,43 +424,102 @@ const ActivityItem: React.FC<{
   }
 );
 
-// Skeleton Loading Component
+// Separador de mes, como en la app: línea — OCTUBRE 2026 — línea
+const MonthSeparator: React.FC<{ label: string }> = React.memo(({ label }) => (
+  <Box
+    role="separator"
+    aria-label={label}
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 2,
+      mt: 3,
+      mb: 1.5,
+      '&:first-of-type': { mt: 0 },
+      '&::before, &::after': {
+        content: '""',
+        flex: 1,
+        height: '1px',
+        background: 'rgba(255, 255, 255, 0.08)',
+      },
+    }}
+  >
+    <Typography
+      component="span"
+      sx={{
+        fontFamily: lora.style.fontFamily,
+        fontSize: 11.5,
+        fontWeight: 600,
+        letterSpacing: '0.14em',
+        textTransform: 'uppercase',
+        color: 'rgba(255, 255, 255, 0.42)',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {label}
+    </Typography>
+  </Box>
+));
+
+// Skeleton Loading Component — mismas medidas que ActivityItem
+const SKELETON_BG = { bgcolor: 'rgba(255, 255, 255, 0.06)' };
 const SkeletonActivityItem: React.FC = React.memo(() => (
   <Box
     sx={{
-      p: 1.5,
-      mb: 2,
-      background: 'rgba(255, 255, 255, 0.02)',
-      backdropFilter: 'blur(16px)',
-      borderRadius: '16px',
-      border: '1px solid rgba(255, 255, 255, 0.04)',
+      p: 2,
+      mb: 1.5,
+      background: 'rgba(255, 255, 255, 0.03)',
+      borderRadius: '18px',
+      border: '1px solid rgba(255, 255, 255, 0.06)',
       display: 'flex',
       alignItems: 'flex-start',
-      gap: 1.5,
+      gap: 2,
     }}
   >
     <Skeleton
       variant="rectangular"
-      width={70}
-      height={100}
-      sx={{ borderRadius: 1, flexShrink: 0 }}
+      width={72}
+      height={108}
+      sx={{ ...SKELETON_BG, borderRadius: '8px', flexShrink: 0 }}
     />
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-        <Skeleton variant="circular" width={14} height={14} />
-        <Skeleton variant="text" width={80} height={12} />
+        <Skeleton variant="circular" width={14} height={14} sx={SKELETON_BG} />
+        <Skeleton variant="text" width={80} height={18} sx={SKELETON_BG} />
       </Box>
-      <Skeleton variant="text" width="100%" height={14} />
-      <Skeleton variant="text" width="80%" height={14} />
-      <Skeleton
-        variant="rectangular"
-        width={60}
-        height={24}
-        sx={{ borderRadius: '6px' }}
-      />
+      <Skeleton variant="text" width="95%" height={22} sx={SKELETON_BG} />
+      <Skeleton variant="text" width="70%" height={22} sx={SKELETON_BG} />
+      <Box sx={{ mt: 0.5 }}>
+        <Skeleton variant="text" width={34} height={18} sx={SKELETON_BG} />
+        <Skeleton
+          variant="rounded"
+          height={5}
+          sx={{ ...SKELETON_BG, borderRadius: 999, mt: 0.5 }}
+        />
+      </Box>
     </Box>
   </Box>
 ));
+
+// Separador de mes en carga
+const SkeletonMonthSeparator: React.FC = () => (
+  <Box
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 2,
+      mb: 1.5,
+      '&::before, &::after': {
+        content: '""',
+        flex: 1,
+        height: '1px',
+        background: 'rgba(255, 255, 255, 0.08)',
+      },
+    }}
+  >
+    <Skeleton variant="text" width={110} height={18} sx={SKELETON_BG} />
+  </Box>
+);
 
 // Empty State Component
 const EmptyState: React.FC = React.memo(() => {
@@ -499,17 +583,17 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ id }) => {
   const { books: cachedBooks, userId: cachedLibraryUserId } = useAppSelector(
     (s) => s.library
   );
-  const libraryBooks = cachedLibraryUserId === user?.id ? cachedBooks : [];
   const [loadedCount, setLoadedCount] = useState(0);
 
   // User edition cover overrides from library
   const userCoverMap = useMemo(() => {
     const map = new Map<string, string>();
+    const libraryBooks = cachedLibraryUserId === user?.id ? cachedBooks : [];
     libraryBooks?.forEach((book) => {
       map.set(String(book.id), BookHelpers.getDisplayCoverUrl(book));
     });
     return map;
-  }, [libraryBooks]);
+  }, [cachedBooks, cachedLibraryUserId, user?.id]);
 
   // Crear un mapa de bookId -> imagen para acceso rápido
   const booksMap = useMemo(() => {
@@ -527,6 +611,24 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ id }) => {
   const handleImageLoad = () => {
     setLoadedCount((prev) => prev + 1);
   };
+
+  // Agrupar por meses, como en la app ("OCTUBRE 2026")
+  const { locale } = useTranslation();
+  const monthKey = (a?: ActivityEntry) => {
+    if (!a?.date) return '';
+    const d = new Date(a.date);
+    return `${d.getFullYear()}-${d.getMonth()}`;
+  };
+  const monthFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(locale || 'es', {
+        month: 'long',
+        year: 'numeric',
+      }),
+    [locale]
+  );
+  const monthLabel = (date: Date | string) =>
+    monthFormatter.format(new Date(date));
 
   // Show skeleton only while initial loading
   const showSkeleton = isLoading;
@@ -549,7 +651,8 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ id }) => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <Box sx={{ maxWidth: '100%', mx: 'auto' }}>
+            <Box sx={{ maxWidth: 880, mx: 'auto', px: 1 }}>
+              <SkeletonMonthSeparator />
               {[...Array(5)].map((_, i) => (
                 <SkeletonActivityItem key={i} />
               ))}
@@ -561,40 +664,34 @@ const ActivityTab: React.FC<ActivityTabProps> = ({ id }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
+            transition={{ duration: 0.2 }}
           >
-            <Box
-              sx={{
-                maxHeight: '70vh',
-                overflowY: 'auto',
-                px: 1,
-                scrollbarColor: '#9333ea transparent',
-                '&::-webkit-scrollbar': { width: 8 },
-                '&::-webkit-scrollbar-track': {
-                  background: 'rgba(147, 51, 234, 0.1)',
-                },
-                '&::-webkit-scrollbar-thumb': {
-                  background:
-                    'linear-gradient(135deg, #9333ea 0%, #a855f7 100%)',
-                  borderRadius: 4,
-                },
-              }}
-            >
+            <Box sx={{ maxWidth: 880, mx: 'auto', px: 1 }}>
               {activities.map((activity: ActivityEntry, index: number) => (
-                <ActivityItem
-                  key={`${activity.bookId || 'activity'}-${index}-${activity.date ? new Date(activity.date).getTime() : Date.now()}`}
-                  activity={activity}
-                  index={index}
-                  bookImage={
-                    activity.bookId
-                      ? booksMap.get(activity.bookId) || null
-                      : null
-                  }
-                  onImageLoad={handleImageLoad}
-                  currentUserId={user?.id !== String(id) ? user?.id : undefined}
-                  profileId={String(id)}
-                  onLikeToggle={toggleLike}
-                />
+                <React.Fragment
+                  key={`${activity.bookId || 'activity'}-${index}-${activity.date ? new Date(activity.date).getTime() : index}`}
+                >
+                  {monthKey(activities[index - 1]) !== monthKey(activity) &&
+                    activity.date && (
+                      <MonthSeparator label={monthLabel(activity.date)} />
+                    )}
+                  <ActivityItem
+                    activity={activity}
+                    index={index}
+                    bookImage={
+                      activity.bookId
+                        ? booksMap.get(activity.bookId) || null
+                        : null
+                    }
+                    onImageLoad={handleImageLoad}
+                    currentUserId={
+                      user?.id !== String(id) ? user?.id : undefined
+                    }
+                    isOwnActivity={!!user?.id && user.id === String(id)}
+                    profileId={String(id)}
+                    onLikeToggle={toggleLike}
+                  />
+                </React.Fragment>
               ))}
             </Box>
           </motion.div>

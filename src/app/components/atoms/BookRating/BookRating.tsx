@@ -5,7 +5,10 @@ import { useUser } from '@/hooks/useUser';
 import { lora } from '@/utils/fonts/fonts';
 import { EBookStatus } from '@gycoding/nebula';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkIcon from '@mui/icons-material/BookmarkBorder';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
 import { Box, Button, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -62,6 +65,25 @@ export const BookRating = ({
   );
   const { t } = useTranslation();
 
+  // Como en la app: el botón se tiñe del color del estado guardado
+  const STATUS_TINT: Record<string, string> = {
+    [EBookStatus.READ]: '#5ee6a8',
+    [EBookStatus.READING]: '#818cf8',
+    [EBookStatus.WANT_TO_READ]: '#fbbf24',
+    NOT_FINISHED: '#f87171',
+    DNF: '#f87171',
+  };
+  const tint =
+    (isBookSaved && STATUS_TINT[displayStatus as string]) || '#a855f7';
+  const StatusIcon =
+    displayStatus === EBookStatus.READ
+      ? CheckCircleOutlineIcon
+      : displayStatus === EBookStatus.READING
+        ? MenuBookOutlinedIcon
+        : ['NOT_FINISHED', 'DNF'].includes(displayStatus as string)
+          ? HighlightOffIcon
+          : BookmarkIcon;
+
   return (
     <Box
       sx={{
@@ -77,7 +99,7 @@ export const BookRating = ({
           variant="outlined"
           color="primary"
           fullWidth
-          startIcon={<BookmarkIcon />}
+          startIcon={<StatusIcon />}
           endIcon={<ArrowDropDownIcon />}
           disabled={!isLoggedIn}
           onClick={(e) => {
@@ -85,31 +107,24 @@ export const BookRating = ({
             else setAnchorEl(e.currentTarget);
           }}
           sx={{
-            justifyContent: 'space-between',
-            color: isBookSaved ? '#fff' : '#ccc',
-            borderColor: isBookSaved
-              ? 'rgba(255, 255, 255, 0.2)'
-              : 'rgba(255, 255, 255, 0.1)',
-            fontWeight: 'bold',
-            fontSize: 20,
+            justifyContent: 'center',
+            gap: 0.5,
+            minWidth: 220,
+            color: tint,
+            borderColor: `${tint}66`,
+            fontWeight: 700,
+            fontSize: 18,
             fontFamily: lora.style.fontFamily,
-            letterSpacing: '.05rem',
-            borderRadius: '12px',
-            background: isBookSaved
-              ? 'rgba(255, 255, 255, 0.12)'
-              : 'rgba(255, 255, 255, 0.03)',
-            px: 2,
-            py: 1,
+            borderRadius: '16px',
+            background: `${tint}14`,
+            px: 2.5,
+            py: 1.1,
             textTransform: 'none',
             opacity: !user ? 0.5 : 1,
+            transition: 'background-color 0.2s, border-color 0.2s',
             '&:hover': {
-              borderColor: 'rgba(255, 255, 255, 0.25)',
-              background: isBookSaved
-                ? 'rgba(255, 255, 255, 0.18)'
-                : 'rgba(255, 255, 255, 0.08)',
-              color: '#fff',
-              transform: 'translateY(-1px)',
-              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+              borderColor: `${tint}aa`,
+              background: `${tint}24`,
             },
             '&:disabled': {
               borderColor: '#666',

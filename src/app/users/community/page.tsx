@@ -156,7 +156,7 @@ function FriendsPageContent() {
         flexDirection: 'column',
         alignItems: 'center',
         minHeight: '100vh',
-        backgroundColor: '#0A0A0A',
+        backgroundColor: 'transparent',
         position: 'relative',
         overflow: 'hidden',
         pb: { xs: '80px', md: '120px' },
@@ -226,7 +226,7 @@ function FriendsPageContent() {
 export default function FriendsPage() {
   return (
     <Suspense
-      fallback={<Box sx={{ minHeight: '100vh', bgcolor: '#0A0A0A' }} />}
+      fallback={<Box sx={{ minHeight: '100vh', bgcolor: 'transparent' }} />}
     >
       <FriendsPageContent />
     </Suspense>

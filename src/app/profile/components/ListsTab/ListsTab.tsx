@@ -304,12 +304,10 @@ export const ListsTab: React.FC<ListsTabProps> = ({ isOwnProfile }) => {
           gap: 2,
         }}
       >
-        {lists.map((list, i) => (
+        {lists.map((list) => (
           <MotionBox
             key={list.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25, delay: i * 0.06 }}
+            initial={false}
             sx={{ width: ['100%', '100%', 'calc(50% - 8px)'] }}
           >
             <ListCard list={list} />

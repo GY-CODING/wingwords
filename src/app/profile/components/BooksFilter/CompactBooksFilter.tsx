@@ -13,7 +13,6 @@ import SortIcon from '@mui/icons-material/Sort';
 import {
   Badge,
   Box,
-  Chip,
   FormControl,
   IconButton,
   InputAdornment,
@@ -22,12 +21,19 @@ import {
   Select,
   TextField,
   Tooltip,
+  Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState } from 'react';
 import { BooksViewToggle, ViewType } from '../BooksViewToggle/BooksViewToggle';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
+import StarRoundedIcon from '@mui/icons-material/StarRounded';
 import { ActiveFiltersChips } from './ActiveFiltersChips';
 import { BooksFilterMobileDrawer } from './BooksFilterMobileDrawer';
 
@@ -57,6 +63,28 @@ const statusChipColors: Record<
     bg: 'rgba(110,231,183,0.15)',
     border: 'rgba(110,231,183,0.4)',
   },
+  NOT_FINISHED: {
+    color: '#f87171',
+    bg: 'rgba(248,113,113,0.15)',
+    border: 'rgba(248,113,113,0.4)',
+  },
+};
+
+const FILTER_LABEL_SX = {
+  fontFamily: lora.style.fontFamily,
+  fontSize: 13,
+  color: 'rgba(255, 255, 255, 0.5)',
+  mb: 1,
+} as const;
+
+// Icono de cada estado en las fichas del filtro (como en la app)
+const STATUS_ICONS: Record<string, typeof BookmarkBorderIcon> = {
+  [EBookStatus.WANT_TO_READ]: BookmarkBorderIcon,
+  [EBookStatus.READING]: MenuBookOutlinedIcon,
+  [EBookStatus.READ]: CheckCircleOutlineIcon,
+  [EBookStatus.RATE]: StarRoundedIcon,
+  NOT_FINISHED: HighlightOffIcon,
+  DNF: HighlightOffIcon,
 };
 
 const MENU_PROPS = {
@@ -223,15 +251,6 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
     onRatingChange(0);
     onSearchChange('');
   };
-
-  // Rating options
-  const ratingOptions = [
-    { label: t('profile.filter.all'), value: 0 },
-    ...[1, 2, 3, 4, 5].map((star) => ({
-      label: `${'★'.repeat(star)} ${star}${star < 5 ? '+' : ''}`,
-      value: star,
-    })),
-  ];
 
   const renderSelect = (
     value: any,
@@ -481,8 +500,9 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
             style={{
               position: 'absolute',
               top: '100%',
-              left: 0,
               right: 0,
+              width: 460,
+              maxWidth: 'calc(100vw - 32px)',
               zIndex: 1000,
               overflow: 'hidden',
               marginTop: 8,
@@ -490,16 +510,14 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
           >
             <Box
               sx={{
-                p: { xs: 2, sm: 2.5 },
-                background: 'rgba(8, 4, 18, 0.82)',
-                backdropFilter: 'blur(24px)',
-                WebkitBackdropFilter: 'blur(24px)',
-                border: '1px solid rgba(168, 85, 247, 0.18)',
-                borderRadius: '16px',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+                p: 2.5,
+                background: 'rgba(22, 20, 28, 0.97)',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '20px',
+                boxShadow: '0 24px 48px -16px rgba(0, 0, 0, 0.7)',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 2,
+                gap: 2.25,
               }}
             >
               {/* Search */}
@@ -512,11 +530,12 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
                 sx={{
                   '& .MuiOutlinedInput-root': {
                     background: 'rgba(255, 255, 255, 0.04)',
-                    borderRadius: '10px',
+                    borderRadius: '14px',
                     color: '#fff',
+                    height: 44,
                     '& fieldset': {
                       borderColor: 'rgba(255, 255, 255, 0.08)',
-                      borderRadius: '10px',
+                      borderRadius: '14px',
                     },
                     '&:hover fieldset': {
                       borderColor: 'rgba(168, 85, 247, 0.35)',
@@ -527,7 +546,7 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
                     },
                     '& input': {
                       fontFamily: lora.style.fontFamily,
-                      fontSize: 13,
+                      fontSize: 14,
                     },
                   },
                 }}
@@ -542,73 +561,133 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
                 }}
               />
 
-              {/* Status chips */}
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                <Chip
-                  label={t('profile.filter.all')}
-                  size="small"
-                  onClick={() => onStatusChange(null)}
+              {/* Estado: fichas con icono, como en la hoja de filtros de la app */}
+              <Box>
+                <Typography sx={FILTER_LABEL_SX}>
+                  {t('profile.filter.status')}
+                </Typography>
+                <Box
+                  role="radiogroup"
+                  aria-label={t('profile.filter.status')}
                   sx={{
-                    cursor: 'pointer',
-                    background: !statusFilter
-                      ? 'rgba(255,255,255,0.12)'
-                      : 'transparent',
-                    border: !statusFilter
-                      ? '1px solid rgba(255,255,255,0.25)'
-                      : '1px solid rgba(255,255,255,0.1)',
-                    color: !statusFilter ? '#fff' : 'rgba(255,255,255,0.4)',
-                    fontFamily: lora.style.fontFamily,
-                    fontSize: '0.78rem',
-                    fontWeight: !statusFilter ? 700 : 500,
-                    height: 28,
-                    borderRadius: '14px',
-                    transition: 'all 0.2s ease',
-                    '&:hover': {
-                      background: 'rgba(255,255,255,0.1)',
-                      color: '#fff',
-                      border: '1px solid rgba(255,255,255,0.2)',
-                    },
-                    '& .MuiChip-label': { px: 1.5 },
+                    display: 'grid',
+                    gridTemplateColumns: `repeat(${statusOptions.length}, minmax(0, 1fr))`,
+                    gap: 1,
                   }}
-                />
-                {statusOptions.map((opt) => {
-                  const isSelected = statusFilter === opt.value;
-                  const c = statusChipColors[opt.value] ?? {
-                    color: '#fff',
-                    bg: 'rgba(255,255,255,0.1)',
-                    border: 'rgba(255,255,255,0.2)',
-                  };
-                  return (
-                    <Chip
-                      key={opt.value}
-                      label={opt.label}
-                      size="small"
-                      onClick={() =>
-                        onStatusChange(isSelected ? null : opt.value)
-                      }
-                      sx={{
-                        cursor: 'pointer',
-                        background: isSelected ? c.bg : 'transparent',
-                        border: isSelected
-                          ? `1px solid ${c.border}`
-                          : '1px solid rgba(255,255,255,0.1)',
-                        color: isSelected ? c.color : 'rgba(255,255,255,0.45)',
-                        fontFamily: lora.style.fontFamily,
-                        fontSize: '0.78rem',
-                        fontWeight: isSelected ? 700 : 500,
-                        height: 28,
-                        borderRadius: '14px',
-                        transition: 'all 0.2s ease',
-                        '&:hover': {
-                          background: c.bg,
-                          border: `1px solid ${c.border}`,
-                          color: c.color,
-                        },
-                        '& .MuiChip-label': { px: 1.5 },
-                      }}
-                    />
-                  );
-                })}
+                >
+                  {statusOptions.map((opt) => {
+                    const isSelected = statusFilter === opt.value;
+                    const c = statusChipColors[opt.value] ?? {
+                      color: '#c084fc',
+                      bg: 'rgba(192,132,252,0.15)',
+                      border: 'rgba(192,132,252,0.4)',
+                    };
+                    const Icon = STATUS_ICONS[opt.value] ?? CircleOutlinedIcon;
+                    return (
+                      <Box
+                        key={opt.value}
+                        component="button"
+                        type="button"
+                        role="radio"
+                        aria-checked={isSelected}
+                        onClick={() =>
+                          onStatusChange(isSelected ? null : opt.value)
+                        }
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 0.5,
+                          minHeight: 64,
+                          px: 0.5,
+                          borderRadius: '14px',
+                          cursor: 'pointer',
+                          fontFamily: lora.style.fontFamily,
+                          fontSize: 12.5,
+                          lineHeight: 1.2,
+                          textAlign: 'center',
+                          color: isSelected ? '#fff' : 'rgba(255,255,255,0.6)',
+                          background: isSelected
+                            ? c.color
+                            : 'rgba(255,255,255,0.03)',
+                          border: `1px solid ${isSelected ? 'transparent' : 'rgba(255,255,255,0.08)'}`,
+                          boxShadow: isSelected
+                            ? `0 8px 18px -10px ${c.color}`
+                            : 'none',
+                          transition:
+                            'background-color 0.2s, border-color 0.2s, color 0.2s',
+                          '&:hover': {
+                            borderColor: isSelected ? 'transparent' : c.border,
+                            color: isSelected ? '#fff' : c.color,
+                          },
+                          '&:focus-visible': {
+                            outline: `2px solid ${c.border}`,
+                            outlineOffset: 2,
+                          },
+                        }}
+                      >
+                        <Icon sx={{ fontSize: 20 }} />
+                        {opt.label}
+                      </Box>
+                    );
+                  })}
+                </Box>
+              </Box>
+
+              {/* Valoración mínima: píldoras, "Todos" en morado relleno */}
+              <Box>
+                <Typography sx={FILTER_LABEL_SX}>
+                  {t('profile.filter.rating')}
+                </Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+                  {[0, 1, 2, 3, 4, 5].map((star) => {
+                    const active = (ratingFilter || 0) === star;
+                    return (
+                      <Box
+                        key={star}
+                        component="button"
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => onRatingChange(star)}
+                        sx={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 0.4,
+                          height: 34,
+                          px: 1.5,
+                          borderRadius: 999,
+                          cursor: 'pointer',
+                          fontFamily: lora.style.fontFamily,
+                          fontSize: 13,
+                          fontWeight: active ? 700 : 400,
+                          color: active ? '#fff' : 'rgba(255,255,255,0.65)',
+                          background: active
+                            ? 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)'
+                            : 'rgba(255,255,255,0.04)',
+                          border: `1px solid ${active ? 'transparent' : 'rgba(255,255,255,0.08)'}`,
+                          transition: 'background-color 0.2s, color 0.2s',
+                          '&:hover': { color: '#fff' },
+                        }}
+                      >
+                        {star === 0 ? (
+                          t('profile.filter.all')
+                        ) : (
+                          <>
+                            <StarRoundedIcon
+                              sx={{
+                                fontSize: 15,
+                                color: active ? '#fff' : '#fbbf24',
+                              }}
+                            />
+                            {star}
+                            {star < 5 ? '+' : ''}
+                          </>
+                        )}
+                      </Box>
+                    );
+                  })}
+                </Box>
               </Box>
 
               {/* Active non-status filters */}
@@ -626,30 +705,46 @@ export const CompactBooksFilter: React.FC<CompactBooksFilterProps> = ({
               {/* Secondary filters: author / series / rating / sort */}
               <Box
                 sx={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: 1,
+                  '& .MuiFormControl-root': { width: '100%', minWidth: 0 },
+                }}
+              >
+                <Box>
+                  <Typography sx={FILTER_LABEL_SX}>
+                    {t('profile.filter.author')}
+                  </Typography>
+                  {renderSelect(
+                    authorFilter,
+                    onAuthorChange,
+                    authorOptions,
+                    t('profile.filter.author')
+                  )}
+                </Box>
+                <Box>
+                  <Typography sx={FILTER_LABEL_SX}>
+                    {t('profile.filter.series')}
+                  </Typography>
+                  {renderSelect(
+                    seriesFilter,
+                    onSeriesChange,
+                    seriesOptions,
+                    t('profile.filter.series')
+                  )}
+                </Box>
+              </Box>
+
+              <Box
+                sx={{
                   display: 'flex',
                   gap: 1,
-                  flexWrap: 'wrap',
                   alignItems: 'center',
                 }}
               >
-                {renderSelect(
-                  authorFilter,
-                  onAuthorChange,
-                  authorOptions,
-                  t('profile.filter.author')
-                )}
-                {renderSelect(
-                  seriesFilter,
-                  onSeriesChange,
-                  seriesOptions,
-                  t('profile.filter.series')
-                )}
-                {renderSelect(
-                  ratingFilter,
-                  onRatingChange,
-                  ratingOptions,
-                  t('profile.filter.rating')
-                )}
+                <Typography sx={{ ...FILTER_LABEL_SX, mb: 0, mr: 'auto' }}>
+                  {t('profile.filter.orderBy')}
+                </Typography>
                 {renderOrderButton()}
                 {orderBy && (
                   <Tooltip

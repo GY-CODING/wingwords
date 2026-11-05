@@ -10,10 +10,9 @@ export default function FriendCardSkeleton() {
         alignItems: 'center',
         gap: '1rem',
         background: 'rgba(255, 255, 255, 0.03)',
-        backdropFilter: 'blur(10px)',
         border: '1px solid rgba(255, 255, 255, 0.06)',
-        borderRadius: '16px',
-        padding: '0.875rem 1rem',
+        borderRadius: '18px',
+        padding: '0.9rem 1rem',
         width: '100%',
       }}
     >
@@ -31,13 +30,15 @@ export default function FriendCardSkeleton() {
           sx={{ bgcolor: 'rgba(255,255,255,0.06)' }}
         />
       </Box>
-      <Skeleton
-        variant="rectangular"
-        width={44}
-        height={44}
+      {/* Hueco del chevron (22px) y círculo del botón de quitar amigo,
+          con las medidas de FriendCard */}
+      <Box sx={{ width: 22, flexShrink: 0 }} />
+      <Box
         sx={{
+          width: 40,
+          height: 40,
+          borderRadius: '50%',
           bgcolor: 'rgba(255,255,255,0.04)',
-          borderRadius: '12px',
           flexShrink: 0,
         }}
       />

@@ -149,7 +149,7 @@ export default function StatsComponent({
         alignItems: 'stretch',
       }}
     >
-      <StatCard title={t('stats.ratingStats')} delay={0.1}>
+      <StatCard title={t('stats.ratingStats')}>
         <RatingStats
           ratings={
             data?.ratings || {
@@ -162,11 +162,11 @@ export default function StatsComponent({
         />
       </StatCard>
       {data.bookStatus && Object.keys(data.bookStatus).length > 0 && (
-        <StatCard title={t('stats.bookStatus')} delay={0.2}>
+        <StatCard title={t('stats.bookStatus')}>
           <DonutChart bookStatus={data?.bookStatus} />
         </StatCard>
       )}
-      <StatCard title={t('stats.pageCount')} delay={0.3}>
+      <StatCard title={t('stats.pageCount')}>
         <PageCountKPI
           totalPages={data?.totalPages || 0}
           wantToReadPages={data?.wantToReadPages || 0}
@@ -174,7 +174,7 @@ export default function StatsComponent({
           fontFamily={lora.style.fontFamily}
         />
       </StatCard>
-      <StatCard title={t('stats.readerDna')} delay={0.4}>
+      <StatCard title={t('stats.readerDna')}>
         <ReadingRadar
           readingCompletionRate={data?.readingCompletionRate || 0}
           reviewedBooks={data?.reviewedBooks || 0}
@@ -186,27 +186,27 @@ export default function StatsComponent({
           fontFamily={lora.style.fontFamily}
         />
       </StatCard>
-      <StatCard title={t('stats.booksThisYear')} delay={0.5}>
+      <StatCard title={t('stats.booksThisYear')}>
         <BooksReadThisYear
           booksReadThisYear={data?.booksReadThisYear || 0}
           booksReadLastYear={data?.booksReadLastYear || 0}
           fontFamily={lora.style.fontFamily}
         />
       </StatCard>
-      <StatCard title={t('stats.monthlyActivity')} delay={0.6}>
+      <StatCard title={t('stats.monthlyActivity')}>
         <MonthlyActivitySparkline
           monthlyBooksRead={data?.monthlyBooksRead || Array(12).fill(0)}
           booksReadThisYear={data?.booksReadThisYear || 0}
           fontFamily={lora.style.fontFamily}
         />
       </StatCard>
-      <StatCard title={t('stats.readingPace')} delay={0.7}>
+      <StatCard title={t('stats.readingPace')}>
         <AvgReadingDays
           avgReadingDays={data?.avgReadingDays || 0}
           fontFamily={lora.style.fontFamily}
         />
       </StatCard>
-      <StatCard title={t('stats.readingHighlights')} delay={0.8}>
+      <StatCard title={t('stats.readingHighlights')}>
         <ReadingHighlights
           readingCompletionRate={data?.readingCompletionRate || 0}
           reviewedBooks={data?.reviewedBooks || 0}
@@ -217,7 +217,7 @@ export default function StatsComponent({
         />
       </StatCard>
       {data.authors && Object.keys(data.authors).length > 0 && (
-        <StatCard title={t('stats.authorsRead')} delay={0.9}>
+        <StatCard title={t('stats.authorsRead')}>
           <AuthorsBarChart authors={data?.authors} />
         </StatCard>
       )}

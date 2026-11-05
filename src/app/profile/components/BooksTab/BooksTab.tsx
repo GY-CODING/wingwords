@@ -76,7 +76,7 @@ export function BooksTab({
               width: '100%',
             }}
           >
-            <BooksListSkeleton />
+            <BooksListSkeleton view={view} />
           </Box>
         ) : books.length === 0 ? (
           <Box

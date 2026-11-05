@@ -59,16 +59,16 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
       id: 0,
       label: t('profile.nav.library'),
       icon: <AutoStoriesIcon sx={{ fontSize: 20 }} />,
-      color: '#a855f7',
-      gradient: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)',
+      color: '#c084fc',
+      gradient: 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)',
       badge: booksCount,
     },
     {
       id: 1,
       label: t('profile.nav.lists'),
       icon: <FormatListBulletedIcon sx={{ fontSize: 20 }} />,
-      color: '#e879f9',
-      gradient: 'linear-gradient(135deg, #d946ef 0%, #a21caf 100%)',
+      color: '#c084fc',
+      gradient: 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)',
     },
     {
       id: 2,
@@ -117,6 +117,7 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
       >
         {/* Navegación horizontal compacta */}
         <Box
+          role="tablist"
           sx={{
             display: 'flex',
             flexWrap: 'nowrap',
@@ -140,8 +141,17 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
             return (
               <MotionBox
                 key={item.id}
+                role="tab"
+                tabIndex={0}
+                aria-selected={isActive}
                 onClick={() => handleTabClick(item.id)}
-                whileTap={{ scale: 0.98 }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleTabClick(item.id);
+                  }
+                }}
+                whileTap={{ scale: 0.97 }}
                 sx={{
                   position: 'relative',
                   display: 'flex',
@@ -149,36 +159,31 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
                   gap: 1,
                   px: 2.5,
                   py: 1.2,
-                  borderRadius: '12px',
+                  borderRadius: '14px',
                   cursor: 'pointer',
+                  // Como en la app: la activa rellena con su color; el resto,
+                  // cristal con borde y texto teñidos de su color.
                   background: isActive
                     ? item.gradient
                     : 'rgba(255, 255, 255, 0.03)',
-                  backdropFilter: 'blur(12px)',
                   border: isActive
-                    ? `1px solid transparent`
-                    : `1px solid ${item.color}25`,
-                  boxShadow: 'none',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    ? '1px solid transparent'
+                    : `1px solid ${item.color}33`,
+                  boxShadow: isActive
+                    ? `0 8px 22px -10px ${item.color}aa, inset 0 1px 0 rgba(255,255,255,0.18)`
+                    : 'none',
+                  transition:
+                    'background-color 0.25s, border-color 0.25s, box-shadow 0.25s',
                   whiteSpace: 'nowrap',
+                  outline: 'none',
                   '&:hover': !isActive
                     ? {
-                        background: `${item.color}0f`,
-                        borderColor: `${item.color}55`,
-                        boxShadow: `0 2px 8px ${item.color}20`,
+                        background: `${item.color}12`,
+                        borderColor: `${item.color}66`,
                       }
                     : {},
-                  '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    bottom: -4,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: isActive ? '70%' : 0,
-                    height: 3,
-                    background: item.gradient,
-                    borderRadius: '2px 2px 0 0',
-                    transition: 'width 0.3s ease',
+                  '&:focus-visible': {
+                    boxShadow: `0 0 0 2px ${item.color}99`,
                   },
                 }}
               >
@@ -189,7 +194,6 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
                     alignItems: 'center',
                     justifyContent: 'center',
                     color: isActive ? '#fff' : item.color,
-                    opacity: isActive ? 1 : 0.8,
                     '& svg': {
                       filter: isActive
                         ? 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15))'
@@ -203,10 +207,10 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
                 {/* Label */}
                 <Typography
                   sx={{
-                    color: isActive ? '#fff' : 'rgba(255, 255, 255, 0.75)',
+                    color: isActive ? '#fff' : item.color,
                     fontFamily: lora.style.fontFamily,
                     fontSize: 15,
-                    fontWeight: isActive ? 700 : 500,
+                    fontWeight: isActive ? 700 : 400,
                     letterSpacing: '0.3px',
                   }}
                 >
@@ -225,12 +229,10 @@ export const ProfileNavigation: React.FC<ProfileNavigationProps> = ({
                       fontWeight: 'bold',
                       fontFamily: lora.style.fontFamily,
                       background: isActive
-                        ? 'rgba(255, 255, 255, 0.25)'
-                        : `${item.color}30`,
+                        ? 'rgba(255, 255, 255, 0.22)'
+                        : `${item.color}22`,
                       color: isActive ? '#fff' : item.color,
-                      border: isActive
-                        ? '1px solid rgba(255, 255, 255, 0.3)'
-                        : `1px solid ${item.color}50`,
+                      border: 'none',
                       '& .MuiChip-label': {
                         px: 1,
                       },

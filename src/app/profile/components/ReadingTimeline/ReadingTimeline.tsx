@@ -198,30 +198,27 @@ export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         sx={{
-          mb: 6,
-          textAlign: 'center',
+          mb: 4,
+          textAlign: 'left',
         }}
       >
         <Typography
           sx={{
             color: '#fff',
             fontFamily: lora.style.fontFamily,
-            fontSize: { xs: 28, md: 36 },
+            fontSize: { xs: 24, md: 30 },
             fontWeight: 'bold',
-            mb: 1,
-            background: 'linear-gradient(135deg, #9333ea 0%, #a855f7 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
+            mb: 0.5,
           }}
         >
           {t('profile.timeline.title')}
         </Typography>
         <Typography
           sx={{
-            color: 'rgba(255, 255, 255, 0.7)',
+            color: 'rgba(255, 255, 255, 0.55)',
             fontFamily: lora.style.fontFamily,
-            fontSize: 16,
-            mb: 3,
+            fontSize: 15,
+            mb: 2,
           }}
         >
           {t('profile.timeline.subtitle', { count: timelineBooks.length })}
@@ -231,8 +228,8 @@ export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
         <Box
           sx={{
             display: 'flex',
-            gap: 2,
-            justifyContent: 'center',
+            gap: 1,
+            justifyContent: 'flex-start',
             flexWrap: 'wrap',
           }}
         >
@@ -244,9 +241,10 @@ export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
               ).length,
             })}
             sx={{
-              background: 'rgba(52, 211, 153, 0.12)',
-              color: '#34d399',
-              border: '1px solid rgba(52, 211, 153, 0.25)',
+              background: 'rgba(255, 255, 255, 0.04)',
+              color: '#fff',
+              border: '1px solid rgba(52, 211, 153, 0.35)',
+              height: 34,
               fontFamily: lora.style.fontFamily,
               fontWeight: 600,
               '& .MuiChip-icon': { color: '#34d399', marginRight: '4px' },
@@ -260,9 +258,10 @@ export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
               ).length,
             })}
             sx={{
-              background: 'rgba(96, 165, 250, 0.12)',
-              color: '#60a5fa',
-              border: '1px solid rgba(96, 165, 250, 0.25)',
+              background: 'rgba(255, 255, 255, 0.04)',
+              color: '#fff',
+              border: '1px solid rgba(96, 165, 250, 0.35)',
+              height: 34,
               fontFamily: lora.style.fontFamily,
               fontWeight: 600,
               '& .MuiChip-icon': { color: '#60a5fa', marginRight: '4px' },
@@ -277,9 +276,10 @@ export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
               ),
             })}
             sx={{
-              background: 'rgba(245, 158, 11, 0.12)',
-              color: '#f59e0b',
-              border: '1px solid rgba(245, 158, 11, 0.25)',
+              background: 'rgba(255, 255, 255, 0.04)',
+              color: '#fff',
+              border: '1px solid rgba(245, 158, 11, 0.35)',
+              height: 34,
               fontFamily: lora.style.fontFamily,
               fontWeight: 600,
               '& .MuiChip-icon': { color: '#f59e0b', marginRight: '4px' },
@@ -371,18 +371,15 @@ export const ReadingTimeline: React.FC<ReadingTimelineProps> = ({ books }) => {
               return (
                 <MotionBox
                   key={book.id}
-                  initial={{ opacity: 0, y: 50, scale: 0.8 }}
+                  // Sin cascada al cargar (con 30 libros eran 1,5 s)
+                  initial={false}
                   animate={{
                     opacity: 1,
                     y: yOffset,
                     scale: 1,
                   }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{
-                    duration: 0.3,
-                    delay: index * 0.05,
-                    ease: 'easeOut',
-                  }}
+                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                   onHoverStart={() => setHoveredBookId(book.id)}
                   onHoverEnd={() => setHoveredBookId(null)}
                   onClick={() => router.push(`/books/${book.id}`)}

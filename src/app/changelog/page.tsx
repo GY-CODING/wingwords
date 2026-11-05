@@ -238,7 +238,7 @@ export default function ChangelogPage() {
     <Box
       sx={{
         minHeight: '100vh',
-        backgroundColor: '#0A0A0A',
+        backgroundColor: 'transparent',
         position: 'relative',
         overflow: 'hidden',
       }}

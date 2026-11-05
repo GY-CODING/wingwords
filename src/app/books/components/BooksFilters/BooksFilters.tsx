@@ -34,32 +34,40 @@ interface BooksFiltersProps {
   onReset: () => void;
 }
 
+// Como en la app: la opción activa es una píldora morada rellena; el resto,
+// píldoras oscuras con borde.
 const chipSx = (active: boolean) => ({
   fontFamily: lora.style.fontFamily,
-  fontSize: '0.75rem',
-  height: 30,
+  fontSize: '0.85rem',
+  fontWeight: active ? 700 : 400,
+  height: 34,
+  px: 0.5,
   cursor: 'pointer',
   borderRadius: '100px',
-  border: active
-    ? '1px solid rgba(147,51,234,0.6)'
-    : '1px solid rgba(255,255,255,0.08)',
-  background: active ? 'rgba(147,51,234,0.18)' : 'rgba(255,255,255,0.03)',
-  color: active ? '#e9d5ff' : 'rgba(255,255,255,0.55)',
-  transition: 'all 0.2s',
+  border: active ? '1px solid transparent' : '1px solid rgba(255,255,255,0.1)',
+  background: active
+    ? 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)'
+    : 'rgba(255,255,255,0.04)',
+  color: active ? '#fff' : 'rgba(255,255,255,0.7)',
+  boxShadow: active ? '0 6px 16px -8px rgba(147,51,234,0.8)' : 'none',
+  transition: 'background-color 0.2s, border-color 0.2s, color 0.2s',
   '&:hover': {
-    background: active ? 'rgba(147,51,234,0.28)' : 'rgba(255,255,255,0.07)',
-    borderColor: active ? 'rgba(147,51,234,0.8)' : 'rgba(255,255,255,0.18)',
-    color: active ? '#f3e8ff' : 'rgba(255,255,255,0.8)',
+    background: active
+      ? 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)'
+      : 'rgba(255,255,255,0.08)',
+    borderColor: active ? 'transparent' : 'rgba(255,255,255,0.2)',
+    color: '#fff',
   },
 });
 
 const sectionLabelSx = {
   fontFamily: lora.style.fontFamily,
-  fontSize: '0.68rem',
-  color: 'rgba(255,255,255,0.3)',
+  fontSize: '0.72rem',
+  fontWeight: 600,
+  color: 'rgba(255,255,255,0.45)',
   textTransform: 'uppercase' as const,
-  letterSpacing: '0.1em',
-  mb: 0.75,
+  letterSpacing: '0.12em',
+  mb: 1,
 };
 
 const SORT_OPTION_KEYS: Array<{ labelKey: string; value: BooksSortBy }> = [
@@ -228,12 +236,11 @@ export const BooksFilters: React.FC<BooksFiltersProps> = ({
           size="small"
           sx={{
             ...chipSx(expanded || hasFilters),
-            height: 30,
-            pl: 0.25,
+            height: 36,
+            pl: 0.5,
             '& .MuiChip-icon': {
-              color:
-                expanded || hasFilters ? '#c084fc' : 'rgba(255,255,255,0.4)',
-              ml: 0.5,
+              color: expanded || hasFilters ? '#fff' : 'rgba(255,255,255,0.6)',
+              ml: 0.75,
             },
           }}
         />
@@ -245,9 +252,9 @@ export const BooksFilters: React.FC<BooksFiltersProps> = ({
           sx={{
             mt: 1.5,
             p: { xs: 2, sm: 2.5 },
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: '16px',
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            borderRadius: '20px',
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
             flexWrap: 'wrap',
@@ -260,7 +267,7 @@ export const BooksFilters: React.FC<BooksFiltersProps> = ({
               <Typography sx={sectionLabelSx}>
                 {t('library.filters.section.author')}
               </Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 <Chip
                   label={t('library.filters.all')}
                   onClick={() => onAuthorChange('')}
@@ -285,7 +292,7 @@ export const BooksFilters: React.FC<BooksFiltersProps> = ({
             <Typography sx={sectionLabelSx}>
               {t('library.filters.section.type')}
             </Typography>
-            <Box sx={{ display: 'flex', gap: 0.75 }}>
+            <Box sx={{ display: 'flex', gap: 1 }}>
               {SERIES_OPTION_KEYS.map((opt) => (
                 <Chip
                   key={opt.value}

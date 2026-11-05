@@ -7,12 +7,17 @@ export class ProfileBookHelpers {
     books: HardcoverBook[],
     t: (key: string) => string
   ): ProfileFilterOptions {
+    // Mismo orden que la app; DNF lo guarda el backend como NOT_FINISHED
     const statusOptions = [
-      { label: t('book.rating.status.reading'), value: EBookStatus.READING },
-      { label: t('book.rating.status.read'), value: EBookStatus.READ },
       {
         label: t('book.rating.status.wantToRead'),
         value: EBookStatus.WANT_TO_READ,
+      },
+      { label: t('book.rating.status.reading'), value: EBookStatus.READING },
+      { label: t('book.rating.status.read'), value: EBookStatus.READ },
+      {
+        label: t('book.rating.status.notFinished'),
+        value: 'NOT_FINISHED' as EBookStatus,
       },
     ];
 
