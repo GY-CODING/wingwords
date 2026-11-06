@@ -371,96 +371,76 @@ export const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books }) => {
           textAlign: 'center',
         }}
       >
-        {/* Quick stats - más minimalista */}
+        {/* Resumen en píldoras, como en la app: "● 29 Terminados" */}
         <Box
           sx={{
             display: 'flex',
-            gap: { xs: 1.5, md: 2 },
-            justifyContent: 'center',
+            gap: 1,
+            justifyContent: 'flex-start',
             flexWrap: 'wrap',
             mb: 2,
           }}
         >
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography
-              sx={{
-                color: '#34d399',
-                fontFamily: lora.style.fontFamily,
-                fontSize: { xs: 20, md: 24 },
-                fontWeight: 'bold',
-                lineHeight: 1,
-              }}
-            >
-              {stats.completed}
-            </Typography>
-            <Typography
-              sx={{
-                color: 'rgba(52, 211, 153, 0.7)',
-                fontFamily: lora.style.fontFamily,
-                fontSize: { xs: 10, md: 11 },
-                fontWeight: 500,
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-                mt: 0.5,
-              }}
-            >
-              {t('profile.calendar.stats.finished')}
-            </Typography>
-          </Box>
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography
-              sx={{
-                color: '#f59e0b',
-                fontFamily: lora.style.fontFamily,
-                fontSize: { xs: 20, md: 24 },
-                fontWeight: 'bold',
-                lineHeight: 1,
-              }}
-            >
-              {stats.totalPages.toLocaleString()}
-            </Typography>
-            <Typography
-              sx={{
-                color: 'rgba(245, 158, 11, 0.7)',
-                fontFamily: lora.style.fontFamily,
-                fontSize: { xs: 10, md: 11 },
-                fontWeight: 500,
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-                mt: 0.5,
-              }}
-            >
-              {t('profile.calendar.stats.pages')}
-            </Typography>
-          </Box>
-          {stats.reading > 0 && (
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography
+          {[
+            {
+              key: 'finished',
+              color: '#5ee6a8',
+              value: stats.completed,
+              label: t('profile.calendar.stats.finished'),
+            },
+            {
+              key: 'reading',
+              color: '#818cf8',
+              value: stats.reading,
+              label: t('profile.calendar.stats.reading'),
+            },
+            {
+              key: 'pages',
+              color: '#fbbf24',
+              value: stats.totalPages.toLocaleString(),
+              label: t('profile.calendar.stats.pages'),
+            },
+          ]
+            .filter((p) => p.key !== 'reading' || stats.reading > 0)
+            .map((p) => (
+              <Box
+                key={p.key}
                 sx={{
-                  color: '#60a5fa',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 0.9,
+                  height: 34,
+                  px: 1.5,
+                  borderRadius: 999,
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
                   fontFamily: lora.style.fontFamily,
-                  fontSize: { xs: 20, md: 24 },
-                  fontWeight: 'bold',
-                  lineHeight: 1,
+                  fontSize: 13.5,
+                  color: 'rgba(255, 255, 255, 0.6)',
                 }}
               >
-                {stats.reading}
-              </Typography>
-              <Typography
-                sx={{
-                  color: 'rgba(96, 165, 250, 0.7)',
-                  fontFamily: lora.style.fontFamily,
-                  fontSize: { xs: 10, md: 11 },
-                  fontWeight: 500,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
-                  mt: 0.5,
-                }}
-              >
-                {t('profile.calendar.stats.reading')}
-              </Typography>
-            </Box>
-          )}
+                <Box
+                  component="span"
+                  sx={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    background: p.color,
+                  }}
+                />
+                <Box
+                  component="span"
+                  sx={{
+                    color: '#fff',
+                    fontWeight: 700,
+                    fontVariantNumeric: 'tabular-nums',
+                  }}
+                >
+                  {p.value}
+                </Box>
+                {p.label}
+              </Box>
+            ))}
         </Box>
       </MotionBox>
 

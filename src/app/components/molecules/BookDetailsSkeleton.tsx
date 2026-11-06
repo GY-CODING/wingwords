@@ -10,7 +10,7 @@ const BookDetailsSkeleton: React.FC = () => {
     <Box
       sx={{
         minHeight: '100vh',
-        bgcolor: '#0A0A0A',
+        bgcolor: 'transparent',
         pb: { xs: '80px', md: '120px' },
       }}
     >

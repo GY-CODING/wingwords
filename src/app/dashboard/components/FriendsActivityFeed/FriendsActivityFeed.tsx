@@ -17,10 +17,10 @@ import {
 } from '@/hooks/activities/utils/activityHelpers';
 import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { lora } from '@/utils/fonts/fonts';
+import { LikeButton } from '../../motion/LikeButton';
+import { DURATION, lateFadeIn } from '../../motion/tokens';
 import { AutoStories } from '@mui/icons-material';
-import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
-import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
-import { Box, IconButton, Skeleton, Typography } from '@mui/material';
+import { Box, Skeleton, Typography } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import React, {
@@ -33,8 +33,6 @@ import React, {
 
 const MotionBox = motion(Box);
 
-const MotionIconButton = motion(IconButton);
-
 /**
  * Item individual de actividad de amigo.
  * Memoizado para evitar re-renders de toda la lista cuando cambia una sola actividad.
@@ -42,7 +40,8 @@ const MotionIconButton = motion(IconButton);
 const FriendActivityItem = React.memo<{
   activity: any;
   bookCoverUrl?: string;
-  index: number;
+  /** true si llega después de la primera carga (página siguiente). */
+  animateIn?: boolean;
   currentUserId?: string;
   onActivityClick: (bookId?: string) => void;
   onUserClick: (userId: string) => void;
@@ -53,7 +52,7 @@ const FriendActivityItem = React.memo<{
 }>(
   ({
     activity,
-    index,
+    animateIn = false,
     currentUserId,
     onActivityClick,
     onUserClick,
@@ -124,19 +123,18 @@ const FriendActivityItem = React.memo<{
 
     return (
       <MotionBox
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          duration: 0.4,
-          delay: index * 0.05,
-          ease: [0.4, 0, 0.2, 1],
-        }}
+        {...(animateIn ? lateFadeIn : { initial: false })}
         sx={{
           mb: 2,
           p: 2,
           borderRadius: 3,
           background: 'rgba(255, 255, 255, 0.02)',
           border: '1px solid rgba(255, 255, 255, 0.05)',
+          transition: `border-color ${DURATION.base}s, background-color ${DURATION.base}s`,
+          '&:hover': {
+            borderColor: `${activityColor}33`,
+            background: 'rgba(255, 255, 255, 0.03)',
+          },
         }}
       >
         {/* Header: Friend Info + Activity Type */}
@@ -282,41 +280,16 @@ const FriendActivityItem = React.memo<{
             alignItems: 'center',
             gap: 0.5,
             mt: 1,
+            ml: -0.75,
           }}
         >
-          <MotionIconButton
+          <LikeButton
+            isLiked={isLiked}
+            count={likes.length}
             onClick={handleLike}
             disabled={!currentUserId || isLiking}
-            whileTap={{ scale: 1.3 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-            sx={{
-              p: 0.5,
-              color: isLiked ? '#e74c6f' : 'rgba(255, 255, 255, 0.25)',
-              '&:hover': {
-                background: 'rgba(231, 76, 111, 0.08)',
-                color: isLiked ? '#e74c6f' : 'rgba(255, 255, 255, 0.5)',
-              },
-            }}
-            size="small"
-          >
-            {isLiked ? (
-              <FavoriteRoundedIcon sx={{ fontSize: 16 }} />
-            ) : (
-              <FavoriteBorderRoundedIcon sx={{ fontSize: 16 }} />
-            )}
-          </MotionIconButton>
-
-          {likes.length > 0 && (
-            <Typography
-              sx={{
-                fontSize: '0.7rem',
-                color: isLiked ? '#e74c6f' : 'rgba(255, 255, 255, 0.35)',
-                fontWeight: 500,
-              }}
-            >
-              {likes.length}
-            </Typography>
-          )}
+            label={t('dashboard.activity.like')}
+          />
         </Box>
       </MotionBox>
     );
@@ -484,6 +457,7 @@ export const FriendsActivityFeed = React.memo<FriendsActivityFeedProps>(
     isLoadingMore,
   }) => {
     const router = useRouter();
+    const { t } = useTranslation();
     const { toggleLike } = useActivityLike();
 
     const handleActivityClick = React.useCallback(
@@ -514,6 +488,13 @@ export const FriendsActivityFeed = React.memo<FriendsActivityFeedProps>(
 
     // Infinite scroll sentinel
     const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+    // Lo de la primera carga sale ya visible; solo las páginas siguientes
+    // del scroll infinito entran con un fundido breve.
+    const initialCount = useRef<number | null>(null);
+    if (!isLoading && initialCount.current === null) {
+      initialCount.current = activities?.length ?? 0;
+    }
 
     useEffect(() => {
       if (!sentinelRef.current || !loadMore) return;
@@ -565,7 +546,9 @@ export const FriendsActivityFeed = React.memo<FriendsActivityFeedProps>(
             <FriendActivityItem
               key={`${activity.userId}-${activity.date}-${index}`}
               activity={activity}
-              index={index}
+              animateIn={
+                initialCount.current !== null && index >= initialCount.current
+              }
               currentUserId={currentUserId}
               onActivityClick={handleActivityClick}
               onUserClick={handleUserClick}
@@ -576,10 +559,8 @@ export const FriendsActivityFeed = React.memo<FriendsActivityFeedProps>(
         {/* Sentinel for infinite scroll */}
         <div ref={sentinelRef} />
         {isLoadingMore && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-            <Typography sx={{ color: 'rgba(255,255,255,0.6)' }}>
-              Loading more...
-            </Typography>
+          <Box role="status" aria-label={t('dashboard.activity.loadingMore')}>
+            <SkeletonItem />
           </Box>
         )}
       </>

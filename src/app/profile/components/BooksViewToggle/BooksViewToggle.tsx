@@ -3,11 +3,12 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import GridViewIcon from '@mui/icons-material/GridView';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import ViewListIcon from '@mui/icons-material/ViewList';
-import { Box, IconButton, Tooltip } from '@mui/material';
+import { Box, Tooltip } from '@mui/material';
 import { motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 import { useTranslation } from '@/hooks/useTranslation';
+import { lora } from '@/utils/fonts/fonts';
 
 const MotionBox = motion(Box);
 
@@ -37,85 +38,112 @@ export const BooksViewToggle: React.FC<BooksViewToggleProps> = ({
     type: ViewType;
     icon: React.ReactElement;
     label: string;
+    short: string;
   }[] = [
-    { type: 'grid', icon: <GridViewIcon />, label: t('profile.view.grid') },
-    { type: 'list', icon: <ViewListIcon />, label: t('profile.view.list') },
+    {
+      type: 'grid',
+      icon: <GridViewIcon />,
+      label: t('profile.view.grid'),
+      short: t('profile.view.short.grid'),
+    },
+    {
+      type: 'list',
+      icon: <ViewListIcon />,
+      label: t('profile.view.list'),
+      short: t('profile.view.short.list'),
+    },
     {
       type: 'timeline',
       icon: <TimelineIcon />,
       label: t('profile.view.timeline'),
+      short: t('profile.view.short.timeline'),
     },
     {
       type: 'calendar',
       icon: <CalendarMonthIcon />,
       label: t('profile.view.calendar'),
+      short: t('profile.view.short.calendar'),
     },
   ];
 
+  // Como en la app: la vista activa es una píldora morada con icono + nombre;
+  // el resto, solo el icono. La píldora se desliza y crece hasta su sitio.
   return (
     <Box
+      role="radiogroup"
+      aria-label={t('profile.view.label')}
       sx={{
         display: 'flex',
         alignItems: 'center',
         gap: 0.5,
-        background: 'rgba(255, 255, 255, 0.03)',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 255, 255, 0.06)',
-        borderRadius: '12px',
-        padding: '4px',
-        boxShadow: 'none',
       }}
     >
       {allViews.map((viewOption) => {
         const isActive = view === viewOption.type;
         return (
-          <Tooltip key={viewOption.type} title={viewOption.label} arrow>
-            <Box sx={{ position: 'relative' }}>
-              {isActive && (
-                <MotionBox
-                  layoutId="activeViewBackground"
-                  sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'rgba(255, 255, 255, 0.12)',
-                    borderRadius: '8px',
-                    boxShadow: 'none',
-                  }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 300,
-                    damping: 30,
-                  }}
-                />
-              )}
-              <IconButton
-                size="small"
+          <Tooltip
+            key={viewOption.type}
+            title={isActive ? '' : viewOption.label}
+            arrow
+          >
+            <motion.div
+              layout
+              transition={{ type: 'spring', stiffness: 420, damping: 36 }}
+              style={{ display: 'inline-flex' }}
+            >
+              <Box
+                component="button"
+                type="button"
+                role="radio"
+                aria-checked={isActive}
+                aria-label={viewOption.label}
                 onClick={() => handleViewChange(viewOption.type)}
                 sx={{
                   position: 'relative',
-                  zIndex: 1,
-                  width: 36,
-                  height: 36,
-                  color: isActive ? '#fff' : 'rgba(255, 255, 255, 0.6)',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  '&:hover': {
-                    color: '#fff',
-                    transform: isActive ? 'scale(1.05)' : 'scale(1.1)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 0.75,
+                  height: 38,
+                  px: isActive ? 1.5 : 1,
+                  border: 0,
+                  borderRadius: '12px',
+                  cursor: 'pointer',
+                  background: 'transparent',
+                  color: isActive ? '#fff' : 'rgba(255, 255, 255, 0.55)',
+                  fontFamily: lora.style.fontFamily,
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  transition: 'color 0.2s',
+                  outline: 'none',
+                  '&:hover': { color: '#fff' },
+                  '&:focus-visible': {
+                    boxShadow: '0 0 0 2px rgba(192,132,252,0.6)',
                   },
-                  '& svg': {
-                    fontSize: '1.25rem',
-                    filter: isActive
-                      ? 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))'
-                      : 'none',
-                  },
+                  '& svg': { fontSize: '1.3rem', position: 'relative' },
                 }}
               >
+                {isActive && (
+                  <MotionBox
+                    layoutId="activeViewBackground"
+                    transition={{ type: 'spring', stiffness: 420, damping: 36 }}
+                    sx={{
+                      position: 'absolute',
+                      inset: 0,
+                      borderRadius: '12px',
+                      background:
+                        'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)',
+                      boxShadow: '0 6px 18px -8px rgba(147, 51, 234, 0.8)',
+                    }}
+                  />
+                )}
                 {viewOption.icon}
-              </IconButton>
-            </Box>
+                {isActive && (
+                  <Box component="span" sx={{ position: 'relative' }}>
+                    {viewOption.short}
+                  </Box>
+                )}
+              </Box>
+            </motion.div>
           </Tooltip>
         );
       })}

@@ -7,20 +7,34 @@ import { lora } from '@/utils/fonts/fonts';
 import AutoStoriesIcon from '@mui/icons-material/AutoStories';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import {
-  Box,
-  IconButton,
-  LinearProgress,
-  Skeleton,
-  Typography,
-} from '@mui/material';
+import { Box, IconButton, Skeleton, Typography } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from '@/lib/i18n/I18nProvider';
 
+import { CountUp } from '../../motion/CountUp';
+import { ProgressFill } from '../../motion/ProgressFill';
+import { DURATION, EASE_OUT } from '../../motion/tokens';
+
 const MotionBox = motion(Box);
+
+/** Distancia (px) que hay que arrastrar para pasar de libro. */
+const SWIPE = 48;
+
+const slideVariants = {
+  enter: (dir: number) => ({ opacity: 0, x: dir * 24 }),
+  center: { opacity: 1, x: 0, transition: { duration: 0.35, ease: EASE_OUT } },
+  exit: (dir: number) => ({
+    opacity: 0,
+    x: dir * -16,
+    transition: {
+      duration: 0.16,
+      ease: [0.4, 0, 1, 1] as [number, number, number, number],
+    },
+  }),
+};
 
 interface CurrentlyReadingMobileProps {
   books: HardcoverBook[];
@@ -83,6 +97,10 @@ export const CurrentlyReadingMobile = React.memo<CurrentlyReadingMobileProps>(
     const { t } = useTranslation();
     const router = useRouter();
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [direction, setDirection] = useState<1 | -1>(1);
+    const dragged = useRef(false);
+    const hasNavigated = useRef(false);
+    if (currentIndex !== 0 || direction !== 1) hasNavigated.current = true;
 
     if (isLoading) return <CurrentlyReadingMobileSkeleton />;
 
@@ -115,7 +133,8 @@ export const CurrentlyReadingMobile = React.memo<CurrentlyReadingMobileProps>(
       );
     }
 
-    const book = books[currentIndex];
+    const safeIndex = Math.min(currentIndex, books.length - 1);
+    const book = books[safeIndex];
     const displayData = getBookDisplayData(book);
     if (!displayData) return null;
 
@@ -126,6 +145,11 @@ export const CurrentlyReadingMobile = React.memo<CurrentlyReadingMobileProps>(
     const total = books.length;
     const hasMultiple = total > 1;
 
+    const go = (dir: 1 | -1) => {
+      setDirection(dir);
+      setCurrentIndex((i) => (i + dir + total) % total);
+    };
+
     return (
       <Box
         sx={{
@@ -135,15 +159,35 @@ export const CurrentlyReadingMobile = React.memo<CurrentlyReadingMobileProps>(
           overflow: 'hidden',
         }}
       >
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false} custom={direction}>
           <MotionBox
             key={book.id}
-            initial={{ opacity: 0, x: 16 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -16 }}
-            transition={{ duration: 0.25 }}
-            onClick={() => router.push(`/books/${book.id}`)}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            // Deslizar para cambiar de libro
+            drag={hasMultiple ? 'x' : false}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.25}
+            dragSnapToOrigin
+            onDragStart={() => {
+              dragged.current = true;
+            }}
+            onDragEnd={(_, info) => {
+              if (info.offset.x < -SWIPE) go(1);
+              else if (info.offset.x > SWIPE) go(-1);
+              // El clic que sigue al arrastre no debe abrir el libro
+              setTimeout(() => {
+                dragged.current = false;
+              }, 0);
+            }}
+            onClick={() => {
+              if (!dragged.current) router.push(`/books/${book.id}`);
+            }}
             sx={{
+              touchAction: 'pan-y',
               display: 'flex',
               gap: 1.5,
               p: 1.5,
@@ -225,7 +269,11 @@ export const CurrentlyReadingMobile = React.memo<CurrentlyReadingMobileProps>(
                       color: 'rgba(255, 255, 255, 0.35)',
                     }}
                   >
-                    {Math.round(progressPercentage)}%
+                    <CountUp
+                      value={Math.round(progressPercentage)}
+                      suffix="%"
+                      animateOnMount={hasNavigated.current}
+                    />
                   </Typography>
                   <Typography
                     sx={{
@@ -234,24 +282,24 @@ export const CurrentlyReadingMobile = React.memo<CurrentlyReadingMobileProps>(
                       fontWeight: 500,
                     }}
                   >
-                    {hasPageCount
-                      ? `${pagesRead}/${displayData.pageCount}`
-                      : '-'}
+                    {hasPageCount ? (
+                      <>
+                        <CountUp
+                          value={pagesRead}
+                          animateOnMount={hasNavigated.current}
+                        />
+                        /{displayData.pageCount}
+                      </>
+                    ) : (
+                      '-'
+                    )}
                   </Typography>
                 </Box>
-                <LinearProgress
-                  variant="determinate"
+                <ProgressFill
                   value={progressPercentage}
-                  sx={{
-                    height: 3,
-                    borderRadius: 2,
-                    backgroundColor: 'rgba(147, 51, 234, 0.12)',
-                    '& .MuiLinearProgress-bar': {
-                      borderRadius: 2,
-                      background:
-                        'linear-gradient(90deg, #9333ea 0%, #c084fc 100%)',
-                    },
-                  }}
+                  height={3}
+                  trackColor="rgba(147, 51, 234, 0.12)"
+                  label={t('dashboard.reading.completed')}
                 />
               </Box>
             </Box>
@@ -272,7 +320,8 @@ export const CurrentlyReadingMobile = React.memo<CurrentlyReadingMobileProps>(
           >
             <IconButton
               size="small"
-              onClick={() => setCurrentIndex((i) => (i - 1 + total) % total)}
+              aria-label={t('dashboard.currentlyReading.previous')}
+              onClick={() => go(-1)}
               sx={{
                 color: 'rgba(255,255,255,0.3)',
                 p: 0.25,
@@ -283,28 +332,50 @@ export const CurrentlyReadingMobile = React.memo<CurrentlyReadingMobileProps>(
             </IconButton>
 
             <Box sx={{ display: 'flex', gap: 0.5 }}>
-              {books.map((_, i) => (
+              {books.map((b, i) => (
                 <Box
-                  key={i}
-                  onClick={() => setCurrentIndex(i)}
-                  sx={{
-                    width: i === currentIndex ? 12 : 5,
-                    height: 5,
-                    borderRadius: 3,
-                    background:
-                      i === currentIndex
-                        ? 'linear-gradient(90deg, #9333ea, #c084fc)'
-                        : 'rgba(255,255,255,0.15)',
-                    cursor: 'pointer',
-                    transition: 'all 0.25s ease',
+                  key={b.id ?? i}
+                  component="button"
+                  type="button"
+                  aria-label={`${i + 1} / ${total}`}
+                  aria-current={i === safeIndex}
+                  onClick={() => {
+                    if (i === safeIndex) return;
+                    setDirection(i > safeIndex ? 1 : -1);
+                    setCurrentIndex(i);
                   }}
-                />
+                  sx={{
+                    position: 'relative',
+                    width: i === safeIndex ? 12 : 5,
+                    height: 5,
+                    p: 0,
+                    border: 0,
+                    borderRadius: 3,
+                    background: 'rgba(255,255,255,0.15)',
+                    cursor: 'pointer',
+                    transition: `width ${DURATION.base}s cubic-bezier(0.16, 1, 0.3, 1)`,
+                  }}
+                >
+                  {i === safeIndex && (
+                    <motion.span
+                      layoutId="ww-reading-dot-mobile"
+                      transition={{ duration: DURATION.slow, ease: EASE_OUT }}
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        borderRadius: 3,
+                        background: 'linear-gradient(90deg, #9333ea, #c084fc)',
+                      }}
+                    />
+                  )}
+                </Box>
               ))}
             </Box>
 
             <IconButton
               size="small"
-              onClick={() => setCurrentIndex((i) => (i + 1) % total)}
+              aria-label={t('dashboard.currentlyReading.next')}
+              onClick={() => go(1)}
               sx={{
                 color: 'rgba(255,255,255,0.3)',
                 p: 0.25,

@@ -9,6 +9,8 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import React, { useMemo } from 'react';
 import { useTranslation } from '@/lib/i18n/I18nProvider';
+import { CountUp } from '../../motion/CountUp';
+import { DURATION } from '../../motion/tokens';
 
 const MotionBox = motion(Box);
 
@@ -119,16 +121,17 @@ export const ReadingStatsMini = React.memo<ReadingStatsMiniProps>(
           gap: 1,
         }}
       >
-        {cards.map((card, index) => {
+        {cards.map((card) => {
           const Icon = card.icon;
           return (
             <MotionBox
               key={card.label}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.06 }}
+              initial={false}
+              whileTap={{ scale: 0.96 }}
             >
               <Paper
+                role="link"
+                aria-label={`${card.value} ${card.label}`}
                 onClick={card.onClick}
                 sx={{
                   background: 'rgba(255, 255, 255, 0.03)',
@@ -137,11 +140,11 @@ export const ReadingStatsMini = React.memo<ReadingStatsMiniProps>(
                   border: '1px solid rgba(255, 255, 255, 0.06)',
                   cursor: 'pointer',
                   textAlign: 'center',
-                  transition: 'all 0.2s ease',
+                  transition: `background-color ${DURATION.fast}s, border-color ${DURATION.fast}s`,
                   WebkitTapHighlightColor: 'transparent',
                   '&:active': {
-                    transform: 'scale(0.96)',
-                    background: `${card.color}08`,
+                    background: `${card.color}10`,
+                    borderColor: `${card.color}33`,
                   },
                 }}
               >
@@ -170,7 +173,7 @@ export const ReadingStatsMini = React.memo<ReadingStatsMiniProps>(
                     lineHeight: 1.2,
                   }}
                 >
-                  {card.value}
+                  <CountUp value={card.value} />
                 </Typography>
 
                 <Typography

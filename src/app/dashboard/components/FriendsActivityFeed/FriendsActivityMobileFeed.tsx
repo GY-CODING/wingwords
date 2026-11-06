@@ -8,7 +8,7 @@ import AutoStoriesRoundedIcon from '@mui/icons-material/AutoStoriesRounded';
 import { Box, Typography } from '@mui/material';
 import { AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 import {
   FriendActivityMobileItem,
   FriendActivityMobileItemSkeleton,
@@ -84,6 +84,11 @@ const EmptyStateMobile: React.FC = () => {
 export const FriendsActivityMobileFeed =
   React.memo<FriendsActivityMobileFeedProps>(
     ({ activities, isLoading, currentUserId }) => {
+      // Primera carga visible de inmediato; lo que llegue después, con fundido.
+      const initialCount = useRef<number | null>(null);
+      if (!isLoading && initialCount.current === null) {
+        initialCount.current = activities?.length ?? 0;
+      }
       const router = useRouter();
       const { toggleLike } = useActivityLike();
 
@@ -143,7 +148,9 @@ export const FriendsActivityMobileFeed =
               <FriendActivityMobileItem
                 key={`${activity.userId}-${activity.date}-${index}`}
                 activity={activity}
-                index={index}
+                animateIn={
+                  initialCount.current !== null && index >= initialCount.current
+                }
                 currentUserId={currentUserId}
                 onActivityClick={handleActivityClick}
                 onUserClick={handleUserClick}

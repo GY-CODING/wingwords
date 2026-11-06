@@ -1,6 +1,7 @@
 import type HardcoverBook from '@/domain/HardcoverBook';
 import { useBookDisplay } from '@/hooks/useBookDisplay';
 import { lora } from '@/utils/fonts/fonts';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import StarIcon from '@mui/icons-material/Star';
 import { Box, Tooltip, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
@@ -131,62 +132,47 @@ export function BookCard({ book, compact = false }: BookCardProps) {
             </Typography>
           </Tooltip>
 
-          <Box
+          {/* Como en la app: autor en gris y la saga como chip morado */}
+          <Typography
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
+              color: 'rgba(255, 255, 255, 0.6)',
+              fontSize: compact
+                ? { xs: '12px', sm: '13px', md: '14px' }
+                : { xs: '14px', sm: '15px', md: '15px' },
+              fontFamily: lora.style.fontFamily,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
               mt: 0.5,
-              flexWrap: 'wrap',
             }}
           >
-            <Typography
+            {book.author.name}
+          </Typography>
+          {book.series && book.series.length > 0 && book.series[0]?.name && (
+            <Box
+              component="span"
+              title={book.series[0].name}
               sx={{
-                color: 'rgba(168, 85, 247, 0.9)',
-                fontSize: compact
-                  ? { xs: '12px', sm: '13px', md: '14px' }
-                  : { xs: '14px', sm: '15px', md: '16px' },
-                fontWeight: '500',
+                display: 'inline-block',
+                maxWidth: '100%',
+                mt: 0.75,
+                px: 1.25,
+                py: 0.4,
+                borderRadius: '8px',
+                background: 'rgba(147, 51, 234, 0.16)',
+                color: '#c4a1ff',
+                fontSize: compact ? '11px' : '12.5px',
                 fontFamily: lora.style.fontFamily,
+                lineHeight: 1.4,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
+                verticalAlign: 'top',
               }}
             >
-              {book.author.name}
-            </Typography>
-            {book.series && book.series.length > 0 && book.series[0]?.name && (
-              <>
-                <Box
-                  sx={{
-                    width: '3px',
-                    height: '3px',
-                    borderRadius: '50%',
-                    background: 'rgba(147, 51, 234, 0.5)',
-                    flexShrink: 0,
-                  }}
-                />
-                <Typography
-                  sx={{
-                    color: 'rgba(147, 51, 234, 0.7)',
-                    fontSize: compact
-                      ? { xs: '11px', sm: '12px', md: '13px' }
-                      : { xs: '13px', sm: '14px', md: '15px' },
-                    fontWeight: '400',
-                    fontFamily: lora.style.fontFamily,
-                    fontStyle: 'italic',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    flex: 1,
-                    minWidth: 0,
-                  }}
-                >
-                  {book.series[0].name}
-                </Typography>
-              </>
-            )}
-          </Box>
+              {book.series[0].name}
+            </Box>
+          )}
         </Box>
 
         {book.description && !compact && (
@@ -224,6 +210,20 @@ export function BookCard({ book, compact = false }: BookCardProps) {
           </Box>
         )}
       </Box>
+      <ChevronRightIcon
+        aria-hidden
+        sx={{
+          alignSelf: 'center',
+          flexShrink: 0,
+          color: 'rgba(255, 255, 255, 0.3)',
+          fontSize: 22,
+          transition: 'transform 0.2s, color 0.2s',
+          '.MuiBox-root:hover > &': {
+            color: '#c084fc',
+            transform: 'translateX(2px)',
+          },
+        }}
+      />
     </Box>
   );
 }

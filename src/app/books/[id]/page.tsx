@@ -28,6 +28,18 @@ import { DEFAULT_COVER_IMAGE } from '@/utils/constants/constants';
 
 const MotionBox = motion(Box);
 
+// Píldora de datos (valoración, páginas, ediciones), como en la app
+const META_PILL_SX = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 0.75,
+  height: 36,
+  px: 1.5,
+  borderRadius: '999px',
+  background: 'rgba(255,255,255,0.04)',
+  border: '1px solid rgba(255,255,255,0.08)',
+} as const;
+
 const GLOW_SX = {
   position: 'absolute' as const,
   borderRadius: '50%',
@@ -149,7 +161,7 @@ export default function BookDetails() {
     <Box
       sx={{
         minHeight: '100vh',
-        bgcolor: '#0A0A0A',
+        bgcolor: 'transparent',
         position: 'relative',
         overflow: 'hidden',
         pb: { xs: '80px', md: '120px' },
@@ -277,25 +289,24 @@ export default function BookDetails() {
                     onClick={handleClick}
                     sx={{
                       width: '100%',
-                      maxWidth: 200,
-                      borderRadius: '10px',
+                      maxWidth: 260,
+                      minWidth: 220,
+                      borderRadius: '16px',
                       gap: 1,
-                      py: 0.8,
+                      py: 1.1,
                       px: 2,
-                      color: isOnHallOfFame
-                        ? '#fbbf24'
-                        : 'rgba(255,255,255,0.4)',
+                      // Dorado como en la app; más intenso si ya está dentro
+                      color: '#fbbf24',
                       background: isOnHallOfFame
-                        ? 'rgba(251,191,36,0.08)'
-                        : 'rgba(255,255,255,0.03)',
+                        ? 'rgba(251,191,36,0.16)'
+                        : 'rgba(251,191,36,0.06)',
                       border: isOnHallOfFame
-                        ? '1px solid rgba(251,191,36,0.25)'
-                        : '1px solid rgba(255,255,255,0.07)',
-                      transition: 'all 0.25s',
+                        ? '1px solid rgba(251,191,36,0.45)'
+                        : '1px solid rgba(251,191,36,0.2)',
+                      transition: 'background-color 0.2s, border-color 0.2s',
                       '&:hover': {
-                        background: isOnHallOfFame
-                          ? 'rgba(251,191,36,0.13)'
-                          : 'rgba(255,255,255,0.06)',
+                        background: 'rgba(251,191,36,0.18)',
+                        borderColor: 'rgba(251,191,36,0.5)',
                       },
                     }}
                   >
@@ -336,21 +347,18 @@ export default function BookDetails() {
                   transition={{ duration: 0.35, delay: 0.1 }}
                   sx={{
                     display: 'inline-flex',
-                    px: 1.5,
-                    py: 0.4,
+                    px: 1.75,
+                    py: 0.5,
                     borderRadius: '100px',
-                    border: '1px solid rgba(147,51,234,0.3)',
-                    background: 'rgba(147,51,234,0.08)',
+                    background: 'rgba(147,51,234,0.16)',
                     mb: 2,
                   }}
                 >
                   <Typography
                     sx={{
                       fontFamily: lora.style.fontFamily,
-                      fontSize: '0.7rem',
-                      color: '#c084fc',
-                      letterSpacing: '0.1em',
-                      textTransform: 'uppercase',
+                      fontSize: '0.85rem',
+                      color: '#c4a1ff',
                     }}
                   >
                     {book.series[0]?.name}
@@ -366,12 +374,9 @@ export default function BookDetails() {
                   fontWeight: 700,
                   fontSize: { xs: '2rem', sm: '2.6rem', md: '3.2rem' },
                   lineHeight: 1.1,
-                  background:
-                    'linear-gradient(135deg, #ffffff 20%, #c084fc 60%, #818cf8 100%)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
+                  color: '#fff',
                   letterSpacing: '-0.02em',
+                  textWrap: 'balance',
                   paddingBottom: '8px',
                   textAlign: { xs: 'center', md: 'left' },
                 }}
@@ -379,18 +384,32 @@ export default function BookDetails() {
                 {displayTitle}
               </Typography>
 
-              {/* Author subtitle */}
-              <Typography
+              {/* Autor en morado con su foto, como en la app */}
+              <Box
+                component={authorId ? Link : 'span'}
+                href={authorId ? `/authors/${authorId}` : undefined}
                 sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 1.25,
+                  mt: 1,
+                  textDecoration: 'none',
                   fontFamily: lora.style.fontFamily,
-                  color: 'rgba(255,255,255,0.4)',
-                  fontSize: { xs: '1rem', md: '1.15rem' },
-                  letterSpacing: '0.02em',
-                  textAlign: { xs: 'center', md: 'left' },
+                  color: '#a855f7',
+                  fontSize: { xs: '1.05rem', md: '1.2rem' },
+                  transition: 'color 0.2s',
+                  '&:hover': { color: '#c084fc' },
                 }}
               >
+                {authorImage && (
+                  <Avatar
+                    src={authorImage}
+                    alt={authorName}
+                    sx={{ width: 30, height: 30 }}
+                  />
+                )}
                 {authorName}
-              </Typography>
+              </Box>
             </Box>
 
             {/* Meta row */}
@@ -398,14 +417,20 @@ export default function BookDetails() {
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: 2.5,
+                gap: 1,
                 mb: 3,
                 flexWrap: 'wrap',
                 justifyContent: { xs: 'center', md: 'flex-start' },
               }}
             >
-              {/* Rating */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
+              {/* Rating: píldora dorada */}
+              <Box
+                sx={{
+                  ...META_PILL_SX,
+                  background: 'rgba(251,191,36,0.1)',
+                  borderColor: 'rgba(251,191,36,0.22)',
+                }}
+              >
                 <StarIcon sx={{ color: '#fbbf24', fontSize: 18 }} />
                 <Typography
                   sx={{
@@ -431,15 +456,15 @@ export default function BookDetails() {
                       : null;
                 if (!showPages) return null;
                 return (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.6 }}>
+                  <Box sx={META_PILL_SX}>
                     <MenuBookIcon
-                      sx={{ color: 'rgba(147,51,234,0.6)', fontSize: 16 }}
+                      sx={{ color: 'rgba(255,255,255,0.5)', fontSize: 16 }}
                     />
                     <Typography
                       sx={{
                         fontFamily: lora.style.fontFamily,
-                        color: 'rgba(255,255,255,0.4)',
-                        fontSize: '0.85rem',
+                        color: 'rgba(255,255,255,0.7)',
+                        fontSize: '0.9rem',
                       }}
                     >
                       {showPages} {t('book.detail.pages')}
@@ -450,15 +475,19 @@ export default function BookDetails() {
 
               {/* Editions count + selector */}
               {allEditions.length > 0 && (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <AutoStoriesIcon
-                    sx={{ color: 'rgba(147,51,234,0.6)', fontSize: 16 }}
-                  />
+                <Box
+                  sx={{
+                    ...META_PILL_SX,
+                    background: 'rgba(147,51,234,0.12)',
+                    borderColor: 'rgba(168,85,247,0.4)',
+                  }}
+                >
+                  <AutoStoriesIcon sx={{ color: '#a855f7', fontSize: 16 }} />
                   <Typography
                     sx={{
                       fontFamily: lora.style.fontFamily,
-                      color: 'rgba(255,255,255,0.4)',
-                      fontSize: '0.85rem',
+                      color: '#c084fc',
+                      fontSize: '0.9rem',
                     }}
                   >
                     {allEditions.length}{' '}

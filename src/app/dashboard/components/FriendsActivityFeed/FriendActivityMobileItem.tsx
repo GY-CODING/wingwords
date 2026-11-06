@@ -14,18 +14,18 @@ import {
 } from '@/hooks/activities/utils/activityHelpers';
 import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { lora } from '@/utils/fonts/fonts';
-import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
-import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
-import { Box, IconButton, Skeleton, Typography } from '@mui/material';
+import { LikeButton } from '../../motion/LikeButton';
+import { lateFadeIn } from '../../motion/tokens';
+import { Box, Skeleton, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import React, { useCallback, useMemo, useState } from 'react';
 
 const MotionBox = motion(Box);
-const MotionIconButton = motion(IconButton);
 
 interface FriendActivityMobileItemProps {
   activity: FriendActivity;
-  index: number;
+  /** true si llega después de la primera carga (página siguiente). */
+  animateIn?: boolean;
   currentUserId?: string;
   onActivityClick: (bookId?: string) => void;
   onUserClick: (userId: string) => void;
@@ -96,7 +96,7 @@ export const FriendActivityMobileItem =
   React.memo<FriendActivityMobileItemProps>(
     ({
       activity,
-      index,
+      animateIn = false,
       currentUserId,
       onActivityClick,
       onUserClick,
@@ -159,6 +159,7 @@ export const FriendActivityMobileItem =
         [
           currentUserId,
           activity.activityId,
+          activity.profileId,
           isLiking,
           isLiked,
           likes,
@@ -168,13 +169,7 @@ export const FriendActivityMobileItem =
 
       return (
         <MotionBox
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            duration: 0.3,
-            delay: index * 0.04,
-            ease: [0.25, 0.1, 0.25, 1],
-          }}
+          {...(animateIn ? lateFadeIn : { initial: false })}
           sx={{
             p: 2,
             borderRadius: 3,
@@ -321,38 +316,14 @@ export const FriendActivityMobileItem =
               gap: 0.5,
             }}
           >
-            <MotionIconButton
+            <LikeButton
+              isLiked={isLiked}
+              count={likes.length}
               onClick={handleLike}
               disabled={!currentUserId || isLiking}
-              whileTap={{ scale: 1.3 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-              sx={{
-                p: 0.5,
-                color: isLiked ? '#e74c6f' : 'rgba(255, 255, 255, 0.25)',
-                '&:hover': {
-                  background: 'transparent',
-                },
-              }}
-              size="small"
-            >
-              {isLiked ? (
-                <FavoriteRoundedIcon sx={{ fontSize: 16 }} />
-              ) : (
-                <FavoriteBorderRoundedIcon sx={{ fontSize: 16 }} />
-              )}
-            </MotionIconButton>
-
-            {likes.length > 0 && (
-              <Typography
-                sx={{
-                  fontSize: '0.65rem',
-                  color: isLiked ? '#e74c6f' : 'rgba(255, 255, 255, 0.35)',
-                  fontWeight: 500,
-                }}
-              >
-                {likes.length}
-              </Typography>
-            )}
+              size={16}
+              label={t('dashboard.activity.like')}
+            />
           </Box>
         </MotionBox>
       );

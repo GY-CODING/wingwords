@@ -236,7 +236,7 @@ export default function AuthorPage() {
       <Box
         sx={{
           minHeight: '100vh',
-          bgcolor: '#0A0A0A',
+          bgcolor: 'transparent',
           pb: { xs: '80px', md: '120px' },
         }}
       >
@@ -250,7 +250,7 @@ export default function AuthorPage() {
       <Box
         sx={{
           minHeight: '100vh',
-          bgcolor: '#0A0A0A',
+          bgcolor: 'transparent',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -273,7 +273,7 @@ export default function AuthorPage() {
     <Box
       sx={{
         minHeight: '100vh',
-        bgcolor: '#0A0A0A',
+        bgcolor: 'transparent',
         position: 'relative',
         overflow: 'hidden',
         pb: { xs: '80px', md: '120px' },

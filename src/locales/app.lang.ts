@@ -696,6 +696,22 @@ const appMessages = defineMessages({
     id: 'dashboard.reading.completed',
     defaultMessage: 'completed',
   },
+  dashboardActivityLike: {
+    id: 'dashboard.activity.like',
+    defaultMessage: 'Like',
+  },
+  dashboardActivityLoadingMore: {
+    id: 'dashboard.activity.loadingMore',
+    defaultMessage: 'Loading more…',
+  },
+  dashboardCurrentlyReadingPrevious: {
+    id: 'dashboard.currentlyReading.previous',
+    defaultMessage: 'Previous book',
+  },
+  dashboardCurrentlyReadingNext: {
+    id: 'dashboard.currentlyReading.next',
+    defaultMessage: 'Next book',
+  },
 
   // ── Profile page ──────────────────────────────────────────────────────────
 
@@ -1358,6 +1374,26 @@ const appMessages = defineMessages({
   profileViewCalendar: {
     id: 'profile.view.calendar',
     defaultMessage: 'Calendar View',
+  },
+  profileViewLabel: {
+    id: 'profile.view.label',
+    defaultMessage: 'View',
+  },
+  profileViewShortGrid: {
+    id: 'profile.view.short.grid',
+    defaultMessage: 'Grid',
+  },
+  profileViewShortList: {
+    id: 'profile.view.short.list',
+    defaultMessage: 'List',
+  },
+  profileViewShortTimeline: {
+    id: 'profile.view.short.timeline',
+    defaultMessage: 'Timeline',
+  },
+  profileViewShortCalendar: {
+    id: 'profile.view.short.calendar',
+    defaultMessage: 'Calendar',
   },
 
   // ── Lists ─────────────────────────────────────────────────────────────────

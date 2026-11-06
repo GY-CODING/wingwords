@@ -9,6 +9,8 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import React, { useMemo } from 'react';
 import { useTranslation } from '@/lib/i18n/I18nProvider';
+import { CountUp } from '../../motion/CountUp';
+import { DURATION } from '../../motion/tokens';
 
 interface ReadingStatsCardsProps {
   totalBooks: number;
@@ -126,9 +128,9 @@ export const ReadingStatsCards = React.memo<ReadingStatsCardsProps>(
           ? cards.map((card) => (
               <motion.div
                 key={card.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: DURATION.base }}
               >
                 <StatCardSkeleton />
               </motion.div>
@@ -138,27 +140,52 @@ export const ReadingStatsCards = React.memo<ReadingStatsCardsProps>(
               return (
                 <motion.div
                   key={card.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={false}
                   whileHover={{ y: -2 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   <Paper
+                    role="link"
+                    tabIndex={0}
                     onClick={card.onClick}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') card.onClick();
+                    }}
                     sx={{
+                      position: 'relative',
+                      overflow: 'hidden',
                       background: 'rgba(255, 255, 255, 0.03)',
                       backdropFilter: 'blur(10px)',
                       borderRadius: '12px',
                       padding: 1.5,
                       border: '1px solid rgba(255, 255, 255, 0.06)',
                       cursor: 'pointer',
-                      '&:hover': {
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                      outline: 'none',
+                      transition: `border-color ${DURATION.base}s, background-color ${DURATION.base}s`,
+                      // Luz del color de la tarjeta desde la esquina del icono
+                      '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        inset: 0,
+                        background: `radial-gradient(120% 140% at 100% 50%, ${card.color}14 0%, transparent 55%)`,
+                        opacity: 0,
+                        transition: `opacity ${DURATION.slow}s`,
+                        pointerEvents: 'none',
+                      },
+                      '&:hover, &:focus-visible': {
+                        borderColor: `${card.color}40`,
                         background: 'rgba(255, 255, 255, 0.04)',
+                      },
+                      '&:hover::after, &:focus-visible::after': { opacity: 1 },
+                      '&:hover .ww-stat-icon, &:focus-visible .ww-stat-icon': {
+                        transform: 'scale(1.06) rotate(-4deg)',
+                        background: `${card.color}2E`,
                       },
                     }}
                   >
                     <Box
                       sx={{
+                        position: 'relative',
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
@@ -173,14 +200,15 @@ export const ReadingStatsCards = React.memo<ReadingStatsCardsProps>(
                             mb: 0.25,
                             fontSize: { xs: '1.5rem', sm: '1.75rem' },
                             fontFamily: lora.style.fontFamily,
+                            lineHeight: 1.15,
                           }}
                         >
-                          {card.value}
+                          <CountUp value={card.value} />
                         </Typography>
                         <Typography
                           variant="body2"
                           sx={{
-                            color: 'rgba(255, 255, 255, 0.5)',
+                            color: 'rgba(255, 255, 255, 0.55)',
                             fontSize: '0.8rem',
                             fontFamily: lora.style.fontFamily,
                           }}
@@ -190,6 +218,7 @@ export const ReadingStatsCards = React.memo<ReadingStatsCardsProps>(
                       </Box>
 
                       <Box
+                        className="ww-stat-icon"
                         sx={{
                           width: 40,
                           height: 40,
@@ -198,14 +227,10 @@ export const ReadingStatsCards = React.memo<ReadingStatsCardsProps>(
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
+                          transition: `transform ${DURATION.slow}s cubic-bezier(0.16, 1, 0.3, 1), background-color ${DURATION.base}s`,
                         }}
                       >
-                        <Icon
-                          sx={{
-                            color: card.color,
-                            fontSize: 24,
-                          }}
-                        />
+                        <Icon sx={{ color: card.color, fontSize: 24 }} />
                       </Box>
                     </Box>
                   </Paper>

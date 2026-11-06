@@ -1,147 +1,148 @@
 'use client';
-import HardcoverBook from '@/domain/HardcoverBook';
+import HardcoverBook, { BookHelpers } from '@/domain/HardcoverBook';
 import { useBookDisplay } from '@/hooks/useBookDisplay';
+import { useTranslation } from '@/hooks/useTranslation';
 import { lora } from '@/utils/fonts/fonts';
 import { EBookStatus } from '@gycoding/nebula';
-import { Box, Chip, Rating, Typography } from '@mui/material';
-import { motion } from 'framer-motion';
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const MotionBox = motion(Box) as any;
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
+import StarRoundedIcon from '@mui/icons-material/StarRounded';
+import { Box, Typography } from '@mui/material';
 
 interface BookCardListProps {
   book: HardcoverBook;
 }
 
+/**
+ * Fila de la vista lista del perfil, como en la app: portada, título, autor,
+ * una línea de estado con su icono y color (+ valoración y páginas) y la saga
+ * en un chip morado.
+ */
 export const BookCardList = ({ book }: BookCardListProps) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const { title, coverUrl } = useBookDisplay(book)!;
+  const { t } = useTranslation();
 
-  // Determinar color del badge según status
-  const getStatusColor = (status?: EBookStatus) => {
-    switch (status) {
-      case EBookStatus.READING:
-        return {
-          bg: 'rgba(129, 140, 248, 0.12)',
-          border: '#818cf8',
-          text: '#a5b4fc',
-        };
-      case EBookStatus.READ:
-        return {
-          bg: 'rgba(110, 231, 183, 0.12)',
-          border: '#6ee7b7',
-          text: '#a7f3d0',
-        };
-      case EBookStatus.WANT_TO_READ:
-        return {
-          bg: 'rgba(251, 191, 36, 0.12)',
-          border: '#fbbf24',
-          text: '#fde68a',
-        };
-      default:
-        return {
-          bg: 'rgba(147, 51, 234, 0.1)',
-          border: '#9333ea',
-          text: '#c084fc',
-        };
-    }
+  const status = (book.userData?.status as string) || '';
+  const STATUS: Record<
+    string,
+    { label: string; color: string; icon: typeof BookmarkBorderIcon }
+  > = {
+    [EBookStatus.READING]: {
+      label: t('book.rating.status.reading'),
+      color: '#818cf8',
+      icon: MenuBookOutlinedIcon,
+    },
+    [EBookStatus.READ]: {
+      label: t('book.rating.status.read'),
+      color: '#5ee6a8',
+      icon: CheckCircleOutlineIcon,
+    },
+    [EBookStatus.RATE]: {
+      label: t('book.rating.status.read'),
+      color: '#5ee6a8',
+      icon: CheckCircleOutlineIcon,
+    },
+    [EBookStatus.WANT_TO_READ]: {
+      label: t('book.rating.status.wantToRead'),
+      color: '#fbbf24',
+      icon: BookmarkBorderIcon,
+    },
+    NOT_FINISHED: {
+      label: t('book.rating.status.notFinished'),
+      color: '#f87171',
+      icon: HighlightOffIcon,
+    },
+    DNF: {
+      label: t('book.rating.status.notFinished'),
+      color: '#f87171',
+      icon: HighlightOffIcon,
+    },
   };
-
-  const statusColors = getStatusColor(book.userData?.status);
+  const statusInfo = STATUS[status];
+  const StatusIcon = statusInfo?.icon;
+  const rating = book.userData?.rating ?? 0;
+  const pages =
+    BookHelpers.getSelectedEdition(book)?.pages ??
+    (book.pageCount > 0 ? book.pageCount : null);
 
   return (
-    <MotionBox
+    <Box
       component="a"
       href={`/books/${book.id}`}
-      whileHover={{ scale: 1.02, y: -4 }}
-      transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
       sx={{
         display: 'flex',
         flexDirection: 'row',
-        gap: 1.5,
-        p: 1.5,
+        alignItems: 'center',
+        gap: 2,
+        p: 1.75,
+        minWidth: 0,
         background: 'rgba(255, 255, 255, 0.03)',
-        backdropFilter: 'blur(12px)',
         border: '1px solid rgba(255, 255, 255, 0.06)',
-        borderRadius: '16px',
+        borderRadius: '18px',
         textDecoration: 'none',
-        overflow: 'hidden',
-        position: 'relative',
+        transition:
+          'background-color 0.2s, border-color 0.2s, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
         '&:hover': {
-          border: '1px solid rgba(255, 255, 255, 0.1)',
           background: 'rgba(255, 255, 255, 0.05)',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          borderColor: 'rgba(147, 51, 234, 0.25)',
+          transform: 'translateY(-2px)',
         },
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          bottom: 0,
-          width: '3px',
-          background: `linear-gradient(180deg, ${statusColors.border} 0%, ${statusColors.text} 100%)`,
-          opacity: 0.8,
+        '&:focus-visible': {
+          outline: '2px solid rgba(192, 132, 252, 0.7)',
+          outlineOffset: 2,
         },
       }}
     >
-      {/* Imagen */}
       <Box
         sx={{
-          width: 60,
-          height: 90,
+          width: 64,
+          height: 96,
           flexShrink: 0,
-          borderRadius: '12px',
+          borderRadius: '10px',
           overflow: 'hidden',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+          boxShadow: '0 6px 16px -6px rgba(0, 0, 0, 0.6)',
         }}
       >
         <Box
           component="img"
           src={coverUrl}
           alt={title}
-          sx={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
+          loading="lazy"
+          sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
       </Box>
 
-      {/* Contenido */}
       <Box
         sx={{
           flex: 1,
           minWidth: 0,
           display: 'flex',
           flexDirection: 'column',
-          gap: 0.5,
-          justifyContent: 'center',
+          gap: 0.4,
         }}
       >
-        {/* Título y serie */}
         <Typography
           sx={{
-            color: '#FFFFFF',
-            fontSize: '0.95rem',
+            color: '#fff',
+            fontSize: '1rem',
             fontWeight: 700,
             fontFamily: lora.style.fontFamily,
-            letterSpacing: '0.02em',
             lineHeight: 1.3,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 1,
-            WebkitBoxOrient: 'vertical',
+            whiteSpace: 'nowrap',
           }}
         >
           {title}
         </Typography>
 
-        {/* Autor */}
         <Typography
           sx={{
             color: 'rgba(255, 255, 255, 0.6)',
-            fontSize: '0.8rem',
+            fontSize: '0.85rem',
             fontFamily: lora.style.fontFamily,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -151,51 +152,83 @@ export const BookCardList = ({ book }: BookCardListProps) => {
           {book.author.name}
         </Typography>
 
-        {/* Rating y Serie */}
+        {/* Estado · valoración · páginas */}
         <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
-            gap: 1,
+            gap: 1.25,
             flexWrap: 'wrap',
+            fontFamily: lora.style.fontFamily,
+            fontSize: '0.8rem',
           }}
         >
-          {book.userData?.rating !== undefined && (
-            <Rating
-              value={book.userData.rating}
-              precision={0.5}
-              readOnly
-              size="small"
+          {statusInfo && StatusIcon && (
+            <Box
+              component="span"
               sx={{
-                '& .MuiRating-iconFilled': {
-                  color: '#a855f7',
-                  fontSize: '0.9rem',
-                },
-                '& .MuiRating-iconEmpty': {
-                  color: 'rgba(255, 255, 255, 0.2)',
-                },
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 0.5,
+                color: statusInfo.color,
               }}
-            />
+            >
+              <StatusIcon sx={{ fontSize: 15 }} />
+              {statusInfo.label}
+            </Box>
           )}
-
-          {book.series && book.series.length > 0 && book.series[0]?.name && (
-            <Chip
-              label={book.series[0].name}
-              size="small"
+          {rating > 0 && (
+            <Box
+              component="span"
               sx={{
-                height: 18,
-                fontSize: '0.65rem',
-                fontFamily: lora.style.fontFamily,
-                background: statusColors.bg,
-                color: statusColors.text,
-                border: `1px solid ${statusColors.border}40`,
-                fontWeight: 600,
-                '& .MuiChip-label': { px: 1 },
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 0.25,
+                color: '#fbbf24',
+                fontVariantNumeric: 'tabular-nums',
               }}
-            />
+            >
+              <StarRoundedIcon sx={{ fontSize: 15 }} />
+              {rating.toFixed(1)}
+            </Box>
+          )}
+          {pages !== null && (
+            <Box
+              component="span"
+              sx={{
+                color: 'rgba(255, 255, 255, 0.45)',
+                fontVariantNumeric: 'tabular-nums',
+              }}
+            >
+              {pages} p.
+            </Box>
           )}
         </Box>
+
+        {book.series && book.series.length > 0 && book.series[0]?.name && (
+          <Box
+            component="span"
+            title={book.series[0].name}
+            sx={{
+              alignSelf: 'flex-start',
+              maxWidth: '100%',
+              mt: 0.5,
+              px: 1.1,
+              py: 0.3,
+              borderRadius: '8px',
+              background: 'rgba(147, 51, 234, 0.16)',
+              color: '#c4a1ff',
+              fontSize: '0.75rem',
+              fontFamily: lora.style.fontFamily,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {book.series[0].name}
+          </Box>
+        )}
       </Box>
-    </MotionBox>
+    </Box>
   );
 };

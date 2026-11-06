@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
-
 'use client';
 
 import {
@@ -63,6 +61,18 @@ const ClientLayoutContent = ({ children }: { children: React.ReactNode }) => {
           // height: ['100dvh', '100vh'],
           overflow: ['hidden', 'auto'],
           backgroundColor: '#0A0A0A',
+          // Aura morada fija de la app móvil, detrás de todas las páginas
+          position: 'relative',
+          isolation: 'isolate',
+          '&::before': {
+            content: '""',
+            position: 'fixed',
+            inset: 0,
+            zIndex: -1,
+            background:
+              'radial-gradient(ellipse 70% 55% at 50% 42%, rgba(124, 58, 237, 0.11) 0%, rgba(124, 58, 237, 0.04) 45%, transparent 75%)',
+            pointerEvents: 'none',
+          },
         }}
       >
         {/* Header Container */}

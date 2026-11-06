@@ -167,7 +167,7 @@ export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
       color: '#6ee7b7',
       bg: 'rgba(110, 231, 183, 0.75)',
     },
-    [EBookStatus.DNF]: {
+    DNF: {
       label: t('book.rating.status.notFinished'),
       color: '#ef4444',
       bg: 'rgba(239, 68, 68, 0.75)',
@@ -217,16 +217,17 @@ export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
         flexDirection: 'column',
         cursor: 'pointer',
         position: 'relative',
-        background: 'rgba(255, 255, 255, 0.03)',
-        border: '1px solid rgba(255, 255, 255, 0.06)',
-        borderRadius: '16px',
-        overflow: 'hidden',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
-        transition: 'all 0.25s ease',
-        '&:hover': {
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3)',
-          transform: 'translateY(-4px)',
+        // Como en la app: sin caja; portada redondeada y el texto debajo
+        background: 'transparent',
+        borderRadius: '14px',
+        transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+        '&:hover': { transform: 'translateY(-3px)' },
+        '&:hover .ww-cover': {
+          boxShadow: '0 14px 30px -10px rgba(0, 0, 0, 0.7)',
+        },
+        '&:focus-visible': {
+          outline: '2px solid rgba(192, 132, 252, 0.7)',
+          outlineOffset: 3,
         },
       }}
     >
@@ -234,8 +235,8 @@ export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
       <Box
         sx={{
           position: 'absolute',
-          top: 8,
-          right: 8,
+          top: 10,
+          right: 10,
           zIndex: 20,
         }}
       >
@@ -244,30 +245,39 @@ export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
           size="small"
           sx={{
             height: 24,
-            background: `${statusInfo.bg}`,
-
+            borderRadius: '8px',
+            // Relleno sólido como en la app; verde y ámbar algo más oscuros
+            // para que el texto blanco se lea.
+            background:
+              (
+                {
+                  '#6ee7b7': '#22a06b',
+                  '#fbbf24': '#d4920b',
+                } as Record<string, string>
+              )[statusInfo.color] ?? statusInfo.color,
             color: '#fff',
             fontFamily: lora.style.fontFamily,
             fontWeight: 700,
-            fontSize: '0.7rem',
-            letterSpacing: '0.05em',
-            border: `1px solid ${statusInfo.color}`,
-            boxShadow: 'none',
-            textShadow: 'none',
-            '& .MuiChip-label': {
-              px: 1.5,
-            },
+            fontSize: '0.75rem',
+            border: 'none',
+            boxShadow: '0 4px 10px -4px rgba(0, 0, 0, 0.5)',
+            textShadow: '0 1px 1px rgba(0, 0, 0, 0.15)',
+            '& .MuiChip-label': { px: 1.1 },
           }}
         />
       </Box>
 
       {/* Imagen del libro */}
       <Box
+        className="ww-cover"
         sx={{
           position: 'relative',
           width: '100%',
           paddingTop: '150%',
           overflow: 'hidden',
+          borderRadius: '14px',
+          boxShadow: '0 8px 22px -10px rgba(0, 0, 0, 0.6)',
+          transition: 'box-shadow 0.25s',
         }}
       >
         <Box
@@ -291,12 +301,10 @@ export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
       {/* Contenido */}
       <Box
         sx={{
-          padding: { xs: '12px', sm: '16px' },
+          padding: { xs: '10px 2px 0', sm: '12px 2px 0' },
           display: 'flex',
           flexDirection: 'column',
-          gap: { xs: '6px', sm: '8px' },
-          background:
-            'linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, transparent 100%)',
+          gap: { xs: '4px', sm: '6px' },
         }}
       >
         {/* Título y Rating */}
@@ -312,10 +320,9 @@ export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
               variant="subtitle1"
               sx={{
                 color: '#FFFFFF',
-                fontWeight: '800',
-                fontSize: { xs: '0.95rem', sm: '1.1rem' },
+                fontWeight: '700',
+                fontSize: { xs: '0.95rem', sm: '1.05rem' },
                 fontFamily: lora.style.fontFamily,
-                letterSpacing: '.05rem',
                 lineHeight: 1.3,
                 textOverflow: 'ellipsis',
                 overflow: 'hidden',
@@ -368,46 +375,30 @@ export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
             <Box sx={{ mt: 0.5, minHeight: 22 }}>
               {progress !== null ? (
                 <>
-                  <Box
+                  <Typography
                     sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      mb: 0.5,
+                      color: '#a78bfa',
+                      fontFamily: lora.style.fontFamily,
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      fontVariantNumeric: 'tabular-nums',
+                      mb: 0.6,
                     }}
                   >
-                    <Typography
-                      sx={{
-                        color: '#818cf8',
-                        fontFamily: lora.style.fontFamily,
-                        fontSize: '0.65rem',
-                        fontWeight: 600,
-                        letterSpacing: '0.04em',
-                      }}
-                    >
-                      {t('book.rating.status.reading')}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: 'rgba(255,255,255,0.4)',
-                        fontFamily: lora.style.fontFamily,
-                        fontSize: '0.65rem',
-                      }}
-                    >
-                      {progress}%
-                    </Typography>
-                  </Box>
+                    {t('book.rating.status.reading')} · {progress}%
+                  </Typography>
                   <LinearProgress
                     variant="determinate"
                     value={progress}
+                    aria-label={`${t('book.rating.status.reading')} ${progress}%`}
                     sx={{
-                      height: 3,
-                      borderRadius: 2,
-                      backgroundColor: 'rgba(129, 140, 248, 0.15)',
+                      height: 4,
+                      borderRadius: 999,
+                      backgroundColor: 'rgba(147, 51, 234, 0.18)',
                       '& .MuiLinearProgress-bar': {
                         background:
-                          'linear-gradient(90deg, #818cf8 0%, #a855f7 100%)',
-                        borderRadius: 2,
+                          'linear-gradient(90deg, #9333ea 0%, #c084fc 100%)',
+                        borderRadius: 999,
                       },
                     }}
                   />
@@ -471,16 +462,15 @@ export const BookCardCompact = ({ book, onClick }: BookCardCompactProps) => {
               size="small"
               sx={{
                 alignSelf: 'flex-start',
-                background:
-                  'linear-gradient(135deg, rgba(147, 51, 234, 0.25) 0%, rgba(168, 85, 247, 0.2) 100%)',
-                color: '#c084fc',
-                fontSize: { xs: '.75rem', sm: '.85rem' },
+                maxWidth: '100%',
+                background: 'rgba(147, 51, 234, 0.16)',
+                color: '#c4a1ff',
+                fontSize: { xs: '.72rem', sm: '.8rem' },
                 fontFamily: lora.style.fontFamily,
-                letterSpacing: '.05rem',
-                fontWeight: '700',
+                fontWeight: 400,
                 height: { xs: '22px', sm: '24px' },
-                borderRadius: '12px',
-                border: '1px solid rgba(147, 51, 234, 0.3)',
+                borderRadius: '8px',
+                border: 'none',
                 textShadow: 'none',
               }}
             />

@@ -3,6 +3,7 @@ import { UserProfileBook } from '@/domain/user.model';
 import { lora } from '@/utils/fonts/fonts';
 import { EBookStatus } from '@gycoding/nebula';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import { Box, Typography } from '@mui/material';
@@ -26,6 +27,10 @@ export const BooksStatsDisplay: React.FC<BooksStatsDisplayProps> = ({
   ).length;
   const wantToReadCount = books.filter(
     (b) => b.userData?.status === EBookStatus.WANT_TO_READ
+  ).length;
+  // El backend guarda el DNF como NOT_FINISHED (ver rateBook.ts)
+  const dnfCount = books.filter((b) =>
+    ['NOT_FINISHED', 'DNF'].includes(b.userData?.status as string)
   ).length;
 
   if (compact) {
@@ -65,6 +70,18 @@ export const BooksStatsDisplay: React.FC<BooksStatsDisplayProps> = ({
             }}
           >
             {wantToReadCount}
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <CancelIcon sx={{ fontSize: 14, color: '#f87171' }} />
+          <Typography
+            sx={{
+              color: '#f87171',
+              fontSize: 13,
+              fontWeight: 600,
+            }}
+          >
+            {dnfCount}
           </Typography>
         </Box>
       </>
@@ -151,6 +168,31 @@ export const BooksStatsDisplay: React.FC<BooksStatsDisplayProps> = ({
           }}
         >
           {wantToReadCount}
+        </Typography>
+      </Box>
+
+      <Box sx={{ color: 'rgba(255,255,255,0.3)' }}>•</Box>
+
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        <CancelIcon sx={{ fontSize: 16, color: '#f87171' }} />
+        <Typography
+          sx={{
+            color: 'rgba(255,255,255,0.7)',
+            fontSize: 13,
+            fontFamily: lora.style.fontFamily,
+          }}
+        >
+          {t('book.rating.status.notFinished')}:
+        </Typography>
+        <Typography
+          sx={{
+            color: '#f87171',
+            fontSize: 14,
+            fontWeight: 700,
+            fontFamily: lora.style.fontFamily,
+          }}
+        >
+          {dnfCount}
         </Typography>
       </Box>
     </Box>

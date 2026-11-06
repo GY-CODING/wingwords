@@ -5,13 +5,10 @@ import { FriendActivity } from '@/hooks/activities/useFriendsActivityFeed';
 import { useTranslation } from '@/lib/i18n/I18nProvider';
 import { lora } from '@/utils/fonts/fonts';
 import { Box, Typography } from '@mui/material';
-import { motion } from 'framer-motion';
 import React from 'react';
 import { CurrentlyReadingMobile } from '../CurrentlyReadingSection/CurrentlyReadingMobile';
 import { FriendsActivityMobileFeed } from '../FriendsActivityFeed/FriendsActivityMobileFeed';
 import { ReadingStatsMini } from '../ReadingStatsCards/ReadingStatsMini';
-
-const MotionBox = motion(Box);
 
 interface DashboardMobileProps {
   /** Libros que el usuario está leyendo actualmente */
@@ -69,24 +66,16 @@ export const DashboardMobile = React.memo<DashboardMobileProps>(
         }}
       >
         {/* Section 1: Currently Reading */}
-        <MotionBox
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
+        <Box>
           <SectionHeader title={t('dashboard.section.currentlyReading')} />
           <CurrentlyReadingMobile
             books={currentlyReadingBooks}
             isLoading={booksLoading}
           />
-        </MotionBox>
+        </Box>
 
         {/* Section 2: Reading Stats */}
-        <MotionBox
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.08 }}
-        >
+        <Box>
           <SectionHeader title={t('dashboard.section.stats')} />
           <ReadingStatsMini
             totalBooks={totalBooks}
@@ -95,21 +84,17 @@ export const DashboardMobile = React.memo<DashboardMobileProps>(
             displayYear={displayYear}
             isLoading={booksLoading}
           />
-        </MotionBox>
+        </Box>
 
         {/* Section 3: Friends Activity Feed */}
-        <MotionBox
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.16 }}
-        >
+        <Box>
           <SectionHeader title={t('dashboard.section.friendsActivity')} />
           <FriendsActivityMobileFeed
             activities={activities}
             isLoading={activitiesLoading}
             currentUserId={currentUserId}
           />
-        </MotionBox>
+        </Box>
       </Box>
     );
   }

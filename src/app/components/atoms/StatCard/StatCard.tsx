@@ -2,14 +2,10 @@
 
 import { lora } from '@/utils/fonts/fonts';
 import { Box, Typography } from '@mui/material';
-import { motion } from 'framer-motion';
 import React from 'react';
-
-const MotionBox = motion(Box);
 
 interface StatCardProps {
   title: string;
-  delay?: number;
   children: React.ReactNode;
 }
 
@@ -21,29 +17,45 @@ const cardSx = {
   border: '1px solid rgba(255, 255, 255, 0.06)',
   borderRadius: '20px',
   display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  padding: 2,
+  // Como en la app: el título arriba a la izquierda y el contenido debajo
+  justifyContent: 'flex-start',
+  alignItems: 'stretch',
+  padding: 3,
   flexDirection: 'column',
-  gap: 1,
+  gap: 2,
   boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+  transition: 'border-color 0.25s',
+  '&:hover': { borderColor: 'rgba(255, 255, 255, 0.1)' },
 };
 
-const StatCard: React.FC<StatCardProps> = ({ title, delay = 0, children }) => (
-  <MotionBox
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5, delay, ease: [0.4, 0, 0.2, 1] }}
-    sx={cardSx}
-  >
+const contentSx = {
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '100%',
+} as const;
+
+// Visible desde el primer pintado: antes las nueve tarjetas entraban en
+// cadena (0,1 s → 0,9 s) y la pestaña parecía tardar en cargar.
+const StatCard: React.FC<StatCardProps> = ({ title, children }) => (
+  <Box sx={cardSx}>
     <Typography
-      sx={{ color: 'white', fontFamily: lora.style.fontFamily }}
-      variant="h4"
+      component="h3"
+      sx={{
+        color: 'white',
+        fontFamily: lora.style.fontFamily,
+        fontSize: '1.35rem',
+        fontWeight: 700,
+        lineHeight: 1.2,
+        textAlign: 'left',
+      }}
     >
       {title}
     </Typography>
-    {children}
-  </MotionBox>
+    <Box sx={contentSx}>{children}</Box>
+  </Box>
 );
 
 export default StatCard;

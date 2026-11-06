@@ -1,6 +1,8 @@
 import { Friend } from '@/domain/friend.model';
 import { lora } from '@/utils/fonts/fonts';
-import DeleteIcon from '@mui/icons-material/Delete';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import PersonRemoveOutlinedIcon from '@mui/icons-material/PersonRemoveOutlined';
+import { useTranslation } from '@/hooks/useTranslation';
 import { Box, IconButton, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -21,29 +23,31 @@ export default function FriendCard({
   isDeleteLoading,
   handleDeleteFriend,
 }: FriendCardProps) {
+  const { t } = useTranslation();
   return (
     <MotionBox
       component="a"
       href={`/users/${friend.id}`}
       key={friend.id}
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      whileHover={{ scale: 1.02, y: -4 }}
-      transition={{ duration: 0.3 }}
       sx={{
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
         gap: '1rem',
         background: 'rgba(255, 255, 255, 0.03)',
-        borderRadius: '16px',
-        padding: '0.875rem 1rem',
+        borderRadius: '18px',
+        padding: '0.9rem 1rem',
         width: '100%',
         textDecoration: 'none',
         border: '1px solid rgba(255, 255, 255, 0.06)',
+        transition: 'background-color 0.2s, border-color 0.2s',
         '&:hover': {
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          background: 'rgba(255, 255, 255, 0.04)',
+          borderColor: 'rgba(147, 51, 234, 0.25)',
+          background: 'rgba(255, 255, 255, 0.05)',
+        },
+        '&:hover .ww-chevron': {
+          color: '#c084fc',
+          transform: 'translateX(2px)',
         },
       }}
     >
@@ -53,8 +57,7 @@ export default function FriendCard({
           height: 48,
           flexShrink: 0,
           borderRadius: '50%',
-          border: '1.5px solid rgba(147, 51, 234, 0.3)',
-          padding: '2px',
+          overflow: 'hidden',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -77,8 +80,7 @@ export default function FriendCard({
         sx={{
           flex: 1,
           minWidth: 0,
-          fontSize: { xs: '1rem', sm: '1.1rem' },
-          letterSpacing: '0.05rem',
+          fontSize: { xs: '1rem', sm: '1.05rem' },
           fontWeight: 600,
           color: 'white',
           fontFamily: lora.style.fontFamily,
@@ -89,27 +91,32 @@ export default function FriendCard({
       >
         {friend.username}
       </Typography>
+      <ChevronRightIcon
+        className="ww-chevron"
+        aria-hidden
+        sx={{
+          color: 'rgba(255, 255, 255, 0.3)',
+          fontSize: 22,
+          transition: 'transform 0.2s, color 0.2s',
+        }}
+      />
       <MotionIconButton
-        whileHover={{ scale: 1.1, rotate: 5 }}
-        whileTap={{ scale: 0.9 }}
+        whileTap={{ scale: 0.92 }}
         loading={isDeleteLoading}
+        aria-label={t('profile.tooltip.removeFriend')}
         sx={{
           flexShrink: 0,
-          width: '44px',
-          height: '44px',
-          background:
-            'linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.1) 100%)',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(239, 68, 68, 0.3)',
-          borderRadius: '12px',
-          right: '1rem',
-          color: '#ff5353',
-          transition: 'all 0.3s ease',
+          // Círculo rojo suave con "quitar amigo", como en la app
+          width: 40,
+          height: 40,
+          background: 'rgba(239, 68, 68, 0.1)',
+          border: '1px solid rgba(239, 68, 68, 0.22)',
+          borderRadius: '50%',
+          color: '#f87171',
+          transition: 'background-color 0.2s, border-color 0.2s',
           '&:hover': {
-            background:
-              'linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.2) 100%)',
-            border: '1px solid rgba(239, 68, 68, 0.5)',
-            boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)',
+            background: 'rgba(239, 68, 68, 0.2)',
+            borderColor: 'rgba(239, 68, 68, 0.45)',
           },
         }}
         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -118,7 +125,7 @@ export default function FriendCard({
           handleDeleteFriend(friend.id);
         }}
       >
-        <DeleteIcon />
+        <PersonRemoveOutlinedIcon sx={{ fontSize: 20 }} />
       </MotionIconButton>
     </MotionBox>
   );

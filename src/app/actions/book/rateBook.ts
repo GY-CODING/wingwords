@@ -39,7 +39,7 @@ export default async function rateBook(
     // Construir userData completo con todos los campos (actuales o nuevos)
     // Normalizar estados: mapear DNF (cliente) -> NOT_FINISHED (backend)
     let statusToUse = status || oldUserData?.status || EBookStatus.WANT_TO_READ;
-    if (statusToUse === EBookStatus.DNF || statusToUse === 'DNF') {
+    if ((statusToUse as string) === 'DNF') {
       statusToUse = 'NOT_FINISHED';
     }
 
